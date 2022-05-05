@@ -1,0 +1,38 @@
+[package]
+name = "myriad"
+version = "0.1.0"
+authors = ["Mark Wainwright <wainwrightml@gmail.com>"]
+license = "MIT"
+keywords = ["math", "game"]
+edition= "2021"
+
+[dependencies]
+itertools = "0.10.3"
+test-case = "2.0.0"
+num = "0.4"
+num-derive = "0.3"
+num-traits = "0.2"
+serde = { version = "1.0", features = ["derive"] }
+strum_macros = "0.24.0"
+im = "15.0.0"
+meval = "0.2.0"
+rand = {version = "0.8.5"}
+getrandom = {version="0.2.5", features=["js"]}
+bencher= "0.1.5"
+log = "0.4.6"
+wasm-logger = "0.2.0"
+yew = "0.19"
+yewdux = "0.7.0"
+
+reqwasm = "0.5.0"
+wasm-bindgen-futures = "0.4"
+bounce = "0.2.0"
+
+
+instant = { version = "0.1", features = [ "wasm-bindgen", "inaccurate" ] }
+
+[dependencies.web-sys]
+version = "0.3.55"
+features = [
+    "HtmlInputElement",
+]

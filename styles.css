@@ -1,0 +1,80 @@
+.myriadSVG {
+    font-family: inherit;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    
+    width: 100%;
+    font-weight: bold;
+  }
+
+  .square {
+    -webkit-transition: 1s ease-out;
+    transition: 1s ease-out;
+  }
+
+  .circle {
+    stroke-width: 360 * 0.02;
+
+    transition: 3s cubic-bezier(0, 1.45, 0.72, 1.33)
+  }
+
+  .circle:hover { transform: scale(1.1) }
+
+  .circle-text{
+    user-select: none;
+    pointer-events: none;
+  }
+
+  .foundWord {
+    -webkit-animation-name: disappearAnimation-webkit;
+    animation-name: disappearAnimation;
+    animation-fill-mode: forwards;
+    animation-timing-function: ease-out;
+  }
+
+  @keyframes disappearAnimation-webkit {
+    0% { opacity: 1; }
+
+    50% {
+      opacity: 0.2;
+      -webkit-transform: translateY(50%);
+    }
+
+    100% {
+      opacity: 0;
+      -webkit-transform: translateY(100%);
+    }
+  }
+
+  @keyframes disappearAnimation {
+    0% { opacity: 1; }
+
+    50% {
+      opacity: 0.2;
+      transform: translateY(50%);
+    }
+
+    100% {
+      opacity: 0;
+      transform: translateY(100%);
+    }
+  }
+
+  .container{
+    max-width: 400px;
+  }
+
+ .chip{
+width: 2.5em;    
+}
+.chip-content{
+    cursor: inherit;
+    display: flex;
+    align-items: center;
+    user-select: none;
+    white-space: nowrap;
+    padding-left: 12px;
+    padding-right: 12px;
+} */

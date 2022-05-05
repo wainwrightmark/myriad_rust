@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+        
+        <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/picnic">
+        <link data-trunk href="styles.css" rel="css" />
+         </head>
+    <body></body>
+</html>
+
+<style>
+    body.dark {
+      --bg-color: #000;
+      --bg-secondary-color: #131316;
+      --font-color: #f5f5f5;
+      --color-grey: #ccc;
+      --color-darkGrey: #777;
+    }
+  </style>
+  <script>
+    if (window.matchMedia &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      document.body.classList.add('dark');
+    }
+  </script>
