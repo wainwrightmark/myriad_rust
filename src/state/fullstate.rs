@@ -73,9 +73,21 @@ impl Reducer<FullState> for Msg {
                 } = move_result.clone()
                 {
                     is_new_word = !state.found_words.has_word(&found_word);
-                    if is_new_word {
-                        crate::web::confetti::make_confetti("🌈⚡️💥✨💫🌸".to_string());
-                        state.found_words.with_word(found_word).into()
+                    if is_new_word {                        
+                        let i =found_word.result;
+                        let ns = state.found_words.with_word(found_word);
+
+                        
+                        const BLOCKSIZE : i32= 20;
+                        if state.found_words.words.len() >= 100{
+                            crate::web::confetti::make_confetti("💯💯💯💯💯💯🌈⚡️💥✨💫🌸".to_string());
+                        }
+                        
+                        else if ns.has_all_words(&mut num::iter::range( ((i / BLOCKSIZE) *BLOCKSIZE).max(1), ((i / BLOCKSIZE) + 1) * BLOCKSIZE)){
+                            crate::web::confetti::make_confetti("🌈⚡️💥✨💫🌸".to_string());
+                        }
+                        ns.into()
+
                     } else {
                         state.found_words.clone()
                     }
@@ -88,6 +100,7 @@ impl Reducer<FullState> for Msg {
                     .deref()
                     .clone()
                     .after_move_result(&move_result, is_new_word);
+
 
                 FullState {
                     game: new_game_state.into(),
