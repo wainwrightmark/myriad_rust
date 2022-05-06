@@ -19,7 +19,12 @@ fn app() -> Html {
         </svg>
         <FoundWordsTable/>
         <NewGameButton/>
+
+        <canvas id="confetti-canvas" style="position: fixed; width: 100%; height: 100%; top: 0px; left: 0px; z-index: 1000; pointer-events: none;"></canvas>
+
         </div>
+
+
     }
 }
 

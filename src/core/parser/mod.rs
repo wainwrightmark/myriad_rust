@@ -61,50 +61,58 @@ fn parse_number(input: &str) -> IResult<&str, Expr> {
     map(delimited(space0, digit1, space0), parse_enum)(input)
 }
 
-fn evaluate(expr: Expr) -> i32 {
+fn evaluate(expr: Expr) -> Option<i32> {
     match expr {
-        ENum(num) => num,
-        EAdd(expr1, expr2) => evaluate(*expr1) + evaluate(*expr2),
-        ESub(expr1, expr2) => evaluate(*expr1) - evaluate(*expr2),
-        EMul(expr1, expr2) => evaluate(*expr1) * evaluate(*expr2),
-        EDiv(expr1, expr2) => evaluate(*expr1) / evaluate(*expr2),
+        ENum(num) => Some(num),
+        EAdd(expr1, expr2) => evaluate(*expr1).and_then(|x| evaluate(*expr2).and_then(|y| Some(x + y))),
+        ESub(expr1, expr2) => evaluate(*expr1).and_then(|x| evaluate(*expr2).and_then(|y| Some(x - y))),
+        EMul(expr1, expr2) => evaluate(*expr1).and_then(|x| evaluate(*expr2).and_then(|y| Some(x * y))),
+        EDiv(expr1, expr2) => evaluate(*expr1).and_then(|x| evaluate(*expr2).and_then(|y| if y != 0 && x % y ==0 {Some(x / y)} else{None})),
     }
 }
 
-pub (crate) fn parse_and_evaluate(input: &str) -> Result<i32, nom::Err<nom::error::Error<&str>>>{
-    parse(input).map(|x|evaluate(x.1))
+pub (crate) fn parse_and_evaluate(input: &str) -> Option<i32>{
+let parse_result = parse(input);
+if let Ok((_, expr)) = parse_result{
+    let ev_result = evaluate(expr);
+    return ev_result;
+}
+None
 }
 
 #[cfg(test)]
 mod tests {
     use crate::core::parser::*;
 
-    #[test]
-    fn parse_add_statement() {
-        let r = parse_and_evaluate("12+34");
-        assert_eq!(
-            r,
-            Ok(46)
-        );
-    }
+    
 
-    #[test]
-    fn parse_subtract_statement() {
-        let r = parse_and_evaluate("12-34");
-        assert_eq!(
-            r,
-            Ok(-22)
-        );
-    }
 
-    #[test]
-    fn parse_nested_add_sub_statements() {
-        let r = parse_and_evaluate("12-34+15 - 9");
-        assert_eq!(
-            r,
-            Ok(-16)
-        );
+macro_rules! fib_tests {
+    ($($name:ident: $value:expr,)*) => {
+    $(
+        #[test]
+        fn $name() {
+            let (input, expected) = $value;
+            assert_eq!(expected, parse_and_evaluate(input));
+        }
+    )*
     }
+}
+
+fib_tests! {
+    t0: ("", None),
+    t1: ("12", Some(12)),
+    t2: ("12+34", Some(46)),
+    t3: ("12-34", Some(-22)),
+    t4: ("12-34+15-9", Some(-16)),
+    t5: ("4*5", Some(20)),
+    t6: ("4*5 + 6", Some(26)),
+    t7: ("4/2", Some(2)),
+    t8: ("5/2", None),
+    t9: ("5/0", None),
+}
+
+
 }
 
 

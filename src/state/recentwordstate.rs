@@ -1,6 +1,4 @@
 use itertools::Itertools;
-use log::debug;
-
 use crate::core::prelude::*;
 
 #[derive(PartialEq, Clone, Default)]
@@ -20,7 +18,7 @@ impl RecentWordState {
             expiry_time: now + instant::Duration::from_millis(linger),
         };
 
-        debug!("{:?}", r_word);
+        //debug!("{:?}", r_word);
 
         let new_words = self
             .recent_words

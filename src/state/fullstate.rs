@@ -2,6 +2,7 @@ use crate::core::prelude::*;
 use crate::state::foundwordsstate::*;
 use crate::state::gamestate::*;
 use crate::state::recentwordstate::*;
+use log::debug;
 use serde::*;
 use std::cell::RefCell;
 use std::ops::Deref;
@@ -36,13 +37,19 @@ impl Reducer<FullState> for Msg {
                     desired_solutions: 100,
                     number_to_return: 1,
                 };
-                let rng = rand::SeedableRng::seed_from_u64(10);
+                let seed: u64 = rand::random();
+                let start_instant = instant::Instant::now();
+                debug!("Generating new board with seed {:?}", seed);
+                let rng = rand::SeedableRng::seed_from_u64(seed);
                 let rng_cell = RefCell::new(rng);
 
                 let boards = crate::core::creator::create_boards(&solver, 9, &settings, &rng_cell);
+                let board = boards[0].to_owned();
+                let diff = instant::Instant::now() - start_instant;
 
+                debug!("Board '{:?}' generated in {:?}", board, diff);
                 let new_game_state = Gamestate {
-                    board: boards[0].clone(),
+                    board: board,
                     ..Default::default()
                 };
 
@@ -67,6 +74,7 @@ impl Reducer<FullState> for Msg {
                 {
                     is_new_word = !state.found_words.has_word(&found_word);
                     if is_new_word {
+                        crate::web::confetti::make_confetti("🌈⚡️💥✨💫🌸".to_string());
                         state.found_words.with_word(found_word).into()
                     } else {
                         state.found_words.clone()

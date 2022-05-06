@@ -13,7 +13,7 @@ pub fn found_words_table_content() -> Html {
                     let i = twenties * 20 + units;
 
                     if i == 0 {
-                        html!(<span class="label chip" style="visibility hidden"></span>)
+                        html!(<span class="label chip" style="visibility: hidden;"></span>)
                     } else {
                         let found = found_words_state.words.contains_key(&i);
 

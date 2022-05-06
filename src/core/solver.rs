@@ -82,7 +82,7 @@ impl Solver {
 
         //let parse_result = meval::eval_str(text);
 
-        if let Ok(u) = parse_result {
+        if let Some(u) = parse_result {
             let found_word = FoundWord {
                 result: u,
                 path: nodes.iter().map(|x| x.coordinate).collect_vec(),
