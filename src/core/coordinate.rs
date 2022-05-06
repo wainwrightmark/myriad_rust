@@ -128,7 +128,7 @@ impl Coordinate {
     }
 
     pub fn has_at_least_x_neighbors(&self, x: u8, max_coordinate: Coordinate) -> bool {
-        if x <= 0 {
+        if x == 0 {
             return true;
         };
         if x > 8 {

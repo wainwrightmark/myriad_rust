@@ -204,7 +204,7 @@ impl Gamestate {
         MoveResult::IllegalMove {}
     }
 
-    fn get_word_text(&self, coordinates: &Vec<Coordinate>) -> String {
+    fn get_word_text(&self, coordinates: &[Coordinate]) -> String {
         let word = coordinates
             .iter()
             .map(|c| {

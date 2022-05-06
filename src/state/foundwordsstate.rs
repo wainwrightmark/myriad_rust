@@ -2,18 +2,11 @@ use crate::core::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
-#[derive(PartialEq, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Clone, Serialize, Deserialize, Default)]
 pub struct FoundWordsState {
     pub words: BTreeMap<i32, FoundWord>,
 }
 
-impl Default for FoundWordsState {
-    fn default() -> Self {
-        Self {
-            words: Default::default(),
-        }
-    }
-}
 
 impl FoundWordsState {
     pub fn with_word(&self, word: FoundWord) -> Self {
