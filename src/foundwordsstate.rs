@@ -1,7 +1,9 @@
 use std::collections::BTreeMap;
 use crate::core::solver::*;
+use serde::{Serialize, Deserialize};
 
-#[derive(PartialEq,Clone)]
+
+#[derive(PartialEq,Clone, Serialize, Deserialize)]
 pub struct FoundWordsState {
     pub words: BTreeMap<i32, FoundWord>,
 }

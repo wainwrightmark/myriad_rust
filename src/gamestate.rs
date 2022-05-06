@@ -1,5 +1,7 @@
 use itertools::Itertools;
 use num::ToPrimitive;
+use serde::Deserialize;
+use serde::Serialize;
 
 use crate::core::coordinate::*;
 use crate::core::board::*;
@@ -7,7 +9,7 @@ use crate::core::move_result::MoveResult;
 use crate::core::solver::*;
 
 
-#[derive(PartialEq, Clone)]
+#[derive(PartialEq, Clone, Serialize, Deserialize)]
 pub struct Gamestate{
     pub board : Board,
     pub chosen_positions : Vec<Coordinate>,

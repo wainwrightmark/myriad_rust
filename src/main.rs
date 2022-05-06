@@ -14,17 +14,24 @@ use yewdux::prelude::*;
 use gamestate::*;
 use recentwordstate::*;
 
+use serde::*;
+
+
 pub mod core;
 pub mod foundwordsstate;
 pub mod gamestate;
 pub mod recentwordstate;
 
-#[derive(PartialEq, Store, Clone, Default)]
+#[derive(PartialEq, Store, Clone,  Default, Serialize, Deserialize)]
+#[store(storage = "local")] // can also be "session"
+
 pub struct FullState {
     pub game: Rc<Gamestate>,
     pub found_words: Rc<FoundWordsState>,
+    #[serde(skip)]
     pub recent_words: Rc<RecentWordState>,
 }
+
 
 enum Msg {
     NewGame,

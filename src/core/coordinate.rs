@@ -1,8 +1,10 @@
 use itertools::Itertools;
 use num::integer::Roots;
 use std::fmt;
+use serde::{Serialize, Deserialize};
 
-#[derive(PartialEq, Debug, PartialOrd, Eq, Ord, Clone, Copy, serde::Serialize, Hash)]
+
+#[derive(PartialEq, Debug, PartialOrd, Eq, Ord, Clone, Copy, Serialize, Deserialize, Hash)]
 pub struct Coordinate {
     pub row: u8,
     pub column: u8,

@@ -1,4 +1,7 @@
-#[derive(PartialEq, Debug, Eq, Copy, Clone, serde::Serialize, Hash)]
+use serde::{Serialize, Deserialize};
+
+
+#[derive(PartialEq, Debug, Eq, Copy, Clone, Serialize, Deserialize, Hash)]
 pub enum Letter{
     Number{value: u32},
     Operator{operation: Operation},
@@ -47,7 +50,7 @@ impl std::fmt::Display for Letter {
     }
 }
 
-#[derive(PartialEq, Debug, Eq, Copy, Clone, serde::Serialize, Hash)]
+#[derive(PartialEq, Debug, Eq, Copy, Clone, Serialize, Deserialize, Hash)]
 pub enum Operation{
     Plus,
     Times,

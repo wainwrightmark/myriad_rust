@@ -1,5 +1,5 @@
 use std::collections::{HashMap, VecDeque, HashSet};
-use std::sync::Arc;
+use serde::{Serialize, Deserialize};
 
 use im::vector::Vector;
 use im::vector;
@@ -11,7 +11,9 @@ use crate::core::board::Board;
 use crate::core::coordinate::Coordinate;
 use crate::core::letter::Letter;
 
-#[derive(PartialEq, Debug, Copy, Clone)]
+
+
+#[derive(PartialEq, Debug, Copy, Clone, Serialize, Deserialize)]
 pub struct SolveSettings{
     pub min: i32,
     pub max: i32
@@ -29,10 +31,10 @@ impl Default for SolveSettings{
     }
 }
 
-#[derive(PartialEq, Eq, Debug, Clone)]
+#[derive(PartialEq, Eq, Debug, Clone,Serialize, Deserialize)]
 pub struct FoundWord{
     pub result: i32,
-    pub path: Arc<Vec<Coordinate>>
+    pub path: Vec<Coordinate>
 }
 
 impl std::fmt::Display for FoundWord {
@@ -64,12 +66,12 @@ impl std::fmt::Display for WordCheckResult {
 }
 
 
-#[derive(PartialEq, Debug, Clone, Default)]
+#[derive(PartialEq, Debug, Clone, Default, Serialize, Deserialize)]
 pub struct Solver{
     pub settings: SolveSettings
 }
 
-#[derive(PartialEq, Debug, Clone, Copy, serde::Serialize)]
+#[derive(PartialEq, Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct Node{
     pub letter: Letter,
     pub coordinate: Coordinate
@@ -92,7 +94,7 @@ impl Solver {
         if let Ok(x) = parse_result{
             if x.round() == x && x < (i32::MAX as f64) && x > (i32::MIN as f64){
                 let u = x as i32;
-                let found_word = FoundWord{result: u, path: Arc::from(nodes.iter().map(|x|x.coordinate).collect_vec()) };
+                let found_word = FoundWord{result: u, path: nodes.iter().map(|x|x.coordinate).collect_vec() };
 
                 if self.settings.allow(u)
                 {

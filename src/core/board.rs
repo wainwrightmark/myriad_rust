@@ -1,8 +1,10 @@
 use crate::core:: letter::Letter;
 use crate::core::coordinate::Coordinate;
 use itertools::*;
+use serde::{Serialize, Deserialize};
 
-#[derive(PartialEq, Debug, Eq, Hash, Clone)]
+
+#[derive(PartialEq, Debug, Eq, Hash, Clone, Serialize, Deserialize)]
 pub struct Board {
     pub columns: u8,
     pub letters: Vec<Letter>,
