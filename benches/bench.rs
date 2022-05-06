@@ -29,7 +29,7 @@ fn create_boards_and_solve(number_of_boards: usize)
 
     for board in  boards {
         let solver = Solver{settings: SolveSettings{min:1, max:100}};
-        let solutions = solver.get_possible_solutions(&board).collect::<Vec<FoundWord>>();
+        let solutions = solver.get_possible_solutions(board).collect::<Vec<FoundWord>>();
 
         assert_eq!(100, solutions.len());
         

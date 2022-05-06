@@ -21,7 +21,7 @@ pub struct SolveSettings{
 
 impl SolveSettings{
     pub fn allow(&self, num:i32) -> bool {
-        return self.min <= num && num <= self.max;
+        self.min <= num && num <= self.max
     }
 }
 
@@ -104,7 +104,7 @@ impl Solver {
             }
         }
         
-        return  WordCheckResult::Invalid;
+        WordCheckResult::Invalid
     }
 
     pub fn is_legal_prefix(&self, nodes: &Vector<Node>) -> bool{
@@ -129,7 +129,7 @@ impl Solver {
             }
         }
 
-        return true;
+        true
     }
     
 
@@ -179,7 +179,7 @@ impl Solver {
              }
         }
 
-        let r = results.into_values();
-        return r;
+        
+        results.into_values()
     }
 }

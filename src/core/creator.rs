@@ -75,7 +75,7 @@ pub fn create_boards(solver: &Solver,
         .filter_map(|(index, letter)|
     
             get_better_solutions(board, solver,  letter, index, existing_boards )    );
-        return solutions.take(settings.branches_to_take).collect();
+        solutions.take(settings.branches_to_take).collect()
     }
 
     fn get_better_solutions(board: &SolvedBoard, solver: &Solver,  letter: Letter, index: usize, existing_boards: &mut HashSet<String>) -> Option<SolvedBoard>
@@ -95,6 +95,6 @@ pub fn create_boards(solver: &Solver,
             
         }
 
-        return None;
+        None
     }
 }

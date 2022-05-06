@@ -47,7 +47,7 @@ impl Coordinate {
             return rotated.reflect_column(max_coordinate.column);
         }
 
-        return rotated;
+        rotated
     }
 
     pub fn get_transform(
@@ -65,7 +65,7 @@ impl Coordinate {
             }
         }
 
-        return None;
+        None
     }
 
     pub fn reflect_column(&self, max_column: u8) -> Coordinate {
@@ -79,8 +79,8 @@ impl Coordinate {
         let x_diff = other.column - self.column;
         let y_diff = other.row - self.row;
 
-        let result = (y_diff as f64).atan2(x_diff as f64).to_degrees();
-        return result;
+        
+        (y_diff as f64).atan2(x_diff as f64).to_degrees()
     }
 
     pub fn is_adjacent(&self, other: &Coordinate) -> bool {
@@ -99,14 +99,16 @@ impl Coordinate {
             other.column - self.column
         };
 
-        return row_diff <= 1 && col_diff <= 1;
+        row_diff <= 1 && col_diff <= 1
     }
 
     pub fn get_adjacent_positions<'a>(
         &'a self,
         max_coordinate: &'a Coordinate,
     ) -> impl Iterator<Item = Coordinate> + 'a {
-        let r = (-1..=1)
+        
+
+        (-1..=1)
             
             .cartesian_product(-1..=1)
             .filter_map(|(r_offset, c_offset)| {
@@ -127,10 +129,8 @@ impl Coordinate {
                     column: new_col as u8,
                 };
 
-                return Some(result);
-            });
-
-        return r;
+                Some(result)
+            })
     }
 
     pub fn has_at_least_x_neighbors(&self, x: u8, max_coordinate: Coordinate) -> bool {
@@ -158,13 +158,13 @@ impl Coordinate {
         if self.column > 0 {dimensions += 1}
         if self.column < max_coordinate.column {dimensions += 1}
 
-        return dimensions >= required_dimensions;
+        dimensions >= required_dimensions
     }
 
     pub fn get_positions_up_to(&self) -> impl Iterator<Item=Coordinate>{
-        return (0..=self.row)            
+        (0..=self.row)            
             .cartesian_product(0..=self.column)
-            .map(|(row, column)|Coordinate{row, column});
+            .map(|(row, column)|Coordinate{row, column})
     }
 
     pub fn distance_from_centre(&self, max_coordinate: Coordinate)-> u8
@@ -175,13 +175,13 @@ impl Coordinate {
         let r_dist = if d_row > max_coordinate.row{d_row - max_coordinate.row}else{max_coordinate.row - d_row};
         let c_dist = if d_col > max_coordinate.column{d_col - max_coordinate.column}else{max_coordinate.column - d_col};
 
-        return c_dist + r_dist;
+        c_dist + r_dist
     }
 
     pub fn get_max_coordinate_for_square_grid(num_nodes: u8)-> Coordinate{
         let mut root = num_nodes.sqrt();
         if root * root < num_nodes{root += 1}
 
-        return Coordinate{row: root, column: root};
+        Coordinate{row: root, column: root}
     }
 }

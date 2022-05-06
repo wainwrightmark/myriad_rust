@@ -15,14 +15,14 @@ impl Letter {
         let d = rune.to_digit(10).map(|x|Letter::Number{value: x});
         if d != None {return d;}
         
-        return  match rune{
+        match rune{
             '-' => Some(Letter::Operator{operation: Operation::Minus}) ,
             '+' => Some(Letter::Operator{operation: Operation::Plus}),
             '*' => Some(Letter::Operator{operation: Operation::Times}),
             '/' => Some(Letter::Operator{operation: Operation::Divide}),
             '_' => Some(Letter::Blank),
             _ => None
-        };
+        }
     }
 
     pub fn legal_letters() -> impl Iterator<Item =Letter>{
@@ -30,8 +30,8 @@ impl Letter {
         let ops = [Letter::Operator{operation: Operation::Plus}, Letter::Operator{operation: Operation::Minus}, Letter::Operator{operation: Operation::Times}, Letter::Operator{operation: Operation::Divide}];
         //let others = [Letter::Blank];
 
-        let result = nums.chain(ops.into_iter());//.chain(others.into_iter());
-        return result;
+        //.chain(others.into_iter());
+        nums.chain(ops.into_iter())
     }
 
     pub fn word_text(&self)-> String{

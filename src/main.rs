@@ -7,20 +7,18 @@ use crate::core::creator::*;
 use crate::core::move_result::*;
 use crate::core::solver::*;
 
-use foundwordsstate::*;
+use state::foundwordsstate::*;
 use yew::prelude::*;
 use yewdux::prelude::*;
 
-use gamestate::*;
-use recentwordstate::*;
+use state::gamestate::*;
+use state::recentwordstate::*;
 
 use serde::*;
 
 
 pub mod core;
-pub mod foundwordsstate;
-pub mod gamestate;
-pub mod recentwordstate;
+pub mod state;
 
 #[derive(PartialEq, Store, Clone,  Default, Serialize, Deserialize)]
 #[store(storage = "local")] // can also be "session"
@@ -69,7 +67,7 @@ impl Reducer<FullState> for Msg {
                 .into()
             }
             Msg::Move { coordinate } => {
-                let move_result = state.game.get_move_result(&coordinate);
+                let move_result = state.game.get_move_result(coordinate);
 
                 let new_game_state = state.game.deref().clone().after_move_result(&move_result);
 
@@ -285,7 +283,7 @@ fn make_circle(gamestate: &Gamestate, coordinate: Coordinate) -> Html {
     );
 
     let onclick = Dispatch::new().apply_callback(move |_| Msg::Move {
-        coordinate: coordinate,
+        coordinate,
     });
 
     html! {

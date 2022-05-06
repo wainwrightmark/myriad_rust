@@ -12,6 +12,6 @@ pub enum MoveResult{
 
 impl MoveResult {
     pub fn is_legal(&self)->bool{
-        return ! matches!(self, MoveResult::IllegalMove);
+        ! matches!(self, MoveResult::IllegalMove)
     }
 }

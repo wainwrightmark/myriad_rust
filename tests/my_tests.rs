@@ -47,10 +47,10 @@ use myriad::core::creator::*;
     
         for board in boards{
     
-            eprintln!("");
+            eprintln!();
             eprintln!("{}",board.to_multiline_string());
     
-            eprintln!("");
+            eprintln!();
         }
     
         assert!(boards.len() >= settings.number_to_return);

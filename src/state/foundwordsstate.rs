@@ -22,7 +22,7 @@ impl FoundWordsState {
 
         new_map.insert(word.result, word);
 
-        return FoundWordsState { words: new_map };
+        FoundWordsState { words: new_map }
     }
 
     pub fn has_word(&self, word: &FoundWord)-> bool{
