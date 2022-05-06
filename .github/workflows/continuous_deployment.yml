@@ -1,9 +1,7 @@
 name: Continuous deployment
 on:
-  workflow_run:
+  push:
     branches: [master]
-    workflows: [Continuous integration]
-    types: [completed]
 
 jobs:
   release:
@@ -24,5 +22,5 @@ jobs:
       - uses: peaceiris/actions-gh-pages@v3
         if: github.ref == 'refs/heads/master'
         with:
-          github_token: $
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
