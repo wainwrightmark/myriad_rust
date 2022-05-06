@@ -78,21 +78,20 @@ impl Solver {
             .collect::<Vec<String>>()
             .join("");
 
-        let parse_result = meval::eval_str(text);
+        let parse_result = crate::core::parser::parse_and_evaluate(&text);
 
-        if let Ok(x) = parse_result {
-            if x.round() == x && x < (i32::MAX as f64) && x > (i32::MIN as f64) {
-                let u = x as i32;
-                let found_word = FoundWord {
-                    result: u,
-                    path: nodes.iter().map(|x| x.coordinate).collect_vec(),
-                };
+        //let parse_result = meval::eval_str(text);
 
-                if self.settings.allow(u) {
-                    return WordCheckResult::Legal { word: found_word };
-                } else {
-                    return WordCheckResult::Illegal { word: found_word };
-                }
+        if let Ok(u) = parse_result {
+            let found_word = FoundWord {
+                result: u,
+                path: nodes.iter().map(|x| x.coordinate).collect_vec(),
+            };
+
+            if self.settings.allow(u) {
+                return WordCheckResult::Legal { word: found_word };
+            } else {
+                return WordCheckResult::Illegal { word: found_word };
             }
         }
 

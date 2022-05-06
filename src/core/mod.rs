@@ -16,6 +16,8 @@ pub mod creator;
 #[allow(dead_code)]
 pub mod move_result;
 
+pub mod parser;
+
 pub mod prelude {
 
     pub use crate::core::board::*;
