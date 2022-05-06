@@ -3,10 +3,7 @@ use num::ToPrimitive;
 use serde::Deserialize;
 use serde::Serialize;
 
-use crate::core::coordinate::*;
-use crate::core::board::*;
-use crate::core::move_result::MoveResult;
-use crate::core::solver::*;
+use crate::core:: prelude::*;
 
 
 #[derive(PartialEq, Clone, Serialize, Deserialize)]
@@ -39,7 +36,7 @@ impl Gamestate{
 
         let d = "M ".to_string() + &coordinates.iter().map(|x| format!("{:.2} {:.2}", x.0, x.1)).join(" L ");
 
-        d
+        return d;
     }
 
     fn get_path_coordinates(&self, square_size : f64) -> Vec<(f64 ,f64)> {
@@ -47,40 +44,40 @@ impl Gamestate{
         fn get_inbetween(d1 : f64, d2 : f64, numerator : f64, denominator : f64) -> f64
         {
             let t = d2 * numerator + d1 * (denominator - numerator);
-            t / denominator
+            return t / denominator;
         }
 
         if !self.chosen_positions.is_empty() {
             
             let locations = self.chosen_positions.iter().map(|x| self.get_location(x, square_size)).collect_vec();
 
-            (0..self.board.letters.len()).map(|i| {
+            return (0..self.board.letters.len()).map(|i| {
                 let index = (i * self.chosen_positions.len()) / self.board.letters.len();
                 let remainder = (i * self.chosen_positions.len()) % self.board.letters.len();
 
                 let loc = locations[index];
 
                 if remainder == 0 || locations.len() <= index  + 1{
-                    loc
+                    return loc;
                 }
                 else{
                     let next = locations[index + 1];
 
-                                        
-
-                    (
+                    let inbetween = (
                         get_inbetween(loc.0, next.0, remainder as f64, self.board.letters.len()as f64),
                         get_inbetween(loc.1, next.1, remainder as f64, self.board.letters.len()as f64)
-                    )
+                    );                    
+
+                    return inbetween;
                 }
 
-            }).collect_vec()
+            }).collect_vec();
 
         }
         else{
             let centre = (square_size * self.board.columns.to_f64().unwrap() / 2.0, square_size * self.board.rows().to_f64().unwrap() / 2.0);
             let zero_vec = vec![centre; self.board.columns as usize];
-            zero_vec
+            return zero_vec;
         }
 
         
@@ -93,7 +90,7 @@ impl Gamestate{
         let cx = (rotated.column as f64 + 0.5) * square_size;
         let cy = (rotated.row as f64 + 0.5) * square_size;
 
-        (cx, cy)
+        return (cx, cy);
     }
 
     pub fn get_color(&self, coordinate : &Coordinate) -> &str{
@@ -102,7 +99,7 @@ impl Gamestate{
 
         let move_result = self.get_move_result(coordinate);
 
-        match move_result{
+        return match move_result{
             MoveResult::WordComplete{word:_, coordinates:_} => "darkgreen",
             MoveResult::WordContinued {word:_, coordinates:_ } => "green",
             MoveResult::WordAbandoned => "blue",
@@ -121,7 +118,7 @@ impl Gamestate{
         let find_result = self.chosen_positions.iter().find_position(|z| z == &coordinate);
 
         if let Some((index, _)) = find_result{
-            let new_chosen_positions : Vec<Coordinate> = self.chosen_positions.iter().take(index + 1).copied().collect_vec();           
+            let new_chosen_positions : Vec<Coordinate> = self.chosen_positions.iter().take(index + 1).map(|c| *c).collect_vec();           
             let word = self.get_word_text(&new_chosen_positions);            
             return MoveResult::MoveRetraced { word, coordinates: new_chosen_positions  }
         }
@@ -163,8 +160,8 @@ impl Gamestate{
     fn get_word_text(&self, coordinates: &Vec<Coordinate>)-> String{
         let word = coordinates.iter().map(|c|{
             let letter = &self.board.get_letter_at_coordinate(c);
-            
-            letter.word_text()
+            let word_text = letter.word_text();
+            word_text
         }) .join("");
         word
     }

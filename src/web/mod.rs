@@ -1,8 +1,5 @@
-#[allow(dead_code)]
-pub mod gamestate;
+pub mod board;
+pub mod foundwords;
+pub mod recentwords;
+pub mod newgamebutton;
 
-#[allow(dead_code)]
-pub mod foundwordsstate;
-
-#[allow(dead_code)]
-pub mod recentwordstate;

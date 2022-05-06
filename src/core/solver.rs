@@ -4,14 +4,7 @@ use serde::{Serialize, Deserialize};
 use im::vector::Vector;
 use im::vector;
 use itertools::Itertools;
-
-use crate::core::letter::Operation;
-
-use crate::core::board::Board;
-use crate::core::coordinate::Coordinate;
-use crate::core::letter::Letter;
-
-
+use crate::core:: prelude::*;
 
 #[derive(PartialEq, Debug, Copy, Clone, Serialize, Deserialize)]
 pub struct SolveSettings{

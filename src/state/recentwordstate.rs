@@ -1,7 +1,7 @@
 use itertools::Itertools;
 use log::debug;
 
-use crate::core::{coordinate::*, move_result::*};
+use crate::core:: prelude::*;
 
 #[derive(PartialEq, Clone, Default)]
 pub struct RecentWordState {
@@ -35,12 +35,12 @@ impl RecentWordState {
 
     pub fn clear_expired(self) -> Self {
 
-        if self.recent_words.is_empty(){return self;};
+        if self.recent_words.is_empty(){return self.clone();};
 
         let now = instant::Instant::now();
         let new_words = self
             .recent_words
-            
+            .clone()
             .into_iter()
             .filter(|x| x.expiry_time > now)            
             .collect_vec();
@@ -59,12 +59,12 @@ impl RecentWordState {
                 } else {
                     FoundWordType::PreviouslyFound
                 },
-                *coordinates.last().unwrap(),
+                coordinates.last().unwrap().clone(),
             ),
             MoveResult::WordContinued { word, coordinates } => self.with_word(
                 word.clone(),
                 FoundWordType::Illegal,
-                *coordinates.last().unwrap(),
+                coordinates.last().unwrap().clone(),
             ),
             MoveResult::WordAbandoned =>  self.clear_expired(),
             MoveResult::MoveRetraced {

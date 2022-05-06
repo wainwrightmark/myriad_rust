@@ -4,9 +4,7 @@ use std::collections::{HashSet, BinaryHeap};
 use itertools::Itertools;
 use rand::prelude::{StdRng, SliceRandom};
 
-use crate::core::board::Board;
-use crate::core::letter::Letter;
-use crate::core::solver::Solver;
+use crate::core:: prelude::*;
 
 #[derive(Clone, Eq, PartialEq)]
 struct SolvedBoard{

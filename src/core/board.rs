@@ -1,5 +1,4 @@
-use crate::core:: letter::Letter;
-use crate::core::coordinate::Coordinate;
+use crate::core:: prelude::*;
 use itertools::*;
 use serde::{Serialize, Deserialize};
 
