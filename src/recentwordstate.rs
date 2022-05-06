@@ -1,17 +1,15 @@
-use bounce::Atom;
 use itertools::Itertools;
 use log::debug;
-use std::{ops::Deref, sync::Arc};
 
 use crate::core::{coordinate::*, move_result::*};
 
-#[derive(PartialEq, Atom, Clone, Default)]
+#[derive(PartialEq, Clone, Default)]
 pub struct RecentWordState {
-    pub recent_words: Arc<Vec<RecentWord>>,
+    pub recent_words: Vec<RecentWord>,
 }
 
 impl RecentWordState {
-    fn with_word(&self, word: String, word_type: FoundWordType, coordinate: Coordinate) -> Self {
+    fn with_word(self, word: String, word_type: FoundWordType, coordinate: Coordinate) -> Self {
         let now = instant::Instant::now();
         let linger = word_type.linger_duration_ms();
 
@@ -26,36 +24,33 @@ impl RecentWordState {
 
         let new_words = self
             .recent_words
-            .deref()
-            .clone()
             .into_iter()
             .chain(std::iter::once(r_word))
             .collect_vec();
 
         Self {
-            recent_words: Arc::new(new_words),
+            recent_words: new_words,
         }
     }
 
-    pub fn clear_expired(&self) -> Self {
+    pub fn clear_expired(self) -> Self {
 
         if self.recent_words.is_empty(){return self.clone();};
 
         let now = instant::Instant::now();
         let new_words = self
             .recent_words
-            .deref()
             .clone()
             .into_iter()
             .filter(|x| x.expiry_time > now)            
             .collect_vec();
 
         Self {
-            recent_words: Arc::new(new_words),
+            recent_words: new_words,
         }
     }
 
-    pub fn after_move_result(&self, move_result: &MoveResult, is_new_word: bool) -> Self {
+    pub fn after_move_result(self, move_result: &MoveResult, is_new_word: bool) -> Self {
         match move_result {
             MoveResult::WordComplete { word, coordinates } => self.with_word(
                 word.result.to_string(),
@@ -71,12 +66,12 @@ impl RecentWordState {
                 FoundWordType::Illegal,
                 coordinates.last().unwrap().clone(),
             ),
-            MoveResult::WordAbandoned => self.clear_expired(),
+            MoveResult::WordAbandoned =>  self.clear_expired(),
             MoveResult::MoveRetraced {
                 word: _,
                 coordinates: _,
-            } => self.clone(),
-            MoveResult::IllegalMove => self.clone(),
+            } => self,
+            MoveResult::IllegalMove => self,
         }
     }
 }

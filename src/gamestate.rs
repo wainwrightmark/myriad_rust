@@ -1,7 +1,3 @@
-use std::ops::Deref;
-use std::sync::Arc;
-
-use bounce::*;
 use itertools::Itertools;
 use num::ToPrimitive;
 
@@ -11,13 +7,13 @@ use crate::core::move_result::MoveResult;
 use crate::core::solver::*;
 
 
-#[derive(PartialEq, Atom, Clone)]
+#[derive(PartialEq, Clone)]
 pub struct Gamestate{
-    pub board : Arc<Board>,
-    pub chosen_positions : Arc<Vec<Coordinate>>,
+    pub board : Board,
+    pub chosen_positions : Vec<Coordinate>,
     pub rotate : i8,
     pub flip: bool,
-    pub solver: Arc<Solver>
+    pub solver: Solver
 }
 
 impl Default for Gamestate{
@@ -25,7 +21,7 @@ impl Default for Gamestate{
     let board = Board::try_create("78++25316").unwrap();
     
         Self {
-            board: Arc::from(board),
+            board: board,
             chosen_positions: Default::default(),
             rotate:  Default::default(),
             flip:  Default::default(),
@@ -129,7 +125,7 @@ impl Gamestate{
         }
 
         if self.chosen_positions.is_empty() || self.chosen_positions.last().unwrap().is_adjacent(coordinate){
-            let mut new_chosen_positions = self.chosen_positions.deref() .clone();
+            let mut new_chosen_positions = self.chosen_positions .clone();
             new_chosen_positions.push(*coordinate);
 
             let word = self.get_word_text(&new_chosen_positions);
@@ -171,13 +167,13 @@ impl Gamestate{
         word
     }
 
-    pub fn after_move_result(&self, move_result: &MoveResult) -> Self{
+    pub fn after_move_result(self, move_result: &MoveResult) -> Self{
         match move_result{
-            MoveResult::WordComplete { word: _, coordinates } => Self{chosen_positions: Arc::from( coordinates.clone()) ,..self.clone()},
-            MoveResult::WordContinued { word: _, coordinates } => Self{chosen_positions: Arc::from( coordinates.clone()), ..self.clone()},
-            MoveResult::WordAbandoned => Self{chosen_positions: Arc::< Vec::<Coordinate>>::default(), ..self.clone()},
-            MoveResult::MoveRetraced { word: _, coordinates } => Self{chosen_positions: Arc::from( coordinates.clone()), ..self.clone()},
-            MoveResult::IllegalMove => self.clone(),
+            MoveResult::WordComplete { word: _, coordinates } => Self{chosen_positions: coordinates.clone() ,..self},
+            MoveResult::WordContinued { word: _, coordinates } => Self{chosen_positions: coordinates.clone(), ..self},
+            MoveResult::WordAbandoned => Self{chosen_positions: Default::default(), ..self},
+            MoveResult::MoveRetraced { word: _, coordinates } => Self{chosen_positions: coordinates.clone(), ..self},
+            MoveResult::IllegalMove => self,
         }
     }
 

@@ -1,7 +1,6 @@
 use std::collections::{HashMap, VecDeque, HashSet};
 use std::sync::Arc;
 
-// use bounce::__vendored::futures::stream::ForEach;
 use im::vector::Vector;
 use im::vector;
 use itertools::Itertools;
@@ -30,7 +29,7 @@ impl Default for SolveSettings{
     }
 }
 
-#[derive(PartialEq, Eq, Debug, Clone, serde::Serialize)]
+#[derive(PartialEq, Eq, Debug, Clone)]
 pub struct FoundWord{
     pub result: i32,
     pub path: Arc<Vec<Coordinate>>
@@ -45,7 +44,7 @@ impl std::fmt::Display for FoundWord {
 
 
 
-#[derive(PartialEq, Eq, Debug, serde::Serialize)]
+#[derive(PartialEq, Eq, Debug)]
 pub enum WordCheckResult{
     Invalid,
     Legal{word: FoundWord},

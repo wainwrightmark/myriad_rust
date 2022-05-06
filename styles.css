@@ -64,17 +64,9 @@
 
   .container{
     max-width: 400px;
+    margin: auto;
   }
 
  .chip{
 width: 2.5em;    
 }
-.chip-content{
-    cursor: inherit;
-    display: flex;
-    align-items: center;
-    user-select: none;
-    white-space: nowrap;
-    padding-left: 12px;
-    padding-right: 12px;
-} */

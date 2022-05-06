@@ -1,9 +1,7 @@
-use bounce::Atom;
 use std::collections::BTreeMap;
-
 use crate::core::solver::*;
 
-#[derive(PartialEq, Atom, Clone)]
+#[derive(PartialEq,Clone)]
 pub struct FoundWordsState {
     pub words: BTreeMap<i32, FoundWord>,
 }

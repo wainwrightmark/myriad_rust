@@ -1,7 +1,3 @@
-
-
-
-
 #[derive(PartialEq, Debug, Eq, Copy, Clone, serde::Serialize, Hash)]
 pub enum Letter{
     Number{value: u32},

@@ -1,35 +1,134 @@
-use crate::core::coordinate::*;
-use crate::core::move_result::*;
+use std::cell::RefCell;
+use std::ops::Deref;
+use std::rc::Rc;
 
-use bounce::*;
+use crate::core::coordinate::*;
+use crate::core::creator::*;
+use crate::core::move_result::*;
+use crate::core::solver::*;
+
 use foundwordsstate::*;
+use yew::prelude::*;
+use yewdux::prelude::*;
+
 use gamestate::*;
 use recentwordstate::*;
-use yew::prelude::*;
 
 pub mod core;
 pub mod foundwordsstate;
 pub mod gamestate;
 pub mod recentwordstate;
 
+#[derive(PartialEq, Store, Clone, Default)]
+pub struct FullState {
+    pub game: Rc<Gamestate>,
+    pub found_words: Rc<FoundWordsState>,
+    pub recent_words: Rc<RecentWordState>,
+}
+
+enum Msg {
+    NewGame,
+    Move { coordinate: Coordinate },
+}
+
+impl Reducer<FullState> for Msg {
+    fn apply(&self, state: Rc<FullState>) -> Rc<FullState> {
+        match self {
+            Msg::NewGame => {
+                let solver = Solver {
+                    settings: SolveSettings { min: 1, max: 100 },
+                };
+
+                let settings = BoardCreateSettings {
+                    branches_to_take: 2,
+                    desired_solutions: 100,
+                    number_to_return: 1,
+                };
+                let rng = rand::SeedableRng::seed_from_u64(10);
+                let rng_cell = RefCell::new(rng);
+
+                let boards = crate::core::creator::create_boards(&solver, 9, &settings, &rng_cell);
+
+                let new_game_state = Gamestate {
+                    board: boards[0].clone(),
+                    ..Default::default()
+                };
+
+                FullState {
+                    game: new_game_state.into(),
+                    recent_words: Default::default(),
+                    found_words: Default::default(),
+                }
+                .into()
+            }
+            Msg::Move { coordinate } => {
+                let move_result = state.game.get_move_result(&coordinate);
+
+                let new_game_state = state.game.deref().clone().after_move_result(&move_result);
+
+                let mut is_new_word: bool = false;
+
+                let new_found_words :Rc<FoundWordsState> = if let MoveResult::WordComplete {
+                    word: found_word,
+                    coordinates: _,
+                } = move_result.clone()
+                {
+                    is_new_word = !state.found_words.has_word(&found_word);
+                    if is_new_word {
+                        state.found_words.with_word(found_word).into()
+                    } else {
+                        state.found_words.clone()
+                    }
+                } else {
+                    state.found_words.clone()
+                };
+
+                let new_recent_words = state
+                    .recent_words.deref().clone()
+                    .after_move_result(&move_result, is_new_word);
+
+                FullState {
+                    game: new_game_state.into(),
+                    recent_words: new_recent_words.into(),
+                    found_words: new_found_words,
+                }
+                .into()
+            }
+        }
+    }
+}
+
+#[function_component(NewGameButton)]
+fn new_game_button() -> Html {
+    let dispatch = Dispatch::<FullState>::new();
+
+    let onclick = dispatch.apply_callback(|_| Msg::NewGame);
+
+    html! {
+        <div>
+            <button {onclick }>{"New Game"} </button>
+        </div>
+    }
+}
+
 #[function_component(RecentWords)]
 fn recent_words() -> Html {
-    let game_state = use_atom::<Gamestate>();
-    let recent_word_state = use_atom::<RecentWordState>();
+    let (state, _) = use_store::<FullState>();
 
-    let recent_words = recent_word_state
+    let recent_words = state
         .recent_words
-        .iter()
+        .recent_words
+        .iter().rev()
         .map(|word| {
-            let id = format!("{}-({})", word.word, word.coordinate);
+            let id = format!("{}_({})", word.word, word.coordinate);
 
-            let (cx, cy) = game_state.get_location(&word.coordinate, SQUARE_SIZE);
+            let (cx, cy) = state.game.get_location(&word.coordinate, SQUARE_SIZE);
 
             let style = format!("animation-duration: {}ms;", word.linger_duration_ms());
 
             let text_anchor = if word.coordinate.column == 0 {
                 "start"
-            } else if word.coordinate.column == game_state.board.columns {
+            } else if word.coordinate.column == state.game.board.columns {
                 "end"
             } else {
                 "middle"
@@ -60,64 +159,55 @@ fn recent_words() -> Html {
 
 #[function_component(FoundWordsTableContent)]
 fn found_words_table_content() -> Html {
+    let found_words_state = use_selector(|state: &FullState| state.found_words.clone());
 
-    let found_words_state = use_atom::<FoundWordsState>();
+    let tab_content = (0..5)
+        .map(|twenties| {
+            let chips = (0..20)
+                .map(|units| {
+                    let i = twenties * 20 + units;
 
-    let tab_content = (0..5).map(|twenties| {
+                    if i == 0 {
+                        html!(<span class="label chip"></span>)
+                    } else {
+                        let found = found_words_state.words.contains_key(&i);
 
-        let chips = (0..20).map(|units|{
-            let i = twenties * 20 + units;
+                        if found {
+                            html!(<span class="label success chip">{i}</span>)
+                        } else {
+                            html!(<span class="label chip">{i}</span>)
+                        }
+                    }
+                })
+                .collect::<Html>();
 
-            if i == 0{
-                html!(<span class="label chip"></span>)
+            html! {
+                <div>
+                {chips}
+                </div>
             }
-            else {
-                let found = found_words_state.words.contains_key(&i);
-
-            if found{
-                html!(<span class="label success chip">{i}</span>)
-            }
-            else{
-                html!(<span class="label chip">{i}</span>)
-            }
-            }
-
-            
-            
-
-        }).collect::<Html>();
-
-        html! {
-            <div>
-            {chips}
-            </div>
-        }
-    }).collect::<Html>();
+        })
+        .collect::<Html>();
 
     html! {
         {tab_content}
     }
-
 }
 
 #[function_component(FoundWordsTable)]
 fn found_words_table() -> Html {
-    
-
-    let tab_labels = (0..5).map(|twenties| {
-        let id = format!("tab-{twenties}");
-        let label = (twenties * 20).to_string();
-
-        html! {
-            <>
-            <input id={id.to_string()} type="radio" name="tabgroupB" />
-            <label class="pseudo button toggle" for={id}>{label}</label>
-            </>
-        }
-    }).collect::<Html>();
-
-   
-    
+    let tab_labels = (0..5)
+        .map(|twenties| {
+            let id = format!("tab-{twenties}");
+            let label = (twenties * 20).to_string();            
+            html! {
+                <>
+                <input id={id.to_string()} type="radio" name="tabgroupB" checked={twenties == 0} />
+                <label class="pseudo button toggle" for={id}>{label}</label>
+                </>
+            }
+        })
+        .collect::<Html>();
 
     html! {
         <div>
@@ -135,9 +225,7 @@ const SQUARE_SIZE: f64 = 40.0;
 
 #[function_component(BoardSVG)]
 fn board_svg() -> Html {
-    let game_state = use_atom::<Gamestate>();
-    let found_words_state = use_atom::<FoundWordsState>();
-    let recent_words_state = use_atom::<RecentWordState>();
+    let game_state = use_selector(|state: &FullState| state.game.clone());
 
     let rope_d = game_state.get_path_data(SQUARE_SIZE);
 
@@ -151,15 +239,7 @@ fn board_svg() -> Html {
         .board
         .max_coordinate()
         .get_positions_up_to()
-        .map(|c| {
-            make_circle(
-                &game_state,
-                c,
-                game_state.clone(),
-                found_words_state.clone(),
-                recent_words_state.clone(),
-            )
-        })
+        .map(|c| make_circle(&game_state, c))
         .collect::<Html>();
 
     html! {
@@ -181,13 +261,7 @@ fn board_svg() -> Html {
       }
 }
 
-fn make_circle(
-    gamestate: &Gamestate,
-    coordinate: Coordinate,
-    game_state: UseAtomHandle<Gamestate>,
-    found_words_state: UseAtomHandle<FoundWordsState>,
-    recent_words_state: UseAtomHandle<RecentWordState>,
-) -> Html {
+fn make_circle(gamestate: &Gamestate, coordinate: Coordinate) -> Html {
     let location = gamestate.get_location(&coordinate, SQUARE_SIZE);
     let cx = location.0;
     let cy = location.1;
@@ -203,32 +277,15 @@ fn make_circle(
         "-webkit-transform: translate({cx}px, {cy}px); transform: translate({cx}px, {cy}px);"
     );
 
-    let on_click_callback = Callback::from(move |_: MouseEvent| {
-        let move_result = game_state.get_move_result(&coordinate);
-        let new_state = game_state.after_move_result(&move_result);
-        game_state.set(new_state);
-
-        let mut is_new_word: bool = false;
-
-        if let MoveResult::WordComplete {
-            word: found_word,
-            coordinates: _,
-        } = move_result.clone()
-        {
-            is_new_word = !found_words_state.has_word(&found_word);
-            if is_new_word {
-                found_words_state.set(found_words_state.with_word(found_word));
-            }
-        }
-
-        recent_words_state.set(recent_words_state.after_move_result(&move_result, is_new_word));
+    let onclick = Dispatch::new().apply_callback(move |_| Msg::Move {
+        coordinate: coordinate,
     });
 
     html! {
         <g class="square"
        style={g_style}
        cursor={cursor}
-       onclick={on_click_callback}
+       {onclick}
        >
       <circle
         id={circle_id}
@@ -256,7 +313,6 @@ fn make_circle(
 #[function_component(App)]
 fn app() -> Html {
     html! {
-        <BounceRoot>
         <div class="container">
         <svg viewBox="0 0 120 120" class="myriadSVG">
 
@@ -264,16 +320,12 @@ fn app() -> Html {
         <RecentWords/>
         </svg>
         <FoundWordsTable/>
+        <NewGameButton/>
         </div>
-
-
-
-
-        </BounceRoot>
     }
 }
 
 fn main() {
     wasm_logger::init(wasm_logger::Config::default());
-    yew::start_app::<App>();
+    yew::Renderer::<App>::new().render();
 }
