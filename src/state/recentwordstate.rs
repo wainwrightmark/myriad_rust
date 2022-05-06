@@ -35,12 +35,12 @@ impl RecentWordState {
 
     pub fn clear_expired(self) -> Self {
 
-        if self.recent_words.is_empty(){return self.clone();};
+        if self.recent_words.is_empty(){return self;};
 
         let now = instant::Instant::now();
         let new_words = self
             .recent_words
-            .clone()
+            
             .into_iter()
             .filter(|x| x.expiry_time > now)            
             .collect_vec();
@@ -59,12 +59,12 @@ impl RecentWordState {
                 } else {
                     FoundWordType::PreviouslyFound
                 },
-                coordinates.last().unwrap().clone(),
+                *coordinates.last().unwrap(),
             ),
             MoveResult::WordContinued { word, coordinates } => self.with_word(
                 word.clone(),
                 FoundWordType::Illegal,
-                coordinates.last().unwrap().clone(),
+                *coordinates.last().unwrap(),
             ),
             MoveResult::WordAbandoned =>  self.clear_expired(),
             MoveResult::MoveRetraced {
