@@ -1,7 +1,6 @@
+use crate::state::fullstate::*;
 use yew::prelude::*;
 use yewdux::prelude::*;
-use crate::state::fullstate::*;
-
 
 #[function_component(RecentWords)]
 pub fn recent_words() -> Html {
@@ -10,11 +9,14 @@ pub fn recent_words() -> Html {
     let recent_words = state
         .recent_words
         .recent_words
-        .iter().rev()
+        .iter()
+        .rev()
         .map(|word| {
             let id = format!("{}_({})", word.word, word.coordinate);
 
-            let (cx, cy) = state.game.get_location(&word.coordinate, crate::web::board:: SQUARE_SIZE);
+            let (cx, cy) = state
+                .game
+                .get_location(&word.coordinate, crate::web::board::SQUARE_SIZE);
 
             let style = format!("animation-duration: {}ms;", word.linger_duration_ms());
 

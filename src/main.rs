@@ -1,14 +1,12 @@
 use yew::prelude::*;
 
-
 use crate::web::board::*;
-use crate::web::recentwords::*;
 use crate::web::foundwords::*;
 use crate::web::newgamebutton::*;
+use crate::web::recentwords::*;
 pub mod core;
 pub mod state;
 pub mod web;
-
 
 #[function_component(App)]
 fn app() -> Html {

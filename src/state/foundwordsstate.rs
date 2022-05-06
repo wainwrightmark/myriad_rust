@@ -1,9 +1,8 @@
+use crate::core::prelude::*;
+use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
-use crate::core:: prelude::*;
-use serde::{Serialize, Deserialize};
 
-
-#[derive(PartialEq,Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Clone, Serialize, Deserialize)]
 pub struct FoundWordsState {
     pub words: BTreeMap<i32, FoundWord>,
 }
@@ -25,7 +24,7 @@ impl FoundWordsState {
         FoundWordsState { words: new_map }
     }
 
-    pub fn has_word(&self, word: &FoundWord)-> bool{
+    pub fn has_word(&self, word: &FoundWord) -> bool {
         self.words.contains_key(&word.result)
     }
 }

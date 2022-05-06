@@ -1,8 +1,7 @@
 use itertools::Itertools;
 use num::integer::Roots;
+use serde::{Deserialize, Serialize};
 use std::fmt;
-use serde::{Serialize, Deserialize};
-
 
 #[derive(PartialEq, Debug, PartialOrd, Eq, Ord, Clone, Copy, Serialize, Deserialize, Hash)]
 pub struct Coordinate {
@@ -11,7 +10,6 @@ pub struct Coordinate {
 }
 
 impl fmt::Display for Coordinate {
-    
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{},{}", self.row, self.column)
     }
@@ -79,7 +77,6 @@ impl Coordinate {
         let x_diff = other.column - self.column;
         let y_diff = other.row - self.row;
 
-        
         (y_diff as f64).atan2(x_diff as f64).to_degrees()
     }
 
@@ -106,10 +103,7 @@ impl Coordinate {
         &'a self,
         max_coordinate: &'a Coordinate,
     ) -> impl Iterator<Item = Coordinate> + 'a {
-        
-
         (-1..=1)
-            
             .cartesian_product(-1..=1)
             .filter_map(|(r_offset, c_offset)| {
                 let new_row = (self.row as i8) + r_offset;
@@ -152,36 +146,56 @@ impl Coordinate {
 
         let mut dimensions = 0;
 
-        if self.row > 0 {dimensions += 1;}
-        if self.row < max_coordinate.row {dimensions += 1;}
-        
-        if self.column > 0 {dimensions += 1}
-        if self.column < max_coordinate.column {dimensions += 1}
+        if self.row > 0 {
+            dimensions += 1;
+        }
+        if self.row < max_coordinate.row {
+            dimensions += 1;
+        }
+
+        if self.column > 0 {
+            dimensions += 1
+        }
+        if self.column < max_coordinate.column {
+            dimensions += 1
+        }
 
         dimensions >= required_dimensions
     }
 
-    pub fn get_positions_up_to(&self) -> impl Iterator<Item=Coordinate>{
-        (0..=self.row)            
+    pub fn get_positions_up_to(&self) -> impl Iterator<Item = Coordinate> {
+        (0..=self.row)
             .cartesian_product(0..=self.column)
-            .map(|(row, column)|Coordinate{row, column})
+            .map(|(row, column)| Coordinate { row, column })
     }
 
-    pub fn distance_from_centre(&self, max_coordinate: Coordinate)-> u8
-    {
+    pub fn distance_from_centre(&self, max_coordinate: Coordinate) -> u8 {
         let d_row = self.row * 2;
         let d_col = self.column * 2;
 
-        let r_dist = if d_row > max_coordinate.row{d_row - max_coordinate.row}else{max_coordinate.row - d_row};
-        let c_dist = if d_col > max_coordinate.column{d_col - max_coordinate.column}else{max_coordinate.column - d_col};
+        let r_dist = if d_row > max_coordinate.row {
+            d_row - max_coordinate.row
+        } else {
+            max_coordinate.row - d_row
+        };
+        let c_dist = if d_col > max_coordinate.column {
+            d_col - max_coordinate.column
+        } else {
+            max_coordinate.column - d_col
+        };
 
         c_dist + r_dist
     }
 
-    pub fn get_max_coordinate_for_square_grid(num_nodes: u8)-> Coordinate{
+    pub fn get_max_coordinate_for_square_grid(num_nodes: u8) -> Coordinate {
         let mut root = num_nodes.sqrt();
-        if root * root < num_nodes{root += 1}
+        if root * root < num_nodes {
+            root += 1
+        }
 
-        Coordinate{row: root, column: root}
+        Coordinate {
+            row: root,
+            column: root,
+        }
     }
 }

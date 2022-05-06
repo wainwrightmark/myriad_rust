@@ -1,15 +1,14 @@
+use crate::core::prelude::*;
+use crate::state::foundwordsstate::*;
+use crate::state::gamestate::*;
+use crate::state::recentwordstate::*;
+use serde::*;
 use std::cell::RefCell;
 use std::ops::Deref;
 use std::rc::Rc;
 use yewdux::prelude::*;
-use crate::state::gamestate::*;
-use crate::state::foundwordsstate::*;
-use crate::state::recentwordstate::*;
-use crate::core:: prelude::*;
-use serde::*;
 
-
-#[derive(PartialEq, Store, Clone,  Default, Serialize, Deserialize)]
+#[derive(PartialEq, Store, Clone, Default, Serialize, Deserialize)]
 #[store(storage = "local")] // can also be "session"
 
 pub struct FullState {
@@ -18,7 +17,6 @@ pub struct FullState {
     #[serde(skip)]
     pub recent_words: Rc<RecentWordState>,
 }
-
 
 pub enum Msg {
     NewGame,
@@ -62,7 +60,7 @@ impl Reducer<FullState> for Msg {
 
                 let mut is_new_word: bool = false;
 
-                let new_found_words :Rc<FoundWordsState> = if let MoveResult::WordComplete {
+                let new_found_words: Rc<FoundWordsState> = if let MoveResult::WordComplete {
                     word: found_word,
                     coordinates: _,
                 } = move_result.clone()
@@ -78,7 +76,9 @@ impl Reducer<FullState> for Msg {
                 };
 
                 let new_recent_words = state
-                    .recent_words.deref().clone()
+                    .recent_words
+                    .deref()
+                    .clone()
                     .after_move_result(&move_result, is_new_word);
 
                 FullState {

@@ -1,8 +1,8 @@
-use yew::prelude::*;
-use yewdux::prelude::*;
-use crate::core:: prelude::*;
+use crate::core::prelude::*;
 use crate::state::fullstate::*;
 use crate::state::gamestate::*;
+use yew::prelude::*;
+use yewdux::prelude::*;
 
 pub const SQUARE_SIZE: f64 = 40.0;
 
@@ -60,9 +60,7 @@ fn make_circle(gamestate: &Gamestate, coordinate: Coordinate) -> Html {
         "-webkit-transform: translate({cx}px, {cy}px); transform: translate({cx}px, {cy}px);"
     );
 
-    let onclick = Dispatch::new().apply_callback(move |_| Msg::Move {
-        coordinate,
-    });
+    let onclick = Dispatch::new().apply_callback(move |_| Msg::Move { coordinate });
 
     html! {
         <g class="square"

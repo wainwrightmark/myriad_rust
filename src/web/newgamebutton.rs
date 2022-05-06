@@ -1,6 +1,6 @@
+use crate::state::fullstate::*;
 use yew::prelude::*;
 use yewdux::prelude::*;
-use crate::state::fullstate::*;
 
 #[function_component(NewGameButton)]
 pub fn new_game_button() -> Html {

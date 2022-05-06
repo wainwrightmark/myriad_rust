@@ -1,7 +1,6 @@
+use crate::state::fullstate::*;
 use yew::prelude::*;
 use yewdux::prelude::*;
-use crate::state::fullstate::*;
-
 
 #[function_component(FoundWordsTableContent)]
 pub fn found_words_table_content() -> Html {
@@ -45,7 +44,7 @@ pub fn found_words_table() -> Html {
     let tab_labels = (0..5)
         .map(|twenties| {
             let id = format!("tab-{twenties}");
-            let label = (twenties * 20).to_string();            
+            let label = (twenties * 20).to_string();
             html! {
                 <>
                 <input id={id.to_string()} type="radio" name="tabgroupB" checked={twenties == 0} />
