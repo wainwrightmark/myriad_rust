@@ -20,7 +20,7 @@ jobs:
       - run: trunk build --release
 
       - name: Change base-tag in index.html from / to Myriad
-      run: sed -i 's/<base href="\/"\/>/<base href="\/myriad_rust\/" \/>/g' dist/index.html
+        run: sed -i 's/<base href="\/"\/>/<base href="\/myriad_rust\/" \/>/g' dist/index.html
 
       - uses: peaceiris/actions-gh-pages@v3
         if: github.ref == 'refs/heads/master'
