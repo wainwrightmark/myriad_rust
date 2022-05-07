@@ -1,11 +1,10 @@
 use crate::core::parser::Expr::*;
 use nom::branch::alt;
-use nom::character::complete::{char, digit1};
+use nom::character::complete::{char};
 use nom::combinator::map;
 use nom::multi::many0;
 use nom::sequence::tuple;
 use nom::IResult;
-use std::str::FromStr;
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum ParseOutcome {
