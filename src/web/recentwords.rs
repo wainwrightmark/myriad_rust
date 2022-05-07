@@ -1,28 +1,28 @@
 use crate::state::fullstate::*;
 use yew::prelude::*;
 use yewdux::prelude::*;
+use crate::web::SQUARE_SIZE;
 
 #[function_component(RecentWords)]
 pub fn recent_words() -> Html {
-    let (state, _) = use_store::<FullState>();
+    let recent_words_state = use_selector(|state: &FullState| state.recent_words.clone());
+    let rot_flip = use_selector(|state: &FullState| state.rotflip.clone());
 
-    let recent_words = state
-        .recent_words
-        .recent_words
+    let recent_words = 
+    recent_words_state.recent_words
         .iter()
         .rev()
         .map(|word| {
             let id = format!("{}_({})", word.word, word.coordinate);
 
-            let (cx, cy) = state
-                .game
-                .get_location(&word.coordinate, crate::web::board::SQUARE_SIZE);
+            let (cx, cy) = rot_flip
+                .get_location(&word.coordinate, SQUARE_SIZE);
 
             let style = format!("animation-duration: {}ms;", word.linger_duration_ms());
 
             let text_anchor = if word.coordinate.column == 0 {
                 "start"
-            } else if word.coordinate.column == state.game.board.columns {
+            } else if word.coordinate.column == rot_flip.max_coordinate.column {
                 "end"
             } else {
                 "middle"

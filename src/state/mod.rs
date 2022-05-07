@@ -1,4 +1,9 @@
-pub mod foundwordsstate;
 pub mod fullstate;
-pub mod gamestate;
+pub mod foundwordsstate;
+pub mod chosenpositionsstate;
 pub mod recentwordstate;
+pub mod rotflipstate;
+
+
+const GOALSIZE : i32= 20;
+

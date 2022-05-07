@@ -1,9 +1,6 @@
 use yew::prelude::*;
 
-use crate::web::board::*;
-use crate::web::foundwords::*;
-use crate::web::newgamebutton::*;
-use crate::web::recentwords::*;
+use crate::web::prelude::*;
 pub mod core;
 pub mod state;
 pub mod web;
@@ -13,8 +10,9 @@ fn app() -> Html {
     html! {
         <div class="container">
         <svg viewBox="0 0 120 120" class="myriadSVG">
-
-        <BoardSVG />
+        <rect x="0" y="0" width="120" height="120" fill="white"/>
+        <CirclesSVG />
+        <ROPESVG />
         <RecentWords/>
         </svg>
         <FoundWordsTable/>

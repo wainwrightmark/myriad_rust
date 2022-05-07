@@ -1,22 +1,140 @@
 use crate::core::prelude::*;
+use crate::web::prelude::*;
 use crate::state::foundwordsstate::*;
-use crate::state::gamestate::*;
 use crate::state::recentwordstate::*;
+use crate::state::rotflipstate::*;
+use crate::state::chosenpositionsstate::*;
+use itertools::Itertools;
 use log::debug;
 use serde::*;
 use std::cell::RefCell;
 use std::ops::Deref;
 use std::rc::Rc;
 use yewdux::prelude::*;
+use crate::state::GOALSIZE;
 
 #[derive(PartialEq, Store, Clone, Default, Serialize, Deserialize)]
 #[store(storage = "local")] // can also be "session"
-
 pub struct FullState {
-    pub game: Rc<Gamestate>,
-    pub found_words: Rc<FoundWordsState>,
+    pub board: Rc<Board>,
+    pub chosen_positions: ChosenPositionsState,
+    pub found_words: Rc<FoundWordsState>,    
+    pub solver: Solver,
+    pub rotflip : RotFlipState,
+
     #[serde(skip)]
     pub recent_words: Rc<RecentWordState>,
+}
+
+impl FullState {
+
+    //TODO also return cursor
+    pub fn get_color(&self, coordinate: &Coordinate) -> &str {
+        if self.chosen_positions.positions.is_empty() {
+            return "grey";
+        }
+
+        let move_result = self.get_move_result(coordinate);
+
+        match move_result {
+            MoveResult::WordComplete {
+                word: _,
+                coordinates: _,
+            } => "darkgreen",
+            MoveResult::WordContinued {
+                word: _,
+                coordinates: _,
+            } => "green",
+            MoveResult::WordAbandoned => "blue",
+            MoveResult::MoveRetraced {
+                word: _,
+                coordinates: _,
+            } => "lightgreen",
+            MoveResult::IllegalMove => "grey",
+        }
+    }
+
+    pub fn get_move_result(&self, coordinate: &Coordinate) -> MoveResult {
+        if !self.chosen_positions.positions.is_empty()
+            && (self.chosen_positions.positions.first().unwrap() == coordinate
+                || self.chosen_positions.positions.last().unwrap() == coordinate)
+        {
+            return MoveResult::WordAbandoned;
+        }
+
+        let find_result = self
+            .chosen_positions.positions
+            .iter()
+            .find_position(|z| z == &coordinate);
+
+        if let Some((index, _)) = find_result {
+            let new_chosen_positions: Vec<Coordinate> = self
+                .chosen_positions.positions
+                .iter()
+                .take(index + 1)
+                .copied()
+                .collect_vec();
+            let word = self.board.get_word_text(&new_chosen_positions);
+            return MoveResult::MoveRetraced {
+                word,
+                coordinates: new_chosen_positions,
+            };
+        }
+
+        if self.chosen_positions.positions.is_empty()
+            || self
+                .chosen_positions.positions
+                .last()
+                .unwrap()
+                .is_adjacent(coordinate)
+        {
+            let mut new_chosen_positions = self.chosen_positions.positions.clone();
+            new_chosen_positions.push(*coordinate);
+
+            let word = self.board.get_word_text(&new_chosen_positions);
+
+            let nodes_iter = new_chosen_positions.iter().map(|c| {
+                let letter = &self.board.get_letter_at_coordinate(c);
+                Node {
+                    coordinate: *c,
+                    letter: *letter,
+                }
+            });
+
+            let nodes = im::Vector::from_iter(nodes_iter);
+            let check_result = self.solver.check(&nodes);
+
+            let final_result = match check_result {
+                crate::core::parser::ParseOutcome::Success(i) =>
+                
+                if self.solver.settings.allow(i){
+                    MoveResult::WordComplete {
+                    
+                        word: FoundWord { result:i, path:  nodes.iter().map(|x| x.coordinate).collect_vec(), },
+                        coordinates: new_chosen_positions,
+                    }
+                }
+                else    {
+                    MoveResult::WordContinued {
+                        word: i.to_string(),
+                        coordinates: new_chosen_positions,
+                    }
+                }
+                ,
+                crate::core::parser::ParseOutcome::PartialSuccess =>{
+                    MoveResult::WordContinued {
+                        word,
+                        coordinates: new_chosen_positions,
+                    }
+                },
+                crate::core::parser::ParseOutcome::Failure => MoveResult::IllegalMove {},
+            };
+
+            return final_result;
+        }
+
+        MoveResult::IllegalMove {}
+    }
 }
 
 pub enum Msg {
@@ -43,27 +161,23 @@ impl Reducer<FullState> for Msg {
                 let rng = rand::SeedableRng::seed_from_u64(seed);
                 let rng_cell = RefCell::new(rng);
 
-                let boards = crate::core::creator::create_boards(&solver, 9, &settings, &rng_cell);
+                let boards = create_boards(&solver, 9, &settings, &rng_cell);
                 let board = boards[0].to_owned();
                 let diff = instant::Instant::now() - start_instant;
 
                 debug!("Board '{:?}' generated in {:?}", board, diff);
-                let new_game_state = Gamestate {
-                    board,
-                    ..Default::default()
-                };
+                
 
                 FullState {
-                    game: new_game_state.into(),
-                    recent_words: Default::default(),
-                    found_words: Default::default(),
+                    board: board.into(),
+                    ..Default::default()
                 }
                 .into()
             }
             Msg::Move { coordinate } => {
-                let move_result = state.game.get_move_result(coordinate);
+                let move_result = state.get_move_result(coordinate);
 
-                let new_game_state = state.game.deref().clone().after_move_result(&move_result);
+                let new_chosen_positions = state.chosen_positions.to_owned().after_move_result(&move_result);
 
                 let mut is_new_word: bool = false;
 
@@ -76,15 +190,13 @@ impl Reducer<FullState> for Msg {
                     if is_new_word {                        
                         let i =found_word.result;
                         let ns = state.found_words.with_word(found_word);
-
-                        
-                        const BLOCKSIZE : i32= 20;
+                                            
                         if state.found_words.words.len() >= 100{
-                            crate::web::confetti::make_confetti("💯💯💯💯💯💯🌈⚡️💥✨💫🌸".to_string());
+                            make_confetti("💯💯💯💯💯💯🌈⚡️💥✨💫🌸".to_string());
                         }
                         
-                        else if ns.has_all_words(&mut num::iter::range( ((i / BLOCKSIZE) *BLOCKSIZE).max(1), ((i / BLOCKSIZE) + 1) * BLOCKSIZE)){
-                            crate::web::confetti::make_confetti("🌈⚡️💥✨💫🌸".to_string());
+                        else if ns.has_all_words(&mut num::iter::range( ((i / GOALSIZE) *GOALSIZE).max(1), ((i / GOALSIZE) + 1) * GOALSIZE)){
+                            make_confetti("🌈⚡️💥✨💫🌸".to_string());
                         }
                         ns.into()
 
@@ -103,7 +215,10 @@ impl Reducer<FullState> for Msg {
 
 
                 FullState {
-                    game: new_game_state.into(),
+                    board: state.board.clone(),
+                    solver: state.solver.clone(),
+                    rotflip: state.rotflip.clone(),
+                    chosen_positions: new_chosen_positions.into(),
                     recent_words: new_recent_words.into(),
                     found_words: new_found_words,
                 }

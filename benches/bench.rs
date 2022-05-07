@@ -2,8 +2,7 @@
 extern crate bencher;
 
 use bencher::Bencher;
-use myriad::core::creator::*;
-use myriad::core::solver::*;
+use myriad::core::prelude::*;
 
 fn bench_find_solutions(bench: &mut Bencher) {
     bench.iter(|| create_boards_and_solve(1));
@@ -22,7 +21,7 @@ fn create_boards_and_solve(number_of_boards: usize) {
     let rng = rand::SeedableRng::seed_from_u64(100);
     let rng_cell = core::cell::RefCell::new(rng);
 
-    let boards = &myriad::core::creator::create_boards(&solver, 9, &settings, &rng_cell);
+    let boards = &create_boards(&solver, 9, &settings, &rng_cell);
 
     for board in boards {
         let solver = Solver {

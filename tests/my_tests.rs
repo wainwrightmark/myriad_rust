@@ -2,9 +2,7 @@
 use std::cell::RefCell;
 
 use itertools::Itertools;
-use myriad::core::board::*;
-use myriad::core::creator::*;
-use myriad::core::solver::*;
+use myriad::core::prelude::*;
 
 #[test]
 fn from_string_test() {
@@ -25,6 +23,7 @@ macro_rules! board_tests {
 board_tests!(
  t1: "98_-7+524",
  t2: "7-6574+2/", //Check out 10
+ t3: "-+718325+",
 );
 
 
@@ -63,7 +62,7 @@ fn test_create_boards() {
     let rng = rand::SeedableRng::seed_from_u64(100);
     let rng_cell = RefCell::new(rng);
 
-    let boards = &myriad::core::creator::create_boards(&solver, 9, &settings, &rng_cell);
+    let boards = &create_boards(&solver, 9, &settings, &rng_cell);
 
     for board in boards {
         eprintln!();

@@ -1,23 +1,13 @@
 use crate::core::prelude::*;
 use crate::state::fullstate::*;
-use crate::state::gamestate::*;
+use crate::web::SQUARE_SIZE;
 use yew::prelude::*;
 use yewdux::prelude::*;
 
-pub const SQUARE_SIZE: f64 = 40.0;
-
-#[function_component(BoardSVG)]
-pub fn board_svg() -> Html {
-    let game_state = use_selector(|state: &FullState| state.game.clone());
-
-    let rope_d = game_state.get_path_data(SQUARE_SIZE);
-
-    let opacity = if game_state.chosen_positions.is_empty() {
-        "0"
-    } else {
-        "!"
-    };
-
+#[function_component(CirclesSVG)]
+pub fn circles_svg() -> Html {
+    let (game_state, _) = use_store::<FullState>();
+    
     let circles = game_state
         .board
         .max_coordinate()
@@ -27,25 +17,14 @@ pub fn board_svg() -> Html {
 
     html! {
           <g>
-                  <rect x="0" y="0" width="120" height="120" fill="white"/>
-                  <path
-    id="rope"
-
-    style="stroke-width: 18; stroke: LightBlue; -webkit-transition: 1s ease-out; transition: 1s ease-out; fill: none;"
-    stroke-linejoin="round"
-    stroke-linecap="round"
-    opacity={opacity}
-    d={rope_d}
-    />
-
     {circles}
     </g>
 
       }
 }
 
-fn make_circle(gamestate: &Gamestate, coordinate: Coordinate) -> Html {
-    let location = gamestate.get_location(&coordinate, SQUARE_SIZE);
+fn make_circle(gamestate: &FullState, coordinate: Coordinate) -> Html {
+    let location = gamestate.rotflip.get_location(&coordinate, SQUARE_SIZE);
     let cx = location.0;
     let cy = location.1;
     let color = gamestate.get_color(&coordinate).to_string();

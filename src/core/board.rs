@@ -8,6 +8,12 @@ pub struct Board {
     pub letters: Vec<Letter>,
 }
 
+impl Default for Board{
+    fn default() -> Self {
+        Board::try_create("-+718325+").unwrap()
+    }
+}
+
 impl std::fmt::Display for Board {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "{}", self.to_multiline_string())
