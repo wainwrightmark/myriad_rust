@@ -57,13 +57,18 @@ fn parse_number(input: &str) -> IResult<&str, Expr> {
 }
 
 fn parse_unary(input: &str) -> IResult<&str, Expr>{
- alt((parse_number,parse_minus))(input)
+ alt((parse_number,parse_minus,parse_plus))(input)
 }
 
 fn parse_minus(input: &str) -> IResult<&str, Expr>{
     let (rem, _) = char('-')(input)?;
     let (rem2, e) = parse_unary(rem)?;
     Ok((rem2, Expr::Minus(Box::new(e))))
+}
+
+fn parse_plus(input: &str) -> IResult<&str, Expr>{
+    let (rem, _) = char('+')(input)?;
+    parse_unary(rem)
 }
 
 fn parse_op(tup: (char, Expr), expr1: Expr) -> Expr {
@@ -169,5 +174,7 @@ mod tests {
         t22:("1--", PartialSuccess),
         t23:("1*-", PartialSuccess),
         t24:("1*-2", Success(-2)),
+        t25:("8-+7", Success(1)),
+        t26:("8-+", PartialSuccess),
     }
 }
