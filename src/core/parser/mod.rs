@@ -13,9 +13,13 @@ pub enum ParseOutcome {
     Failure,
 }
 
+//TODO rewrite to use a token stream instead of a string
+
 #[derive(Debug, PartialEq)]
 pub enum Expr {
+    Empty,
     ENum(i32),
+    Minus(Box<Expr>),
     EAdd(Box<Expr>, Box<Expr>),
     ESub(Box<Expr>, Box<Expr>),
     EMul(Box<Expr>, Box<Expr>),
@@ -23,17 +27,7 @@ pub enum Expr {
 }
 
 fn parse(input: &str) -> IResult<&str, Expr> {
-    parse_basic_expr(input)
-}
-
-fn parse_basic_expr(input: &str) -> IResult<&str, Expr> {
     parse_math_expr(input)
-}
-
-fn parse_term(input: &str) -> IResult<&str, Expr> {
-    let (input, num1) = parse_number(input)?;
-    let (input, exprs) = many0(tuple((alt((char('/'), char('*'))), parse_term)))(input)?;
-    Ok((input, parse_expr(num1, exprs)))
 }
 
 fn parse_math_expr(input: &str) -> IResult<&str, Expr> {
@@ -42,8 +36,34 @@ fn parse_math_expr(input: &str) -> IResult<&str, Expr> {
     Ok((input, parse_expr(num1, exprs)))
 }
 
+fn parse_term(input: &str) -> IResult<&str, Expr> {
+    let (input, num1) = parse_unary(input)?;
+    let (input, exprs) = many0(tuple((alt((char('/'), char('*'))), parse_term)))(input)?;
+    Ok((input, parse_expr(num1, exprs)))
+}
+
 fn parse_expr(expr: Expr, rem: Vec<(char, Expr)>) -> Expr {
     rem.into_iter().fold(expr, |acc, val| parse_op(val, acc))
+}
+
+fn parse_number(input: &str) -> IResult<&str, Expr> {
+    if input.is_empty(){
+        Ok(("", Expr::Empty))
+    }else {
+        map(nom::character::complete::i32, |n|Expr::ENum(n))(input)    
+    }
+
+    
+}
+
+fn parse_unary(input: &str) -> IResult<&str, Expr>{
+ alt((parse_number,parse_minus))(input)
+}
+
+fn parse_minus(input: &str) -> IResult<&str, Expr>{
+    let (rem, _) = char('-')(input)?;
+    let (rem2, e) = parse_unary(rem)?;
+    Ok((rem2, Expr::Minus(Box::new(e))))
 }
 
 fn parse_op(tup: (char, Expr), expr1: Expr) -> Expr {
@@ -58,13 +78,13 @@ fn parse_op(tup: (char, Expr), expr1: Expr) -> Expr {
 }
 
 
-fn parse_number(input: &str) -> IResult<&str, Expr> {
-    map(nom::character::complete::i32, |n|Expr::ENum(n))(input)
-}
+
 
 fn evaluate(expr: Expr) -> Option<i32> {
     match expr {
+        Empty => None,
         ENum(num) => Some(num),
+        Minus(e) => evaluate(*e).and_then(|x| Some(-x)),
         EAdd(expr1, expr2) => {
             evaluate(*expr1).and_then(|x| evaluate(*expr2).and_then(|y| Some(x + y)))
         }
@@ -86,22 +106,23 @@ fn evaluate(expr: Expr) -> Option<i32> {
     }
 }
 
-pub(crate) fn parse_and_evaluate(input: &str) -> ParseOutcome {
-    if input.is_empty() {return ParseOutcome::PartialSuccess;}
-    let parse_result = parse(input);
-    if let Ok((rem, expr)) = parse_result {
-        if rem.is_empty() {
+pub(crate) fn parse_and_evaluate(input: &str) -> ParseOutcome {    
+    match parse(input) {
+        Ok((rem, expr)) => if rem.is_empty() {
             if let Some(i) = evaluate(expr) {
                 ParseOutcome::Success(i)
             } else {
                 ParseOutcome::PartialSuccess
             }
         } else {
-            ParseOutcome::PartialSuccess
-        }
-    } else {
-        ParseOutcome::Failure
+
+            ParseOutcome::Failure
+
+            
+        },
+        Err(_) => ParseOutcome::Failure
     }
+
 }
 
 #[cfg(test)]
@@ -115,7 +136,7 @@ mod tests {
         #[test]
         fn $name() {
             let (input, expected) = $value;
-            assert_eq!(expected, parse_and_evaluate(input));
+            assert_eq!(expected, parse_and_evaluate(input), "'{}'", input);
         }
     )*
     }
@@ -138,6 +159,15 @@ mod tests {
         t12: ("-2+3", Success(1)),
         t13: ("18*", PartialSuccess),
         t14: ("-12", Success(-12)),
-
+        t15: ("-", PartialSuccess),
+        t16: ("--", PartialSuccess),
+        t17: ("--1", Success(1)),
+        t18:("1+-", PartialSuccess),
+        t19:("1+*", Failure),
+        t20:("+*", Failure),
+        t21:("1-", PartialSuccess),
+        t22:("1--", PartialSuccess),
+        t23:("1*-", PartialSuccess),
+        t24:("1*-2", Success(-2)),
     }
 }
