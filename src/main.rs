@@ -9,14 +9,17 @@ pub mod web;
 fn app() -> Html {
     html! {
         <div class="container">
+
+        <NewGameButton/>
         <svg viewBox="0 0 120 120" class="myriadSVG">
         <rect x="0" y="0" width="120" height="120" fill="white"/>
+        <RopeSVG />
         <CirclesSVG />
-        <ROPESVG />
+        
         <RecentWords/>
         </svg>
         <FoundWordsTable/>
-        <NewGameButton/>
+        
 
         <canvas id="confetti-canvas" style="position: fixed; width: 100%; height: 100%; top: 0px; left: 0px; z-index: 1000; pointer-events: none;"></canvas>
 

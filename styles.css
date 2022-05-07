@@ -15,7 +15,7 @@
   }
 
   .circle {
-    stroke-width: 360 * 0.02;
+    stroke-width: 2.4;
 
     transition: 3s cubic-bezier(0, 1.45, 0.72, 1.33)
   }

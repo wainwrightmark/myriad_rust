@@ -10,7 +10,7 @@ use num::ToPrimitive;
 use yew::prelude::*;
 use yewdux::prelude::*;
 
-#[function_component(ROPESVG)]
+#[function_component(RopeSVG)]
 pub fn rope_svg_g() -> Html {
     let board = use_selector(|state: &FullState| state.board.clone());
     let chosen_positions = use_selector(|state: &FullState| state.chosen_positions.clone());
@@ -28,7 +28,7 @@ pub fn rope_svg_g() -> Html {
                   <path
     id="rope"
 
-    style="stroke-width: 18; stroke: LightBlue; -webkit-transition: 1s ease-out; transition: 1s ease-out; fill: none; pointer-events: none;"
+    style="stroke-width: 6; stroke: LightBlue; -webkit-transition: 1s ease-out; transition: 1s ease-out; fill: none; pointer-events: none;"
     stroke-linejoin="round"
     stroke-linecap="round"
     opacity={opacity}
