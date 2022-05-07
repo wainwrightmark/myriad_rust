@@ -50,7 +50,7 @@ fn parse_number(input: &str) -> IResult<&str, Expr> {
     if input.is_empty(){
         Ok(("", Expr::Empty))
     }else {
-        map(nom::character::complete::i32, |n|Expr::ENum(n))(input)    
+        map(nom::character::complete::i32, Expr::ENum)(input)    
     }
 
     
@@ -84,15 +84,15 @@ fn evaluate(expr: Expr) -> Option<i32> {
     match expr {
         Empty => None,
         ENum(num) => Some(num),
-        Minus(e) => evaluate(*e).and_then(|x| Some(-x)),
+        Minus(e) => evaluate(*e).map(|x| -x),
         EAdd(expr1, expr2) => {
-            evaluate(*expr1).and_then(|x| evaluate(*expr2).and_then(|y| Some(x + y)))
+            evaluate(*expr1).and_then(|x| evaluate(*expr2).map(|y| x + y))
         }
         ESub(expr1, expr2) => {
-            evaluate(*expr1).and_then(|x| evaluate(*expr2).and_then(|y| Some(x - y)))
+            evaluate(*expr1).and_then(|x| evaluate(*expr2).map(|y| x - y))
         }
         EMul(expr1, expr2) => {
-            evaluate(*expr1).and_then(|x| evaluate(*expr2).and_then(|y| Some(x * y)))
+            evaluate(*expr1).and_then(|x| evaluate(*expr2).map(|y| x * y))
         }
         EDiv(expr1, expr2) => evaluate(*expr1).and_then(|x| {
             evaluate(*expr2).and_then(|y| {

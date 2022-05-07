@@ -49,7 +49,7 @@ impl Reducer<FullState> for Msg {
 
                 debug!("Board '{:?}' generated in {:?}", board, diff);
                 let new_game_state = Gamestate {
-                    board: board,
+                    board,
                     ..Default::default()
                 };
 

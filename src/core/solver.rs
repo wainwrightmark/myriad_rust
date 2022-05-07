@@ -79,9 +79,9 @@ impl Solver {
             .collect::<Vec<String>>()
             .join("");
 
-        let parse_result = crate::core::parser::parse_and_evaluate(&text);
+        
 
-        parse_result
+        crate::core::parser::parse_and_evaluate(&text)
         // //let parse_result = meval::eval_str(text);
 
         // if let Some(u) = parse_result {
