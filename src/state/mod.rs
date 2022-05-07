@@ -5,5 +5,5 @@ pub mod recentwordstate;
 pub mod rotflipstate;
 
 
-const GOALSIZE : i32= 20;
+pub const GOALSIZE : i32= 20;
 

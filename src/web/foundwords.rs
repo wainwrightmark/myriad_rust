@@ -1,4 +1,4 @@
-use crate::state::fullstate::*;
+use crate::state::{fullstate::*, GOALSIZE};
 use yew::prelude::*;
 use yewdux::prelude::*;
 
@@ -43,26 +43,40 @@ pub fn found_words_table_content() -> Html {
 pub fn found_words_table() -> Html {
     let found_words_state = use_selector(|state: &FullState| state.found_words.clone());
 
-    let tab_labels = (0..5)
-        .map(|twenties| {
+    let checked_tab = found_words_state.most_recent.map_or(0, |x| x / GOALSIZE);
 
-            let complete = found_words_state.has_all_words(&mut num::iter::range( (twenties * 20).max(1), (twenties + 1) * 20));
+    let tab_labels = (0..(100 / GOALSIZE))
+        .map(|group_index| {
+
+            let complete = found_words_state.has_all_words(&mut num::iter::range( (group_index * GOALSIZE).max(1), (group_index + 1) * GOALSIZE));
 
             let style = if complete{"background-color: #2ecc40;"} else{""};
-            let id = format!("tab-{twenties}");
-            let label = format!("{:0>2}", (twenties * 20));
+            let id = format!("tab-{group_index}");
+            let label = format!("{:0>2}", (group_index * GOALSIZE));
+            
+
             html! {
                 <>
-                <input id={id.clone()} type="radio" name="tabgroupB" checked={twenties == 0} />
+                <input id={id.clone()} type="radio" name="tabgroupB" checked={group_index == checked_tab} />
                 <label class="pseudo button toggle" for={id} style={style}>{label}</label>
                 </>
             }
         })
         .collect::<Html>();
 
+    let tab_count = match 100 / GOALSIZE {
+        1 => "one",
+        2 => "two",
+        3 => "three",
+        4 => "four",
+        5 => "five",
+        6 => "six",
+        _ => "seven"
+    };
+
     html! {
         <div>
-        <div class="tabs five">
+        <div class={format!("tabs {tab_count}")}> // should depend on number of groups
         {tab_labels}
         <div class="row">
         <FoundWordsTableContent/>
