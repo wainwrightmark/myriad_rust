@@ -19,7 +19,7 @@ pub fn rope_svg_g() -> Html {
     let opacity = if chosen_positions.positions.is_empty() {
         "0"
     } else {
-        "!"
+        "1"
     };
 
     let rope_d = get_path_data(board, chosen_positions, rot_flip, SQUARE_SIZE);

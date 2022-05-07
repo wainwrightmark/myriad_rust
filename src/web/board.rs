@@ -27,16 +27,15 @@ fn make_circle(gamestate: &FullState, coordinate: Coordinate) -> Html {
     let location = gamestate.rotflip.get_location(&coordinate, SQUARE_SIZE);
     let cx = location.0;
     let cy = location.1;
-    let color = gamestate.get_color(&coordinate).to_string();
+    let (color, cursor) = gamestate.get_color(&coordinate);
     let letter = gamestate.board.get_letter_at_coordinate(&coordinate);
     let text = letter.word_text();
-    let cursor = "default";
     let circle_id = format!("{coordinate}_bigCircle");
     let text_id = format!("{coordinate}_text");
     let radius = format!("{:2}", SQUARE_SIZE * 0.4);
 
     let g_style = format!(
-        "-webkit-transform: translate({cx}px, {cy}px); transform: translate({cx}px, {cy}px);"
+        " -webkit-transform: translate({cx}px, {cy}px); transform: translate({cx}px, {cy}px);"
     );
 
     let onclick = Dispatch::new().apply_callback(move |_| Msg::Move { coordinate });
