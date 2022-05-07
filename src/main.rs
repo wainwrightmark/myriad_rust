@@ -9,8 +9,6 @@ pub mod web;
 fn app() -> Html {
     html! {
         <div class="container">
-
-        <NewGameButton/>
         <svg viewBox="0 0 120 120" class="myriadSVG">
         <rect x="0" y="0" width="120" height="120" fill="white"/>
         <RopeSVG />

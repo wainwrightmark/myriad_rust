@@ -1,4 +1,5 @@
 use crate::state::{fullstate::*, GOALSIZE};
+use crate::web::newgamebutton::*;
 use yew::prelude::*;
 use yewdux::prelude::*;
 
@@ -28,6 +29,7 @@ pub fn found_words_table_content() -> Html {
 
             html! {
                 <div>
+                
                 {chips}
                 </div>
             }
@@ -64,22 +66,30 @@ pub fn found_words_table() -> Html {
         })
         .collect::<Html>();
 
-    let tab_count = match 100 / GOALSIZE {
+    let tab_count = match (100 / GOALSIZE) + 1 {
         1 => "one",
         2 => "two",
         3 => "three",
         4 => "four",
         5 => "five",
         6 => "six",
-        _ => "seven"
+        7 => "seven",
+        _ => "seven",
     };
 
     html! {
         <div>
         <div class={format!("tabs {tab_count}")}> // should depend on number of groups
         {tab_labels}
+        <input id="plus_tab" type="radio" name="tabgroupB" />
+        <label class="pseudo button toggle" for="plus_tab" >{"➕"}</label>
+
         <div class="row">
         <FoundWordsTableContent/>
+        <div>
+        <NewGameButton/>
+        </div>
+
         </div>
         </div>
         </div>
