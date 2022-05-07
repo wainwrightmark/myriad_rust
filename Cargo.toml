@@ -8,23 +8,19 @@ edition= "2021"
 
 [dependencies]
 itertools = "0.10.3"
-test-case = "2.0.0"
 num = "0.4"
-num-derive = "0.3"
 num-traits = "0.2"
 serde = { version = "1.0", features = ["derive", "rc"] }
-strum_macros = "0.24.0"
 im = "15.0.0"
 nom = "7.1.1"
 rand = {version = "0.8.5"}
 getrandom = {version="0.2.5", features=["js"]}
-bencher= "0.1.5"
+
 log = "0.4.6"
 wasm-logger = "0.2.0"
 yew = { git = "https://github.com/yewstack/yew.git", features = ["csr"] }
 yewdux = { git = "https://github.com/intendednull/yewdux.git" }
 
-reqwasm = "0.5.0"
 wasm-bindgen-futures = "0.4"
 wasm-bindgen= { version = "0.2.80", features = ["serde"] }
 
@@ -43,3 +39,6 @@ harness = false
 [profile.release]
 lto = true
 opt-level = 3
+
+[dev-dependencies]
+bencher= "0.1.5"
