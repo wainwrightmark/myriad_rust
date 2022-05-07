@@ -36,6 +36,18 @@ impl Board {
         }
     }
 
+    pub fn get_word_text(&self, coordinates: &[Coordinate]) -> String {
+        let word = coordinates
+            .iter()
+            .map(|c| {
+                let letter = &self.get_letter_at_coordinate(c);
+
+                letter.word_text()
+            })
+            .join("");
+        word
+    }
+
     pub fn with_set_letter(&self, letter: Letter, index: usize) -> Board {
         let mut new_letters = self.letters.clone();
         new_letters[index] = letter;

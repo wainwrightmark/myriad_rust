@@ -1,11 +1,18 @@
+use crate::core::parser::Expr::*;
 use nom::branch::alt;
-use nom::character::complete::{char, digit1, space0};
+use nom::character::complete::{char, digit1};
 use nom::combinator::map;
 use nom::multi::many0;
-use nom::sequence::{delimited, tuple};
+use nom::sequence::tuple;
 use nom::IResult;
 use std::str::FromStr;
-use crate::core::parser::Expr::*;
+
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+pub enum ParseOutcome {
+    Success(i32),
+    PartialSuccess,
+    Failure,
+}
 
 #[derive(Debug, PartialEq)]
 pub enum Expr {
@@ -23,7 +30,6 @@ fn parse(input: &str) -> IResult<&str, Expr> {
 fn parse_basic_expr(input: &str) -> IResult<&str, Expr> {
     parse_math_expr(input)
 }
-
 
 fn parse_term(input: &str) -> IResult<&str, Expr> {
     let (input, num1) = parse_number(input)?;
@@ -52,42 +58,59 @@ fn parse_op(tup: (char, Expr), expr1: Expr) -> Expr {
     }
 }
 
-fn parse_enum(parsed_num: &str) -> Expr {
-    let num = i32::from_str(parsed_num).unwrap();
-    Expr::ENum(num)
-}
 
 fn parse_number(input: &str) -> IResult<&str, Expr> {
-    map(delimited(space0, digit1, space0), parse_enum)(input)
+    map(nom::character::complete::i32, |n|Expr::ENum(n))(input)
 }
 
 fn evaluate(expr: Expr) -> Option<i32> {
     match expr {
         ENum(num) => Some(num),
-        EAdd(expr1, expr2) => evaluate(*expr1).and_then(|x| evaluate(*expr2).and_then(|y| Some(x + y))),
-        ESub(expr1, expr2) => evaluate(*expr1).and_then(|x| evaluate(*expr2).and_then(|y| Some(x - y))),
-        EMul(expr1, expr2) => evaluate(*expr1).and_then(|x| evaluate(*expr2).and_then(|y| Some(x * y))),
-        EDiv(expr1, expr2) => evaluate(*expr1).and_then(|x| evaluate(*expr2).and_then(|y| if y != 0 && x % y ==0 {Some(x / y)} else{None})),
+        EAdd(expr1, expr2) => {
+            evaluate(*expr1).and_then(|x| evaluate(*expr2).and_then(|y| Some(x + y)))
+        }
+        ESub(expr1, expr2) => {
+            evaluate(*expr1).and_then(|x| evaluate(*expr2).and_then(|y| Some(x - y)))
+        }
+        EMul(expr1, expr2) => {
+            evaluate(*expr1).and_then(|x| evaluate(*expr2).and_then(|y| Some(x * y)))
+        }
+        EDiv(expr1, expr2) => evaluate(*expr1).and_then(|x| {
+            evaluate(*expr2).and_then(|y| {
+                if y != 0 && x % y == 0 {
+                    Some(x / y)
+                } else {
+                    None
+                }
+            })
+        }),
     }
 }
 
-pub (crate) fn parse_and_evaluate(input: &str) -> Option<i32>{
-let parse_result = parse(input);
-if let Ok((_, expr)) = parse_result{
-    let ev_result = evaluate(expr);
-    return ev_result;
-}
-None
+pub(crate) fn parse_and_evaluate(input: &str) -> ParseOutcome {
+    if input.is_empty() {return ParseOutcome::PartialSuccess;}
+    let parse_result = parse(input);
+    if let Ok((rem, expr)) = parse_result {
+        if rem.is_empty() {
+            if let Some(i) = evaluate(expr) {
+                ParseOutcome::Success(i)
+            } else {
+                ParseOutcome::PartialSuccess
+            }
+        } else {
+            ParseOutcome::PartialSuccess
+        }
+    } else {
+        ParseOutcome::Failure
+    }
 }
 
 #[cfg(test)]
 mod tests {
+    use crate::core::parser::ParseOutcome::*;
     use crate::core::parser::*;
 
-    
-
-
-macro_rules! fib_tests {
+    macro_rules! parse_tests {
     ($($name:ident: $value:expr,)*) => {
     $(
         #[test]
@@ -99,20 +122,23 @@ macro_rules! fib_tests {
     }
 }
 
-fib_tests! {
-    t0: ("", None),
-    t1: ("12", Some(12)),
-    t2: ("12+34", Some(46)),
-    t3: ("12-34", Some(-22)),
-    t4: ("12-34+15-9", Some(-16)),
-    t5: ("4*5", Some(20)),
-    t6: ("4*5 + 6", Some(26)),
-    t7: ("4/2", Some(2)),
-    t8: ("5/2", None),
-    t9: ("5/0", None),
+    parse_tests! {
+        t0: ("", PartialSuccess),
+        t1: ("12", Success(12)),
+
+        t2: ("12+34", Success(46)),
+        t3: ("12-34", Success(-22)),
+        t4: ("12-34+15-9", Success(-16)),
+        t5: ("4*5", Success(20)),
+        t6: ("4*5+6", Success(26)),
+        t7: ("4/2", Success(2)),
+        t8: ("5/2", PartialSuccess),
+        t9: ("5/0", PartialSuccess),
+        t10: ("18-2*3", Success(12)),
+        t11: ("18*-1", Success(-18)),
+        t12: ("-2+3", Success(1)),
+        t13: ("18*", PartialSuccess),
+        t14: ("-12", Success(-12)),
+
+    }
 }
-
-
-}
-
-

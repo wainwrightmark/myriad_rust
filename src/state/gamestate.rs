@@ -148,7 +148,7 @@ impl Gamestate {
                 .take(index + 1)
                 .copied()
                 .collect_vec();
-            let word = self.get_word_text(&new_chosen_positions);
+            let word = self.board.get_word_text(&new_chosen_positions);
             return MoveResult::MoveRetraced {
                 word,
                 coordinates: new_chosen_positions,
@@ -165,7 +165,7 @@ impl Gamestate {
             let mut new_chosen_positions = self.chosen_positions.clone();
             new_chosen_positions.push(*coordinate);
 
-            let word = self.get_word_text(&new_chosen_positions);
+            let word = self.board.get_word_text(&new_chosen_positions);
 
             let nodes_iter = new_chosen_positions.iter().map(|c| {
                 let letter = &self.board.get_letter_at_coordinate(c);
@@ -179,42 +179,50 @@ impl Gamestate {
             let check_result = self.solver.check(&nodes);
 
             let final_result = match check_result {
-                WordCheckResult::Invalid => {
+                crate::core::parser::ParseOutcome::Success(i) =>
+                
+                if self.solver.settings.allow(i){
+                    MoveResult::WordComplete {
+                    
+                        word: FoundWord { result:i, path:  nodes.iter().map(|x| x.coordinate).collect_vec(), },
+                        coordinates: new_chosen_positions,
+                    }
+                }
+                else    {
+                    MoveResult::WordContinued {
+                        word: i.to_string(),
+                        coordinates: new_chosen_positions,
+                    }
+                }
+                ,
+                crate::core::parser::ParseOutcome::PartialSuccess =>{
+                    MoveResult::WordContinued {
+                        word,
+                        coordinates: new_chosen_positions,
+                    }
+                },
+                crate::core::parser::ParseOutcome::Failure => MoveResult::IllegalMove {},
+            };
+
+/*
+WordCheckResult::Invalid => {
                     if self.solver.is_legal_prefix(&nodes) {
-                        MoveResult::WordContinued {
-                            word,
-                            coordinates: new_chosen_positions,
-                        }
+                        
                     } else {
                         MoveResult::IllegalMove {}
                     }
                 }
-                WordCheckResult::Legal { word } => MoveResult::WordComplete {
-                    word,
-                    coordinates: new_chosen_positions,
-                },
-                WordCheckResult::Illegal { word: _ } => MoveResult::WordContinued {
-                    word,
-                    coordinates: new_chosen_positions,
-                },
-            };
+                WordCheckResult::Legal { word } => ,
+                WordCheckResult::Illegal { word: _ } =>
+ */
+
             return final_result;
         }
 
         MoveResult::IllegalMove {}
     }
 
-    fn get_word_text(&self, coordinates: &[Coordinate]) -> String {
-        let word = coordinates
-            .iter()
-            .map(|c| {
-                let letter = &self.board.get_letter_at_coordinate(c);
-
-                letter.word_text()
-            })
-            .join("");
-        word
-    }
+    
 
     pub fn after_move_result(self, move_result: &MoveResult) -> Self {
         match move_result {

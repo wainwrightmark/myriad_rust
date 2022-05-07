@@ -1,6 +1,7 @@
 #[cfg(test)]
 use std::cell::RefCell;
 
+use itertools::Itertools;
 use myriad::core::board::*;
 use myriad::core::creator::*;
 use myriad::core::solver::*;
@@ -9,6 +10,23 @@ use myriad::core::solver::*;
 fn from_string_test() {
     test_board("98_-7+524", 100);
 }
+
+macro_rules! board_tests {
+    ($($name:ident: $value:expr,)*) => {
+        $(
+            #[test]
+            fn $name() {
+                test_board($value, 100);
+            }
+        )*
+        }
+}
+
+board_tests!(
+ t1: "98_-7+524",
+ t2: "7-6574+2/", //Check out 10
+);
+
 
 fn test_board(letters: &str, expected_count: usize) {
     let board = Board::try_create(letters).expect("board should be created");
@@ -21,8 +39,12 @@ fn test_board(letters: &str, expected_count: usize) {
         .get_possible_solutions(&board)
         .collect::<Vec<FoundWord>>();
 
-    // let solution_nums = solutions.iter().map(|x|x.result).sorted().join(",");
-    // eprintln!("{}",solution_nums);
+    for r in solutions.iter(). sorted_by(|a, b| Ord::cmp(&a.result, &b.result)){
+        let coordinates = r.path.clone();        
+        let word_text = board.get_word_text(&coordinates);
+        eprintln!("{} = {}",r.result, word_text );
+    }
+    
 
     assert_eq!(expected_count, solutions.len());
 }

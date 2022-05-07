@@ -1,3 +1,4 @@
+use crate::core::parser::ParseOutcome;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet, VecDeque};
 
@@ -36,22 +37,22 @@ impl std::fmt::Display for FoundWord {
     }
 }
 
-#[derive(PartialEq, Eq, Debug)]
-pub enum WordCheckResult {
-    Invalid,
-    Legal { word: FoundWord },
-    Illegal { word: FoundWord },
-}
+// #[derive(PartialEq, Eq, Debug)]
+// pub enum WordCheckResult {
+//     Invalid,
+//     Legal { word: FoundWord },
+//     Pa,
+// }
 
-impl std::fmt::Display for WordCheckResult {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match self {
-            WordCheckResult::Invalid => write!(f, "invalid"),
-            WordCheckResult::Legal { word } => write!(f, "{}", word),
-            WordCheckResult::Illegal { word } => write!(f, "illegal: {}", word),
-        }
-    }
-}
+// impl std::fmt::Display for WordCheckResult {
+//     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+//         match self {
+//             WordCheckResult::Invalid => write!(f, "invalid"),
+//             WordCheckResult::Legal { word } => write!(f, "{}", word),
+//             WordCheckResult::Illegal { word } => write!(f, "illegal: {}", word),
+//         }
+//     }
+// }
 
 #[derive(PartialEq, Debug, Clone, Default, Serialize, Deserialize)]
 pub struct Solver {
@@ -71,7 +72,7 @@ impl std::fmt::Display for Node {
 }
 
 impl Solver {
-    pub fn check(&self, nodes: &Vector<Node>) -> WordCheckResult {
+    pub fn check(&self, nodes: &Vector<Node>) -> ParseOutcome {
         let text: String = nodes
             .iter()
             .map(|x| x.letter.to_string())
@@ -80,57 +81,58 @@ impl Solver {
 
         let parse_result = crate::core::parser::parse_and_evaluate(&text);
 
-        //let parse_result = meval::eval_str(text);
+        parse_result
+        // //let parse_result = meval::eval_str(text);
 
-        if let Some(u) = parse_result {
-            let found_word = FoundWord {
-                result: u,
-                path: nodes.iter().map(|x| x.coordinate).collect_vec(),
-            };
+        // if let Some(u) = parse_result {
+        //     let found_word = FoundWord {
+        //         result: u,
+        //         path: nodes.iter().map(|x| x.coordinate).collect_vec(),
+        //     };
 
-            if self.settings.allow(u) {
-                return WordCheckResult::Legal { word: found_word };
-            } else {
-                return WordCheckResult::Illegal { word: found_word };
-            }
-        }
+        //     if self.settings.allow(u) {
+        //         return WordCheckResult::Legal { word: found_word };
+        //     } else {
+        //         return WordCheckResult::Illegal { word: found_word };
+        //     }
+        // }
 
-        WordCheckResult::Invalid
+        // WordCheckResult::Invalid
     }
 
-    pub fn is_legal_prefix(&self, nodes: &Vector<Node>) -> bool {
-        if nodes.is_empty() {
-            return true;
-        }
+    // pub fn is_legal_prefix(&self, nodes: &Vector<Node>) -> bool {
+    //     if nodes.is_empty() {
+    //         return true;
+    //     }
 
-        //Check first letter
-        if let Letter::Operator {
-            operation: letter_op,
-        } = nodes[0].letter
-        {
-            if letter_op != Operation::Minus {
-                return false;
-            }
-        }
+    //     //Check first letter
+    //     if let Letter::Operator {
+    //         operation: letter_op,
+    //     } = nodes[0].letter
+    //     {
+    //         if letter_op != Operation::Minus {
+    //             return false;
+    //         }
+    //     }
 
-        //Check for blanks
-        if nodes.iter().any(|f| f.letter == Letter::Blank) {
-            return false;
-        }
+    //     //Check for blanks
+    //     if nodes.iter().any(|f| f.letter == Letter::Blank) {
+    //         return false;
+    //     }
 
-        //Check there are no pairs of operators (except where second is minus)
-        for (a, b) in nodes.iter().tuple_windows() {
-            if let Letter::Operator { operation: op_b } = b.letter {
-                if op_b != Operation::Minus {
-                    if let Letter::Operator { operation: _ } = a.letter {
-                        return false;
-                    }
-                }
-            }
-        }
+    //     //Check there are no pairs of operators (except where second is minus)
+    //     for (a, b) in nodes.iter().tuple_windows() {
+    //         if let Letter::Operator { operation: op_b } = b.letter {
+    //             if op_b != Operation::Minus {
+    //                 if let Letter::Operator { operation: _ } = a.letter {
+    //                     return false;
+    //                 }
+    //             }
+    //         }
+    //     }
 
-        true
-    }
+    //     true
+    // }
 
     pub fn get_possible_solutions(&self, board: &Board) -> impl Iterator<Item = FoundWord> {
         let mut results = HashMap::<i32, FoundWord>::new();
@@ -145,13 +147,26 @@ impl Solver {
         ) {
             let check_result = solver.check(&nodes);
 
-            if let WordCheckResult::Legal { word } = check_result {
-                results.insert(word.result, word);
-            } else if !solver.is_legal_prefix(&nodes) {
-                return;
-            }
+            match check_result {
+                ParseOutcome::Success(i) => {
 
-            queue.push_back(nodes);
+                    if solver.settings.allow(i){
+                        let found_word = FoundWord {
+                            result: i,
+                            path: nodes.iter().map(|x| x.coordinate).collect_vec(),
+                        };
+    
+                        results.insert(i, found_word);
+                    }
+
+                    
+                    queue.push_back(nodes);
+                }
+                ParseOutcome::PartialSuccess => {
+                    queue.push_back(nodes);
+                }
+                ParseOutcome::Failure => {}
+            }
         }
 
         for coordinate in board.max_coordinate().get_positions_up_to() {
