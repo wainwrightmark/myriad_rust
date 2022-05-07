@@ -6,6 +6,7 @@ use crate::state::rotflipstate::*;
 use crate::state::chosenpositionsstate::*;
 use itertools::Itertools;
 use log::debug;
+use num::ToPrimitive;
 use serde::*;
 use std::cell::RefCell;
 use std::ops::Deref;
@@ -142,7 +143,29 @@ pub enum Msg {
     Move { coordinate: Coordinate },
 }
 
+fn get_emoji(i : i32)-> String{
+    (match i / 10 {
+        0 =>  "🌈⚡️💥✨💫🌸",
+        1 => "🐒🐶🦊🐕🐈🐎",
+        2 => "🐳🐬🐠🐙🦈",
+        3 => "🦋🐛🐝🐞🕷️",
+        4 => "🦖🐉🐲🦄👾👻👹👽",
+        5 => "🌹🌷🍀🍃🌿🌸🌻💐",
+        6 => "🐦🦤🦚🦜🐧🦅🐓🦆",
+        7 => "🚀👩‍🚀☄️🌠☀️🌖🌌🛰️",
+        8 => "😀🙂😃😺🐮",
+        9 => "🎈🎉🥳👯🪅🎊",
+        10 => "💯💯💯💯💯💯",
+        _ =>  "🌈⚡️💥✨💫🌸"
+    }).to_string()
+}
+
 impl Reducer<FullState> for Msg {
+
+
+    
+
+
     fn apply(&self, state: Rc<FullState>) -> Rc<FullState> {
         match self {
             Msg::NewGame => {
@@ -188,16 +211,22 @@ impl Reducer<FullState> for Msg {
                 {
                     is_new_word = !state.found_words.has_word(&found_word);
                     if is_new_word {                        
-                        let i =found_word.result;
+                        //let i =found_word.result;
                         let ns = state.found_words.with_word(found_word);
+
+                        let len =  ns.words.len().to_i32().unwrap();
                                             
-                        if state.found_words.words.len() >= 100{
-                            make_confetti("💯💯💯💯💯💯🌈⚡️💥✨💫🌸".to_string());
+                        if len % 10 == 0{
+                            make_confetti(get_emoji(len / 10), 300 + len* 10);
                         }
+
+                        // if state.found_words.words.len() >= 100{
+                        //     make_confetti(get_emoji(i) + "💯💯💯💯💯💯");
+                        // }
                         
-                        else if ns.has_all_words(&mut num::iter::range( ((i / GOALSIZE) *GOALSIZE).max(1), ((i / GOALSIZE) + 1) * GOALSIZE)){
-                            make_confetti("🌈⚡️💥✨💫🌸".to_string());
-                        }
+                        // else if ns.has_all_words(&mut num::iter::range( ((i / GOALSIZE) *GOALSIZE).max(1), ((i / GOALSIZE) + 1) * GOALSIZE)){
+                        //     make_confetti(get_emoji(i));
+                        // }
                         ns.into()
 
                     } else {
