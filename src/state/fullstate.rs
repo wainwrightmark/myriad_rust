@@ -12,7 +12,7 @@ use std::cell::RefCell;
 use std::ops::Deref;
 use std::rc::Rc;
 use yewdux::prelude::*;
-use crate::state::GOALSIZE;
+//use crate::state::GOALSIZE;
 
 #[derive(PartialEq, Store, Clone, Default, Serialize, Deserialize)]
 #[store(storage = "local")] // can also be "session"
@@ -31,9 +31,9 @@ impl FullState {
 
     //TODO also return cursor
     pub fn get_color(&self, coordinate: &Coordinate) -> (String, String) {
-        if self.chosen_positions.positions.is_empty() {
-            return ("blue".to_string(), "pointer".to_string());
-        }
+        // if self.chosen_positions.positions.is_empty() {
+        //     return ("blue".to_string(), "pointer".to_string());
+        // }
 
         let move_result = self.get_move_result(coordinate);
 
@@ -144,19 +144,18 @@ pub enum Msg {
 }
 
 fn get_emoji(i : i32)-> String{
-    (match i / 10 {
-        0 =>  "🌈⚡️💥✨💫🌸",
-        1 => "🐒🐶🦊🐕🐈🐎",
-        2 => "🐳🐬🐠🐙🦈",
-        3 => "🦋🐛🐝🐞🕷️",
-        4 => "🦖🐉🐲🦄👾👻👹👽",
-        5 => "🌹🌷🍀🍃🌿🌸🌻💐",
-        6 => "🐦🦤🦚🦜🐧🦅🐓🦆",
-        7 => "🚀👩‍🚀☄️🌠☀️🌖🌌🛰️",
-        8 => "😀🙂😃😺🐮",
-        9 => "🎈🎉🥳👯🪅🎊",
+    (match i {
+        1 =>  "🌈⚡️💥✨💫🌸",
+        2 => "🐒🐶🦊🐕🐈🐎",
+        3 => "🐳🐬🐠🐙🦈",
+        4 => "🦋🐛🐝🐞🕷️",
+        5 => "🦖🐉🐲🦄👾👻👹👽",
+        6 => "🌹🌷🍀🍃🌿🌸🌻💐",
+        7 => "🐦🦤🦚🦜🐧🦅🐓🦆",
+        8 => "🚀👩‍🚀☄️🌠☀️🌖🌌🛰️",
+        9 => "😀🙂😃😺🐮",
         10 => "💯💯💯💯💯💯",
-        _ =>  "🌈⚡️💥✨💫🌸"
+        _ =>  "🎈🎉🥳👯🪅🎊"
     }).to_string()
 }
 
@@ -217,7 +216,7 @@ impl Reducer<FullState> for Msg {
                         let len =  ns.words.len().to_i32().unwrap();
                                             
                         if len % 10 == 0{
-                            make_confetti(get_emoji(len / 10), 100 + len* 5);
+                            make_confetti(get_emoji(len / 10), 30 + len* 3);
                         }
 
                         // if state.found_words.words.len() >= 100{
