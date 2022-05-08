@@ -112,6 +112,7 @@ fn evaluate(expr: Expr) -> Option<i32> {
 }
 
 pub(crate) fn parse_and_evaluate(input: &str) -> ParseOutcome {    
+    if input == "+" {return ParseOutcome::Failure;}
     match parse(input) {
         Ok((rem, expr)) => if rem.is_empty() {
             if let Some(i) = evaluate(expr) {
