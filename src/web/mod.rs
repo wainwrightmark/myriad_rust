@@ -1,6 +1,9 @@
 automod::dir!("src/web");
 
-pub const SQUARE_SIZE: f64 = 40.0;
+pub const SQUARE_SIZE: f64 = 120.0;
+pub const SVG_WIDTH: f64 = 360.0;
+pub const SVG_HEIGHT: f64 = 360.0;
+
 
 pub mod prelude {
 

@@ -4,6 +4,7 @@ use crate::state::chosenpositionsstate::*;
 use crate::state::fullstate::FullState;
 use crate::state::rotflipstate::RotFlipState;
 use crate::web::SQUARE_SIZE;
+use crate::web::SVG_WIDTH;
 use itertools::Itertools;
 use num::ToPrimitive;
 use yew::prelude::*;
@@ -20,17 +21,19 @@ pub fn rope_svg_g() -> Html {
         "1"
     };
 
-    let rope_d = get_path_data( chosen_positions, rot_flip, SQUARE_SIZE);
+    let d = get_path_data( chosen_positions, rot_flip, SQUARE_SIZE);
+
+    let style = format!("stroke-width: {};", SVG_WIDTH / 20.0);
 
     html! {
                   <path
     id="rope"
-
-    style="stroke-width: 6; stroke: LightBlue; -webkit-transition: 1s ease-out; transition: 1s ease-out; fill: none; pointer-events: none;"
+    class="rope"
+    {style}
     stroke-linejoin="round"
     stroke-linecap="round"
-    opacity={opacity}
-    d={rope_d}
+    {opacity}
+    {d}
     />
 
       }

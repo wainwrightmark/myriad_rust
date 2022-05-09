@@ -1,16 +1,22 @@
 use yew::prelude::*;
 
 use crate::web::prelude::*;
+use crate::web::SVG_HEIGHT;
+use crate::web::SVG_WIDTH;
 pub mod core;
 pub mod state;
 pub mod web;
 
 #[function_component(App)]
 fn app() -> Html {
+
+    let viewBox = format!("0 0 {SVG_WIDTH} {SVG_HEIGHT}");
+    let width = format!("{SVG_WIDTH}");
+    let height = format!("{SVG_HEIGHT}");
     html! {
         <div class="container">
-        <svg viewBox="0 0 120 120" class="myriadSVG">
-        <rect x="0" y="0" width="120" height="120" fill="white"/>
+        <svg {viewBox} class="myriadSVG">
+        <rect x="0" y="0" {width} {height} fill="white"/>
         <RopeSVG />
         <CirclesSVG />
 
