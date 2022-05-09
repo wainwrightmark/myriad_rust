@@ -216,7 +216,7 @@ impl Reducer<FullState> for Msg {
                         let len =  ns.words.len().to_i32().unwrap();
                                             
                         if len % 10 == 0{
-                            make_confetti(get_emoji(len / 10), 30 + len* 3);
+                            make_confetti(get_emoji(len / 10), 10 + len* 2);
                         }
 
                         // if state.found_words.words.len() >= 100{

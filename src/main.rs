@@ -5,6 +5,8 @@ pub mod core;
 pub mod state;
 pub mod web;
 
+
+
 #[function_component(App)]
 fn app() -> Html {
     html! {

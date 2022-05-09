@@ -32,11 +32,14 @@ features = [
     "HtmlInputElement",
 ]
 
+
 [[bench]]
 name = "bench"
 harness = false
 
 [profile.release]
+panic = 'abort'
+codegen-units = 1
 lto = true
 opt-level = 3
 

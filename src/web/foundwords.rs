@@ -9,21 +9,14 @@ pub fn found_words_table_content() -> Html {
 
     let tab_content = (0..5)
         .map(|twenties| {
-            let chips = (0..20)
+            let chips = (1..GOALSIZE + 1)
                 .map(|units| {
-                    let i = twenties * 20 + units;
+                    let i = twenties * GOALSIZE + units;
 
-                    if i == 0 {
-                        html!(<span class="label chip" style="visibility: hidden;"></span>)
-                    } else {
-                        let found = found_words_state.words.contains_key(&i);
+                    let found = found_words_state.words.contains_key(&i);
+                    let class = if found {"label success chip"} else {"label chip"};
 
-                        if found {
-                            html!(<span class="label success chip">{i}</span>)
-                        } else {
-                            html!(<span class="label chip">{i}</span>)
-                        }
-                    }
+                    html!(<span key={format!("chip{i}")} {class}>{i}</span>)
                 })
                 .collect::<Html>();
 
@@ -52,15 +45,15 @@ pub fn found_words_table() -> Html {
 
             let complete = found_words_state.has_all_words(&mut num::iter::range( (group_index * GOALSIZE).max(1), (group_index + 1) * GOALSIZE));
 
-            let style = if complete{"background-color: #2ecc40;"} else{""};
+            let style = if complete{Some("background-color: #2ecc40;")} else{None};
             let id = format!("tab-{group_index}");
-            let label = format!("{:0>2}", (group_index * GOALSIZE));
+            let label = format!("{:0>2}", (group_index * GOALSIZE) + 1);
             
 
             html! {
-                <>
-                <input id={id.clone()} type="radio" name="tabgroupB" checked={group_index == checked_tab} />
-                <label class="pseudo button toggle" for={id} style={style}>{label}</label>
+                <key={id.clone()} >
+                <input  id={id.clone()} type="radio" name="tabgroupB" checked={group_index == checked_tab} />
+                <label class="pseudo button toggle" for={id.clone()} {style}>{label}</label>
                 </>
             }
         })
