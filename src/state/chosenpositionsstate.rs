@@ -16,7 +16,13 @@ impl ChosenPositionsState{
                 positions: coordinates.to_owned(),
                 ..self
             },
-            MoveResult::WordContinued {
+            MoveResult::WordOutsideRange {
+                word: _,
+                coordinates,
+            } => Self {
+                positions: coordinates.to_owned(),
+                ..self
+            },MoveResult::WordIncomplete {
                 word: _,
                 coordinates,
             } => Self {

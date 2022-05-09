@@ -13,7 +13,7 @@ pub fn recent_words() -> Html {
         .iter()
         .rev()
         .map(|word| {
-            let id = format!("{}_({})", word.word, word.coordinate);
+            let key = format!("{}_({:?})", word.word, word.expiry_time);
 
             let (cx, cy) = rot_flip
                 .get_location(&word.coordinate, SQUARE_SIZE);
@@ -30,11 +30,12 @@ pub fn recent_words() -> Html {
 
             html! {
                 <text
+                {key}
                 fill={word.get_color()}
                 class="foundWord"
-                style={style}
+                {style}
                 pointer-events="none"
-                id={id}
+                
                 x={format!("{}", cx)}
                 y={format!("{}", cy)}
                 dominant-baseline="text-bottom"

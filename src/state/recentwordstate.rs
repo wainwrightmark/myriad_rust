@@ -18,8 +18,6 @@ impl RecentWordState {
             expiry_time: now + instant::Duration::from_millis(linger),
         };
 
-        //debug!("{:?}", r_word);
-
         let new_words = self
             .recent_words
             .into_iter()
@@ -59,9 +57,9 @@ impl RecentWordState {
                 },
                 *coordinates.last().unwrap(),
             ),
-            MoveResult::WordContinued { word, coordinates } => self.with_word(
+            MoveResult::WordOutsideRange { word, coordinates } => self.with_word(
                 word.clone(),
-                FoundWordType::Illegal,
+                FoundWordType::NotInRange,
                 *coordinates.last().unwrap(),
             ),
             MoveResult::WordAbandoned => self.clear_expired(),
@@ -70,6 +68,7 @@ impl RecentWordState {
                 coordinates: _,
             } => self,
             MoveResult::IllegalMove => self,
+            MoveResult::WordIncomplete{ word:_, coordinates:_ } => self
         }
     }
 }
@@ -78,8 +77,9 @@ impl RecentWordState {
 pub enum FoundWordType {
     Found,
     PreviouslyFound,
+    Incomplete,
+    NotInRange,
     Invalid,
-    Illegal,
 }
 
 impl FoundWordType {
@@ -90,7 +90,8 @@ impl FoundWordType {
             FoundWordType::Found => BASIS * 10,
             FoundWordType::PreviouslyFound => BASIS * 5,
             FoundWordType::Invalid => BASIS * 2,
-            FoundWordType::Illegal => BASIS * 4,
+            FoundWordType::Incomplete => BASIS * 4,
+            FoundWordType::NotInRange => BASIS * 4,
         }
     }
 }
@@ -105,7 +106,8 @@ impl RecentWord {
             FoundWordType::Found => "Green".to_string(),
             FoundWordType::PreviouslyFound => "Blue".to_string(),
             FoundWordType::Invalid => "Red".to_string(),
-            FoundWordType::Illegal => "Orange".to_string(),
+            FoundWordType::Incomplete => "Orange".to_string(),
+            FoundWordType::NotInRange => "Orange".to_string(),
         }
     }
 }

@@ -12,15 +12,16 @@ use std::cell::RefCell;
 use std::ops::Deref;
 use std::rc::Rc;
 use yewdux::prelude::*;
-//use crate::state::GOALSIZE;
 
 #[derive(PartialEq, Store, Clone, Default, Serialize, Deserialize)]
 #[store(storage = "local")] // can also be "session"
 pub struct FullState {
     pub board: Rc<Board>,
+    #[serde(skip)]
     pub chosen_positions: ChosenPositionsState,
     pub found_words: Rc<FoundWordsState>,    
     pub solver: Solver,
+    #[serde(skip)]
     pub rotflip : RotFlipState,
 
     #[serde(skip)]
@@ -42,7 +43,11 @@ impl FullState {
                 word: _,
                 coordinates: _,
             } => ("darkgreen".to_string(), "pointer".to_string()),
-            MoveResult::WordContinued {
+            MoveResult::WordIncomplete {
+                word: _,
+                coordinates: _,
+            } => ("green".to_string(), "pointer".to_string()),
+            MoveResult::WordOutsideRange {
                 word: _,
                 coordinates: _,
             } => ("green".to_string(), "pointer".to_string()),
@@ -116,14 +121,14 @@ impl FullState {
                     }
                 }
                 else    {
-                    MoveResult::WordContinued {
+                    MoveResult::WordOutsideRange  {
                         word: i.to_string(),
                         coordinates: new_chosen_positions,
                     }
                 }
                 ,
                 crate::core::parser::ParseOutcome::PartialSuccess =>{
-                    MoveResult::WordContinued {
+                    MoveResult::WordIncomplete  {
                         word,
                         coordinates: new_chosen_positions,
                     }
