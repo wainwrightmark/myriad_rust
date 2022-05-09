@@ -37,5 +37,3 @@ fn create_boards_and_solve(number_of_boards: usize) {
         assert_eq!(100, solutions.len());
     }
 }
-
-

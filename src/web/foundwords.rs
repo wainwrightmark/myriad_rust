@@ -51,7 +51,7 @@ pub fn found_words_table() -> Html {
             
 
             html! {
-                <key={id.clone()} >
+                <key={id} >
                 <input  id={id.clone()} type="radio" name="tabgroupB" checked={group_index == checked_tab} />
                 <label class="pseudo button toggle" for={id.clone()} {style}>{label}</label>
                 </>

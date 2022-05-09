@@ -5,8 +5,6 @@ pub mod core;
 pub mod state;
 pub mod web;
 
-
-
 #[function_component(App)]
 fn app() -> Html {
     html! {
@@ -15,11 +13,11 @@ fn app() -> Html {
         <rect x="0" y="0" width="120" height="120" fill="white"/>
         <RopeSVG />
         <CirclesSVG />
-        
+
         <RecentWords/>
         </svg>
         <FoundWordsTable/>
-        
+
 
         <canvas id="confetti-canvas" style="position: fixed; width: 100%; height: 100%; top: 0px; left: 0px; z-index: 1000; pointer-events: none;"></canvas>
 

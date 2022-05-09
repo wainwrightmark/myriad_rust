@@ -1,5 +1,5 @@
-use itertools::Itertools;
 use crate::core::prelude::*;
+use itertools::Itertools;
 
 #[derive(PartialEq, Clone, Default)]
 pub struct RecentWordState {
@@ -68,7 +68,10 @@ impl RecentWordState {
                 coordinates: _,
             } => self,
             MoveResult::IllegalMove => self,
-            MoveResult::WordIncomplete{ word:_, coordinates:_ } => self
+            MoveResult::WordIncomplete {
+                word: _,
+                coordinates: _,
+            } => self,
         }
     }
 }

@@ -27,7 +27,6 @@ board_tests!(
  t4: "7+58-2675",
 );
 
-
 fn test_board(letters: &str, expected_count: usize) {
     let board = Board::try_create(letters).expect("board should be created");
 
@@ -39,12 +38,14 @@ fn test_board(letters: &str, expected_count: usize) {
         .get_possible_solutions(&board)
         .collect::<Vec<FoundWord>>();
 
-    for r in solutions.iter(). sorted_by(|a, b| Ord::cmp(&a.result, &b.result)){
-        let coordinates = r.path.clone();        
+    for r in solutions
+        .iter()
+        .sorted_by(|a, b| Ord::cmp(&a.result, &b.result))
+    {
+        let coordinates = r.path.clone();
         let word_text = board.get_word_text(&coordinates);
-        eprintln!("{} = {}",r.result, word_text );
+        eprintln!("{} = {}", r.result, word_text);
     }
-    
 
     assert_eq!(expected_count, solutions.len());
 }

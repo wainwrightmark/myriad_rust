@@ -1,12 +1,12 @@
-use serde::*;
 use crate::core::prelude::*;
+use serde::*;
 
 #[derive(PartialEq, Clone, Default, Serialize, Deserialize)]
-pub struct ChosenPositionsState{
-    pub positions : Vec<Coordinate>
+pub struct ChosenPositionsState {
+    pub positions: Vec<Coordinate>,
 }
 
-impl ChosenPositionsState{
+impl ChosenPositionsState {
     pub fn after_move_result(self, move_result: &MoveResult) -> Self {
         match move_result {
             MoveResult::WordComplete {
@@ -22,7 +22,8 @@ impl ChosenPositionsState{
             } => Self {
                 positions: coordinates.to_owned(),
                 ..self
-            },MoveResult::WordIncomplete {
+            },
+            MoveResult::WordIncomplete {
                 word: _,
                 coordinates,
             } => Self {
@@ -44,4 +45,3 @@ impl ChosenPositionsState{
         }
     }
 }
-

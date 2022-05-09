@@ -13,70 +13,73 @@ pub enum ParseFail {
     Failure,
 }
 
-
 fn parse<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R {
     parse_math_expr(input)
 }
 
-fn parse_math_expr<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R { //Plus and Minus
+fn parse_math_expr<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R {
+    //Plus and Minus
     let num1 = parse_term(input)?;
-    
+
     let mut current = num1;
-    loop{
-        if let Some(Letter::Operator { operation }) = input.peek(){
+    loop {
+        if let Some(Letter::Operator { operation }) = input.peek() {
             match operation {
                 Operation::Plus => {
                     input.next();
-                    let other = parse_term(input)?;                    
+                    let other = parse_term(input)?;
                     current += other;
-                },
+                }
                 Operation::Times => panic!("Shoould not encounter times in top level math expr"),
-                
+
                 Operation::Minus => {
                     input.next();
-                    let other = parse_term(input)?;                    
+                    let other = parse_term(input)?;
                     current -= other;
-                },
+                }
                 Operation::Divide => panic!("Shoould not encounter divide in top level math expr"),
             }
-        }        
-        else{            
+        } else {
             return Ok(current);
         }
     }
 }
 
-fn parse_term<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R { //Times and Divide
-    let num1 = parse_unary(input)?;    
+fn parse_term<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R {
+    //Times and Divide
+    let num1 = parse_unary(input)?;
 
     let mut current = num1;
-    loop{
-        if let Some(Letter::Operator { operation }) = input.peek(){
+    loop {
+        if let Some(Letter::Operator { operation }) = input.peek() {
             match operation {
                 Operation::Plus => return Ok(current),
                 Operation::Times => {
                     input.next();
                     let multiplicant = parse_unary(input)?;
                     current *= multiplicant;
-                },
+                }
                 Operation::Minus => return Ok(current),
                 Operation::Divide => {
                     input.next();
-                    let  denominator = parse_unary(input)?;
-                    if denominator == 0 {return Err(ParseFail::PartialSuccess);}
-                    if current % denominator != 0 {return Err(ParseFail::PartialSuccess);}
+                    let denominator = parse_unary(input)?;
+                    if denominator == 0 {
+                        return Err(ParseFail::PartialSuccess);
+                    }
+                    if current % denominator != 0 {
+                        return Err(ParseFail::PartialSuccess);
+                    }
 
                     current /= denominator;
-                },
+                }
             }
-        }        
-        else{            
-            return Ok( current);
+        } else {
+            return Ok(current);
         }
-    }    
+    }
 }
 
-fn parse_number<J: Iterator<Item = Letter>>(input:&mut Peekable<J>) -> R {
+fn parse_number<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R {
     let mut current = 0u32;
     while let Some(Letter::Number { value }) = input.peek() {
         current *= 10;
@@ -84,46 +87,48 @@ fn parse_number<J: Iterator<Item = Letter>>(input:&mut Peekable<J>) -> R {
         input.next();
     }
 
-    Ok( current.to_i32().unwrap())
+    Ok(current.to_i32().unwrap())
 }
 
-fn parse_unary<J: Iterator<Item = Letter>>(input:&mut Peekable<J>) -> R {
-
+fn parse_unary<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R {
     let mut negative = false;
-    loop{
-        if let Some(l) = input.peek(){
-            match l{
-                Letter::Number { value: _ } => return parse_number(input).map(|i|  if negative{-i} else{i} ),
-                Letter::Operator { operation } => {
-                    match operation{
-                        Operation::Plus => {input.next();},
-                        Operation::Times => return Err(ParseFail::Failure),
-                        Operation::Minus => {
-                            negative = !negative;
-                            input.next();},
-                        Operation::Divide =>return Err(ParseFail::Failure),
+    loop {
+        if let Some(l) = input.peek() {
+            match l {
+                Letter::Number { value: _ } => {
+                    return parse_number(input).map(|i| if negative { -i } else { i })
+                }
+                Letter::Operator { operation } => match operation {
+                    Operation::Plus => {
+                        input.next();
                     }
+                    Operation::Times => return Err(ParseFail::Failure),
+                    Operation::Minus => {
+                        negative = !negative;
+                        input.next();
+                    }
+                    Operation::Divide => return Err(ParseFail::Failure),
                 },
                 Letter::Blank => return Err(ParseFail::Failure),
             }
-        }
-        else {
-            return Err(ParseFail::PartialSuccess)
+        } else {
+            return Err(ParseFail::PartialSuccess);
         }
     }
 }
 
-
 pub(crate) fn parse_and_evaluate<J: Iterator<Item = Letter>>(
     input: &mut Peekable<J>,
 ) -> Result<i32, ParseFail> {
-    if let Some(Letter::Operator { operation: Operation::Plus }) = input.peek()
+    if let Some(Letter::Operator {
+        operation: Operation::Plus,
+    }) = input.peek()
     {
         return Err(ParseFail::Failure);
     }
     //if input == "+" {return Err(ParseFail::Failure);}
     match parse(input) {
-        Ok( expr) => {
+        Ok(expr) => {
             if input.peek() == None {
                 Ok(expr)
             } else {

@@ -2,7 +2,6 @@ automod::dir!("src/web");
 
 pub const SQUARE_SIZE: f64 = 40.0;
 
-
 pub mod prelude {
 
     pub use crate::web::board::*;

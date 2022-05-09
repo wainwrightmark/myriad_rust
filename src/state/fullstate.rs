@@ -1,10 +1,10 @@
 use crate::core::parser::ParseFail;
 use crate::core::prelude::*;
-use crate::web::prelude::*;
+use crate::state::chosenpositionsstate::*;
 use crate::state::foundwordsstate::*;
 use crate::state::recentwordstate::*;
 use crate::state::rotflipstate::*;
-use crate::state::chosenpositionsstate::*;
+use crate::web::prelude::*;
 use itertools::Itertools;
 use log::debug;
 use num::ToPrimitive;
@@ -20,17 +20,16 @@ pub struct FullState {
     pub board: Rc<Board>,
     #[serde(skip)]
     pub chosen_positions: ChosenPositionsState,
-    pub found_words: Rc<FoundWordsState>,    
+    pub found_words: Rc<FoundWordsState>,
     pub solver: Solver,
     #[serde(skip)]
-    pub rotflip : RotFlipState,
+    pub rotflip: RotFlipState,
 
     #[serde(skip)]
     pub recent_words: Rc<RecentWordState>,
 }
 
 impl FullState {
-
     //TODO also return cursor
     pub fn get_color(&self, coordinate: &Coordinate) -> (String, String) {
         // if self.chosen_positions.positions.is_empty() {
@@ -52,7 +51,7 @@ impl FullState {
                 word: _,
                 coordinates: _,
             } => ("green".to_string(), "pointer".to_string()),
-            MoveResult::WordAbandoned =>("darkgreen".to_string(), "pointer".to_string()),
+            MoveResult::WordAbandoned => ("darkgreen".to_string(), "pointer".to_string()),
             MoveResult::MoveRetraced {
                 word: _,
                 coordinates: _,
@@ -70,13 +69,15 @@ impl FullState {
         }
 
         let find_result = self
-            .chosen_positions.positions
+            .chosen_positions
+            .positions
             .iter()
             .find_position(|z| z == &coordinate);
 
         if let Some((index, _)) = find_result {
             let new_chosen_positions: Vec<Coordinate> = self
-                .chosen_positions.positions
+                .chosen_positions
+                .positions
                 .iter()
                 .take(index + 1)
                 .copied()
@@ -90,7 +91,8 @@ impl FullState {
 
         if self.chosen_positions.positions.is_empty()
             || self
-                .chosen_positions.positions
+                .chosen_positions
+                .positions
                 .last()
                 .unwrap()
                 .is_adjacent(coordinate)
@@ -112,29 +114,27 @@ impl FullState {
             let check_result = self.solver.check(&nodes);
 
             let final_result = match check_result {
-                Ok(i) =>
-                
-                if self.solver.settings.allow(i){
-                    MoveResult::WordComplete {
-                    
-                        word: FoundWord { result:i, path:  nodes.iter().map(|x| x.coordinate).collect_vec(), },
-                        coordinates: new_chosen_positions,
+                Ok(i) => {
+                    if self.solver.settings.allow(i) {
+                        MoveResult::WordComplete {
+                            word: FoundWord {
+                                result: i,
+                                path: nodes.iter().map(|x| x.coordinate).collect_vec(),
+                            },
+                            coordinates: new_chosen_positions,
+                        }
+                    } else {
+                        MoveResult::WordOutsideRange {
+                            word: i.to_string(),
+                            coordinates: new_chosen_positions,
+                        }
                     }
                 }
-                else    {
-                    MoveResult::WordOutsideRange  {
-                        word: i.to_string(),
-                        coordinates: new_chosen_positions,
-                    }
-                }
-                ,
-                Err(ParseFail:: PartialSuccess) =>{
-                    MoveResult::WordIncomplete  {
-                        word,
-                        coordinates: new_chosen_positions,
-                    }
+                Err(ParseFail::PartialSuccess) => MoveResult::WordIncomplete {
+                    word,
+                    coordinates: new_chosen_positions,
                 },
-                Err(ParseFail:: Failure) => MoveResult::IllegalMove {},
+                Err(ParseFail::Failure) => MoveResult::IllegalMove {},
             };
 
             return final_result;
@@ -149,9 +149,9 @@ pub enum Msg {
     Move { coordinate: Coordinate },
 }
 
-fn get_emoji(i : i32)-> String{
+fn get_emoji(i: i32) -> String {
     (match i {
-        1 =>  "🌈⚡️💥✨💫🌸",
+        1 => "🌈⚡️💥✨💫🌸",
         2 => "🐒🐶🦊🐕🐈🐎",
         3 => "🐳🐬🐠🐙🦈",
         4 => "🦋🐛🐝🐞🕷️",
@@ -161,16 +161,12 @@ fn get_emoji(i : i32)-> String{
         8 => "🚀👩‍🚀☄️🌠☀️🌖🌌🛰️",
         9 => "😀🙂😃😺🐮",
         10 => "💯💯💯💯💯💯",
-        _ =>  "🎈🎉🥳👯🪅🎊"
-    }).to_string()
+        _ => "🎈🎉🥳👯🪅🎊",
+    })
+    .to_string()
 }
 
 impl Reducer<FullState> for Msg {
-
-
-    
-
-
     fn apply(&self, state: Rc<FullState>) -> Rc<FullState> {
         match self {
             Msg::NewGame => {
@@ -194,7 +190,6 @@ impl Reducer<FullState> for Msg {
                 let diff = instant::Instant::now() - start_instant;
 
                 debug!("Board '{:?}' generated in {:?}", board, diff);
-                
 
                 FullState {
                     board: board.into(),
@@ -205,7 +200,10 @@ impl Reducer<FullState> for Msg {
             Msg::Move { coordinate } => {
                 let move_result = state.get_move_result(coordinate);
 
-                let new_chosen_positions = state.chosen_positions.to_owned().after_move_result(&move_result);
+                let new_chosen_positions = state
+                    .chosen_positions
+                    .to_owned()
+                    .after_move_result(&move_result);
 
                 let mut is_new_word: bool = false;
 
@@ -215,25 +213,24 @@ impl Reducer<FullState> for Msg {
                 } = move_result.clone()
                 {
                     is_new_word = !state.found_words.has_word(&found_word);
-                    if is_new_word {                        
+                    if is_new_word {
                         //let i =found_word.result;
                         let ns = state.found_words.with_word(found_word);
 
-                        let len =  ns.words.len().to_i32().unwrap();
-                                            
-                        if len % 10 == 0{
-                            make_confetti(get_emoji(len / 10), 10 + len* 2);
+                        let len = ns.words.len().to_i32().unwrap();
+
+                        if len % 10 == 0 {
+                            make_confetti(get_emoji(len / 10), 10 + len * 2);
                         }
 
                         // if state.found_words.words.len() >= 100{
                         //     make_confetti(get_emoji(i) + "💯💯💯💯💯💯");
                         // }
-                        
+
                         // else if ns.has_all_words(&mut num::iter::range( ((i / GOALSIZE) *GOALSIZE).max(1), ((i / GOALSIZE) + 1) * GOALSIZE)){
                         //     make_confetti(get_emoji(i));
                         // }
                         ns.into()
-
                     } else {
                         state.found_words.clone()
                     }
@@ -247,12 +244,11 @@ impl Reducer<FullState> for Msg {
                     .clone()
                     .after_move_result(&move_result, is_new_word);
 
-
                 FullState {
                     board: state.board.clone(),
                     solver: state.solver.clone(),
                     rotflip: state.rotflip.clone(),
-                    chosen_positions: new_chosen_positions.into(),
+                    chosen_positions: new_chosen_positions,
                     recent_words: new_recent_words.into(),
                     found_words: new_found_words,
                 }
