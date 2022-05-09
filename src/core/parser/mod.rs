@@ -1,4 +1,4 @@
-use crate::core::parser::Expr::*;
+use crate::core::parser::ParseOutcome::*;
 use nom::branch::alt;
 use nom::character::complete::{char};
 use nom::combinator::map;
@@ -15,116 +15,118 @@ pub enum ParseOutcome {
 
 //TODO rewrite to use a token stream instead of a string
 
-#[derive(Debug, PartialEq)]
-pub enum Expr {
-    Empty,
-    ENum(i32),
-    Minus(Box<Expr>),
-    EAdd(Box<Expr>, Box<Expr>),
-    ESub(Box<Expr>, Box<Expr>),
-    EMul(Box<Expr>, Box<Expr>),
-    EDiv(Box<Expr>, Box<Expr>),
-}
-
-fn parse(input: &str) -> IResult<&str, Expr> {
+fn parse(input: &str) -> IResult<&str, ParseOutcome> {
     parse_math_expr(input)
 }
 
-fn parse_math_expr(input: &str) -> IResult<&str, Expr> {
+fn parse_math_expr(input: &str) -> IResult<&str, ParseOutcome> {
     let (input, num1) = parse_term(input)?;
     let (input, exprs) = many0(tuple((alt((char('+'), char('-'))), parse_term)))(input)?;
     Ok((input, parse_expr(num1, exprs)))
 }
 
-fn parse_term(input: &str) -> IResult<&str, Expr> {
+fn parse_term(input: &str) -> IResult<&str, ParseOutcome> {
     let (input, num1) = parse_unary(input)?;
     let (input, exprs) = many0(tuple((alt((char('/'), char('*'))), parse_term)))(input)?;
     Ok((input, parse_expr(num1, exprs)))
 }
 
-fn parse_expr(expr: Expr, rem: Vec<(char, Expr)>) -> Expr {
+fn parse_expr(expr: ParseOutcome, rem: Vec<(char, ParseOutcome)>) -> ParseOutcome {
     rem.into_iter().fold(expr, |acc, val| parse_op(val, acc))
 }
 
-fn parse_number(input: &str) -> IResult<&str, Expr> {
+fn parse_number(input: &str) -> IResult<&str, ParseOutcome> {
     if input.is_empty(){
-        Ok(("", Expr::Empty))
+        Ok(("", PartialSuccess))
     }else {
-        map(nom::character::complete::i32, Expr::ENum)(input)    
+        map(nom::character::complete::i32, |x|ParseOutcome::Success(x))(input)    
     }
 
     
 }
 
-fn parse_unary(input: &str) -> IResult<&str, Expr>{
+fn parse_unary(input: &str) -> IResult<&str, ParseOutcome>{
  alt((parse_number,parse_minus,parse_plus))(input)
 }
 
-fn parse_minus(input: &str) -> IResult<&str, Expr>{
+fn parse_minus(input: &str) -> IResult<&str, ParseOutcome>{
     let (rem, _) = char('-')(input)?;
     let (rem2, e) = parse_unary(rem)?;
-    Ok((rem2, Expr::Minus(Box::new(e))))
+    
+    if let Success(i) = e{
+        Ok((rem2, Success(-i)))
+    }
+    else{
+        Ok((rem2, e))
+    }
 }
 
-fn parse_plus(input: &str) -> IResult<&str, Expr>{
+fn parse_plus(input: &str) -> IResult<&str, ParseOutcome>{
     let (rem, _) = char('+')(input)?;
     parse_unary(rem)
 }
 
-fn parse_op(tup: (char, Expr), expr1: Expr) -> Expr {
+fn parse_op(tup: (char, ParseOutcome), expr1: ParseOutcome) -> ParseOutcome {
     let (op, expr2) = tup;
-    match op {
-        '+' => Expr::EAdd(Box::new(expr1), Box::new(expr2)),
-        '-' => Expr::ESub(Box::new(expr1), Box::new(expr2)),
-        '*' => Expr::EMul(Box::new(expr1), Box::new(expr2)),
-        '/' => Expr::EDiv(Box::new(expr1), Box::new(expr2)),
-        _ => panic!("Unknown Operation"),
-    }
-}
 
-
-
-
-fn evaluate(expr: Expr) -> Option<i32> {
-    match expr {
-        Empty => None,
-        ENum(num) => Some(num),
-        Minus(e) => evaluate(*e).map(|x| -x),
-        EAdd(expr1, expr2) => {
-            evaluate(*expr1).and_then(|x| evaluate(*expr2).map(|y| x + y))
-        }
-        ESub(expr1, expr2) => {
-            evaluate(*expr1).and_then(|x| evaluate(*expr2).map(|y| x - y))
-        }
-        EMul(expr1, expr2) => {
-            evaluate(*expr1).and_then(|x| evaluate(*expr2).map(|y| x * y))
-        }
-        EDiv(expr1, expr2) => evaluate(*expr1).and_then(|x| {
-            evaluate(*expr2).and_then(|y| {
-                if y != 0 && x % y == 0 {
-                    Some(x / y)
-                } else {
-                    None
+    if let Success(i1) = expr1{
+        if let Success(i2) = expr2{
+            match op {
+                '+' => Success(i1 + i2),
+                '-' => Success(i1 - i2),
+                '*' => Success(i1 * i2),
+                '/' => {
+                    if i2 == 0 {  ParseOutcome::PartialSuccess}
+                    else if i1 % i2 != 0 {  ParseOutcome::PartialSuccess}
+                    else{ Success(i1 / i2)}
                 }
-            })
-        }),
+                _ => panic!("Unknown Operation"),
+            }
+        }else {
+            expr2
+        }
     }
+    else {expr1}
+
+    
 }
+
+
+
+
+// fn evaluate(expr: Expr) -> Option<i32> {
+//     match expr {
+//         Empty => None,
+//         ENum(num) => Some(num),
+//         Minus(e) => evaluate(*e).map(|x| -x),
+//         EAdd(expr1, expr2) => {
+//             evaluate(*expr1).and_then(|x| evaluate(*expr2).map(|y| x + y))
+//         }
+//         ESub(expr1, expr2) => {
+//             evaluate(*expr1).and_then(|x| evaluate(*expr2).map(|y| x - y))
+//         }
+//         EMul(expr1, expr2) => {
+//             evaluate(*expr1).and_then(|x| evaluate(*expr2).map(|y| x * y))
+//         }
+//         EDiv(expr1, expr2) => evaluate(*expr1).and_then(|x| {
+//             evaluate(*expr2).and_then(|y| {
+//                 if y != 0 && x % y == 0 {
+//                     Some(x / y)
+//                 } else {
+//                     None
+//                 }
+//             })
+//         }),
+//     }
+// }
 
 pub(crate) fn parse_and_evaluate(input: &str) -> ParseOutcome {    
     if input == "+" {return ParseOutcome::Failure;}
     match parse(input) {
-        Ok((rem, expr)) => if rem.is_empty() {
-            if let Some(i) = evaluate(expr) {
-                ParseOutcome::Success(i)
-            } else {
-                ParseOutcome::PartialSuccess
-            }
+        Ok((rem, expr)) =>
+         if rem.is_empty() { expr
         } else {
-
-            ParseOutcome::Failure
-
-            
+            ParseOutcome::Failure            
         },
         Err(_) => ParseOutcome::Failure
     }
@@ -133,7 +135,6 @@ pub(crate) fn parse_and_evaluate(input: &str) -> ParseOutcome {
 
 #[cfg(test)]
 mod tests {
-    use crate::core::parser::ParseOutcome::*;
     use crate::core::parser::*;
 
     macro_rules! parse_tests {

@@ -38,12 +38,12 @@ pub fn found_words_table_content() -> Html {
 pub fn found_words_table() -> Html {
     let found_words_state = use_selector(|state: &FullState| state.found_words.clone());
 
-    let checked_tab = found_words_state.most_recent.map_or(0, |x| x / GOALSIZE);
+    let checked_tab = found_words_state.most_recent.map_or(0, |x| (x - 1) / GOALSIZE);
 
     let tab_labels = (0..(100 / GOALSIZE))
         .map(|group_index| {
 
-            let complete = found_words_state.has_all_words(&mut num::iter::range( (group_index * GOALSIZE).max(1), (group_index + 1) * GOALSIZE));
+            let complete = found_words_state.has_all_words(&mut num::iter::range( (group_index * GOALSIZE) + 1, ((group_index + 1) * GOALSIZE) + 1));
 
             let style = if complete{Some("background-color: #2ecc40;")} else{None};
             let id = format!("tab-{group_index}");
