@@ -1,0 +1,7 @@
+- [ ] Use routing
+- [ ] Store history of all games
+- [ ] Roman Numerals (Century)
+- [ ] Tutorial
+- [ ] Touch to scroll FoundWords
+- [ ] Confetti Listener
+- [ ] Confetti in Rust
