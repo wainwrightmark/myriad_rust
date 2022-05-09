@@ -86,39 +86,8 @@ fn parse_op(tup: (char, ParseOutcome), expr1: ParseOutcome) -> ParseOutcome {
             expr2
         }
     }
-    else {expr1}
-
-    
+    else {expr1}    
 }
-
-
-
-
-// fn evaluate(expr: Expr) -> Option<i32> {
-//     match expr {
-//         Empty => None,
-//         ENum(num) => Some(num),
-//         Minus(e) => evaluate(*e).map(|x| -x),
-//         EAdd(expr1, expr2) => {
-//             evaluate(*expr1).and_then(|x| evaluate(*expr2).map(|y| x + y))
-//         }
-//         ESub(expr1, expr2) => {
-//             evaluate(*expr1).and_then(|x| evaluate(*expr2).map(|y| x - y))
-//         }
-//         EMul(expr1, expr2) => {
-//             evaluate(*expr1).and_then(|x| evaluate(*expr2).map(|y| x * y))
-//         }
-//         EDiv(expr1, expr2) => evaluate(*expr1).and_then(|x| {
-//             evaluate(*expr2).and_then(|y| {
-//                 if y != 0 && x % y == 0 {
-//                     Some(x / y)
-//                 } else {
-//                     None
-//                 }
-//             })
-//         }),
-//     }
-// }
 
 pub(crate) fn parse_and_evaluate(input: &str) -> ParseOutcome {    
     if input == "+" {return ParseOutcome::Failure;}

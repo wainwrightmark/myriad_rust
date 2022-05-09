@@ -82,57 +82,7 @@ impl Solver {
         
 
         crate::core::parser::parse_and_evaluate(&text)
-        // //let parse_result = meval::eval_str(text);
-
-        // if let Some(u) = parse_result {
-        //     let found_word = FoundWord {
-        //         result: u,
-        //         path: nodes.iter().map(|x| x.coordinate).collect_vec(),
-        //     };
-
-        //     if self.settings.allow(u) {
-        //         return WordCheckResult::Legal { word: found_word };
-        //     } else {
-        //         return WordCheckResult::Illegal { word: found_word };
-        //     }
-        // }
-
-        // WordCheckResult::Invalid
     }
-
-    // pub fn is_legal_prefix(&self, nodes: &Vector<Node>) -> bool {
-    //     if nodes.is_empty() {
-    //         return true;
-    //     }
-
-    //     //Check first letter
-    //     if let Letter::Operator {
-    //         operation: letter_op,
-    //     } = nodes[0].letter
-    //     {
-    //         if letter_op != Operation::Minus {
-    //             return false;
-    //         }
-    //     }
-
-    //     //Check for blanks
-    //     if nodes.iter().any(|f| f.letter == Letter::Blank) {
-    //         return false;
-    //     }
-
-    //     //Check there are no pairs of operators (except where second is minus)
-    //     for (a, b) in nodes.iter().tuple_windows() {
-    //         if let Letter::Operator { operation: op_b } = b.letter {
-    //             if op_b != Operation::Minus {
-    //                 if let Letter::Operator { operation: _ } = a.letter {
-    //                     return false;
-    //                 }
-    //             }
-    //         }
-    //     }
-
-    //     true
-    // }
 
     pub fn get_possible_solutions(&self, board: &Board) -> impl Iterator<Item = FoundWord> {
         let mut results = HashMap::<i32, FoundWord>::new();
