@@ -32,7 +32,7 @@ pub fn recent_words() -> Html {
                 <text
                 {key}
                 fill={word.get_color()}
-                class="foundWord"
+                class="recentWord"
                 {style}
                 pointer-events="none"
                 

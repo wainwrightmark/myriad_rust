@@ -28,12 +28,14 @@
     pointer-events: none;
   }
 
-  .foundWord {
+  .recentWord {
     -webkit-animation-name: disappearAnimation-webkit;
     animation-name: disappearAnimation;
     animation-fill-mode: forwards;
     animation-timing-function: ease-out;
+    font-size: 3em;
   }
+  
 
   @keyframes disappearAnimation-webkit {
     0% { opacity: 1; }

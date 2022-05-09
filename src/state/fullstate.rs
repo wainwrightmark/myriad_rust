@@ -220,16 +220,8 @@ impl Reducer<FullState> for Msg {
                         let len = ns.words.len().to_i32().unwrap();
 
                         if len % 10 == 0 {
-                            make_confetti(get_emoji(len / 10), 10 + len * 2);
+                            make_confetti(get_emoji(len / 10), 10 + len );
                         }
-
-                        // if state.found_words.words.len() >= 100{
-                        //     make_confetti(get_emoji(i) + "💯💯💯💯💯💯");
-                        // }
-
-                        // else if ns.has_all_words(&mut num::iter::range( ((i / GOALSIZE) *GOALSIZE).max(1), ((i / GOALSIZE) + 1) * GOALSIZE)){
-                        //     make_confetti(get_emoji(i));
-                        // }
                         ns.into()
                     } else {
                         state.found_words.clone()

@@ -10,12 +10,12 @@ pub mod web;
 #[function_component(App)]
 fn app() -> Html {
 
-    let viewBox = format!("0 0 {SVG_WIDTH} {SVG_HEIGHT}");
+    let view_box = format!("0 0 {SVG_WIDTH} {SVG_HEIGHT}");
     let width = format!("{SVG_WIDTH}");
     let height = format!("{SVG_HEIGHT}");
     html! {
         <div class="container">
-        <svg {viewBox} class="myriadSVG">
+        <svg viewBox={view_box} class="myriadSVG">
         <rect x="0" y="0" {width} {height} fill="white"/>
         <RopeSVG />
         <CirclesSVG />
