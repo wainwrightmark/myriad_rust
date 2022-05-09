@@ -107,7 +107,7 @@ impl FullState {
                 }
             });
 
-            let nodes = im::Vector::from_iter(nodes_iter);
+            let nodes = nodes_iter.collect_vec();
             let check_result = self.solver.check(&nodes);
 
             let final_result = match check_result {
