@@ -1,4 +1,4 @@
-use crate::core::parser::ParseOutcome;
+use crate::core::parser::ParseFail;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet, VecDeque};
 
@@ -53,16 +53,17 @@ impl std::fmt::Display for Node {
 }
 
 impl Solver {
-    pub fn check(&self, nodes: &Vec<Node>) -> ParseOutcome {
-        let text: String = nodes
-            .iter()
-            .map(|x| x.letter.to_string())
-            .collect::<Vec<String>>()
-            .join("");
-
+    pub fn check(&self, nodes: &Vec<Node>) -> Result<i32, ParseFail> {
+        // let text: String = nodes
+        //     .iter()
+        //     .map(|x| x.letter.to_string())
+        //     .collect::<Vec<String>>()
+        //     .join("");
+        let mut input = nodes     .iter()
+        .map(|x| x.letter).peekable();
         
 
-        crate::core::parser::parse_and_evaluate(&text)
+        crate::core::parser::parse_and_evaluate(&mut input)
     }
 
     pub fn get_possible_solutions(&self, board: &Board) -> impl Iterator<Item = FoundWord> {
@@ -79,7 +80,7 @@ impl Solver {
             let check_result = solver.check(&nodes);
 
             match check_result {
-                ParseOutcome::Success(i) => {
+                Ok(i) => {
 
                     if solver.settings.allow(i){
                         let found_word = FoundWord {
@@ -93,10 +94,10 @@ impl Solver {
                     
                     queue.push_back(nodes);
                 }
-                ParseOutcome::PartialSuccess => {
+                Err(ParseFail::PartialSuccess) => {
                     queue.push_back(nodes);
                 }
-                ParseOutcome::Failure => {}
+                Err(ParseFail::Failure) => {}
             }
         }
 

@@ -1,3 +1,4 @@
+use crate::core::parser::ParseFail;
 use crate::core::prelude::*;
 use crate::web::prelude::*;
 use crate::state::foundwordsstate::*;
@@ -111,7 +112,7 @@ impl FullState {
             let check_result = self.solver.check(&nodes);
 
             let final_result = match check_result {
-                crate::core::parser::ParseOutcome::Success(i) =>
+                Ok(i) =>
                 
                 if self.solver.settings.allow(i){
                     MoveResult::WordComplete {
@@ -127,13 +128,13 @@ impl FullState {
                     }
                 }
                 ,
-                crate::core::parser::ParseOutcome::PartialSuccess =>{
+                Err(ParseFail:: PartialSuccess) =>{
                     MoveResult::WordIncomplete  {
                         word,
                         coordinates: new_chosen_positions,
                     }
                 },
-                crate::core::parser::ParseOutcome::Failure => MoveResult::IllegalMove {},
+                Err(ParseFail:: Failure) => MoveResult::IllegalMove {},
             };
 
             return final_result;

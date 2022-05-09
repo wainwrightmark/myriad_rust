@@ -1,109 +1,142 @@
-use crate::core::parser::ParseOutcome::*;
-use nom::branch::alt;
-use nom::character::complete::{char};
-use nom::combinator::map;
-use nom::multi::many0;
-use nom::sequence::tuple;
-use nom::IResult;
+use std::iter::Peekable;
+
+use num::ToPrimitive;
+
+use crate::core::prelude::Letter;
+use crate::core::prelude::Operation;
+
+type R = Result<i32, ParseFail>;
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
-pub enum ParseOutcome {
-    Success(i32),
+pub enum ParseFail {
     PartialSuccess,
     Failure,
 }
 
-//TODO rewrite to use a token stream instead of a string
 
-fn parse(input: &str) -> IResult<&str, ParseOutcome> {
+fn parse<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R {
     parse_math_expr(input)
 }
 
-fn parse_math_expr(input: &str) -> IResult<&str, ParseOutcome> {
-    let (input, num1) = parse_term(input)?;
-    let (input, exprs) = many0(tuple((alt((char('+'), char('-'))), parse_term)))(input)?;
-    Ok((input, parse_expr(num1, exprs)))
-}
-
-fn parse_term(input: &str) -> IResult<&str, ParseOutcome> {
-    let (input, num1) = parse_unary(input)?;
-    let (input, exprs) = many0(tuple((alt((char('/'), char('*'))), parse_term)))(input)?;
-    Ok((input, parse_expr(num1, exprs)))
-}
-
-fn parse_expr(expr: ParseOutcome, rem: Vec<(char, ParseOutcome)>) -> ParseOutcome {
-    rem.into_iter().fold(expr, |acc, val| parse_op(val, acc))
-}
-
-fn parse_number(input: &str) -> IResult<&str, ParseOutcome> {
-    if input.is_empty(){
-        Ok(("", PartialSuccess))
-    }else {
-        map(nom::character::complete::i32, |x|ParseOutcome::Success(x))(input)    
-    }
-
+fn parse_math_expr<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R { //Plus and Minus
+    let num1 = parse_term(input)?;
     
-}
-
-fn parse_unary(input: &str) -> IResult<&str, ParseOutcome>{
- alt((parse_number,parse_minus,parse_plus))(input)
-}
-
-fn parse_minus(input: &str) -> IResult<&str, ParseOutcome>{
-    let (rem, _) = char('-')(input)?;
-    let (rem2, e) = parse_unary(rem)?;
-    
-    if let Success(i) = e{
-        Ok((rem2, Success(-i)))
-    }
-    else{
-        Ok((rem2, e))
-    }
-}
-
-fn parse_plus(input: &str) -> IResult<&str, ParseOutcome>{
-    let (rem, _) = char('+')(input)?;
-    parse_unary(rem)
-}
-
-fn parse_op(tup: (char, ParseOutcome), expr1: ParseOutcome) -> ParseOutcome {
-    let (op, expr2) = tup;
-
-    if let Success(i1) = expr1{
-        if let Success(i2) = expr2{
-            match op {
-                '+' => Success(i1 + i2),
-                '-' => Success(i1 - i2),
-                '*' => Success(i1 * i2),
-                '/' => {
-                    if i2 == 0 {  ParseOutcome::PartialSuccess}
-                    else if i1 % i2 != 0 {  ParseOutcome::PartialSuccess}
-                    else{ Success(i1 / i2)}
-                }
-                _ => panic!("Unknown Operation"),
+    let mut current = num1;
+    loop{
+        if let Some(Letter::Operator { operation }) = input.peek(){
+            match operation {
+                Operation::Plus => {
+                    input.next();
+                    let other = parse_term(input)?;                    
+                    current += other;
+                },
+                Operation::Times => panic!("Shoould not encounter times in top level math expr"),
+                
+                Operation::Minus => {
+                    input.next();
+                    let other = parse_term(input)?;                    
+                    current -= other;
+                },
+                Operation::Divide => panic!("Shoould not encounter divide in top level math expr"),
             }
-        }else {
-            expr2
+        }        
+        else{            
+            return Ok(current);
         }
     }
-    else {expr1}    
 }
 
-pub(crate) fn parse_and_evaluate(input: &str) -> ParseOutcome {    
-    if input == "+" {return ParseOutcome::Failure;}
-    match parse(input) {
-        Ok((rem, expr)) =>
-         if rem.is_empty() { expr
-        } else {
-            ParseOutcome::Failure            
-        },
-        Err(_) => ParseOutcome::Failure
+fn parse_term<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R { //Times and Divide
+    let num1 = parse_unary(input)?;    
+
+    let mut current = num1;
+    loop{
+        if let Some(Letter::Operator { operation }) = input.peek(){
+            match operation {
+                Operation::Plus => return Ok(current),
+                Operation::Times => {
+                    input.next();
+                    let multiplicant = parse_unary(input)?;
+                    current *= multiplicant;
+                },
+                Operation::Minus => return Ok(current),
+                Operation::Divide => {
+                    input.next();
+                    let  denominator = parse_unary(input)?;
+                    if denominator == 0 {return Err(ParseFail::PartialSuccess);}
+                    if current % denominator != 0 {return Err(ParseFail::PartialSuccess);}
+
+                    current /= denominator;
+                },
+            }
+        }        
+        else{            
+            return Ok( current);
+        }
+    }    
+}
+
+fn parse_number<J: Iterator<Item = Letter>>(input:&mut Peekable<J>) -> R {
+    let mut current = 0u32;
+    while let Some(Letter::Number { value }) = input.peek() {
+        current *= 10;
+        current += value;
+        input.next();
     }
 
+    Ok( current.to_i32().unwrap())
+}
+
+fn parse_unary<J: Iterator<Item = Letter>>(input:&mut Peekable<J>) -> R {
+
+    let mut negative = false;
+    loop{
+        if let Some(l) = input.peek(){
+            match l{
+                Letter::Number { value: _ } => return parse_number(input).map(|i|  if negative{-i} else{i} ),
+                Letter::Operator { operation } => {
+                    match operation{
+                        Operation::Plus => {input.next();},
+                        Operation::Times => return Err(ParseFail::Failure),
+                        Operation::Minus => {
+                            negative = !negative;
+                            input.next();},
+                        Operation::Divide =>return Err(ParseFail::Failure),
+                    }
+                },
+                Letter::Blank => return Err(ParseFail::Failure),
+            }
+        }
+        else {
+            return Err(ParseFail::PartialSuccess)
+        }
+    }
+}
+
+
+pub(crate) fn parse_and_evaluate<J: Iterator<Item = Letter>>(
+    input: &mut Peekable<J>,
+) -> Result<i32, ParseFail> {
+    if let Some(Letter::Operator { operation: Operation::Plus }) = input.peek()
+    {
+        return Err(ParseFail::Failure);
+    }
+    //if input == "+" {return Err(ParseFail::Failure);}
+    match parse(input) {
+        Ok( expr) => {
+            if input.peek() == None {
+                Ok(expr)
+            } else {
+                Err(ParseFail::PartialSuccess)
+            }
+        }
+        Err(e) => Err(e),
+    }
 }
 
 #[cfg(test)]
 mod tests {
+    use crate::core::parser::ParseFail::*;
     use crate::core::parser::*;
 
     macro_rules! parse_tests {
@@ -112,40 +145,47 @@ mod tests {
         #[test]
         fn $name() {
             let (input, expected) = $value;
-            assert_eq!(expected, parse_and_evaluate(input), "'{}'", input);
+
+            let letters: Option<Vec<Letter>> = input.chars().map(Letter::try_create).collect();
+
+            assert_eq!(expected, parse_and_evaluate(&mut letters.unwrap().into_iter().peekable()), "'{}'", input);
         }
     )*
     }
 }
 
     parse_tests! {
-        t0: ("", PartialSuccess),
-        t1: ("12", Success(12)),
+        t0: ("", Err(PartialSuccess)),
+        t1: ("12", Ok(12)),
 
-        t2: ("12+34", Success(46)),
-        t3: ("12-34", Success(-22)),
-        t4: ("12-34+15-9", Success(-16)),
-        t5: ("4*5", Success(20)),
-        t6: ("4*5+6", Success(26)),
-        t7: ("4/2", Success(2)),
-        t8: ("5/2", PartialSuccess),
-        t9: ("5/0", PartialSuccess),
-        t10: ("18-2*3", Success(12)),
-        t11: ("18*-1", Success(-18)),
-        t12: ("-2+3", Success(1)),
-        t13: ("18*", PartialSuccess),
-        t14: ("-12", Success(-12)),
-        t15: ("-", PartialSuccess),
-        t16: ("--", PartialSuccess),
-        t17: ("--1", Success(1)),
-        t18:("1+-", PartialSuccess),
-        t19:("1+*", Failure),
-        t20:("+*", Failure),
-        t21:("1-", PartialSuccess),
-        t22:("1--", PartialSuccess),
-        t23:("1*-", PartialSuccess),
-        t24:("1*-2", Success(-2)),
-        t25:("8-+7", Success(1)),
-        t26:("8-+", PartialSuccess),
+        t2: ("12+34", Ok(46)),
+        t3: ("12-34", Ok(-22)),
+        t4: ("12-34+15-9", Ok(-16)),
+        t5: ("4*5", Ok(20)),
+        t6: ("4*5+6", Ok(26)),
+        t7: ("4/2", Ok(2)),
+        t8: ("5/2", Err(PartialSuccess)),
+        t9: ("5/0", Err(PartialSuccess)),
+        t10: ("18-2*3", Ok(12)),
+        t11: ("18*-1", Ok(-18)),
+        t12: ("-2+3", Ok(1)),
+        t13: ("18*", Err(PartialSuccess)),
+        t14: ("-12", Ok(-12)),
+        t15: ("-", Err(PartialSuccess)),
+        t16: ("--", Err(PartialSuccess)),
+        t17: ("--1", Ok(1)),
+        t18:("1+-", Err(PartialSuccess)),
+        t19:("1+*", Err(Failure)),
+        t20:("+*", Err(Failure)),
+        t21:("1-", Err(PartialSuccess)),
+        t22:("1--", Err(PartialSuccess)),
+        t23:("1*-", Err(PartialSuccess)),
+        t24:("1*-2", Ok(-2)),
+        t25:("8-+7", Ok(1)),
+        t26:("8-+", Err(PartialSuccess)),
+        t27:("+", Err(Failure)),
+        t28:("+1", Err(Failure)),
+        t29:("*", Err(Failure)),
+        t30:("*1", Err(Failure)),
     }
 }
