@@ -1,3 +1,4 @@
+use num::ToPrimitive;
 use serde::*;
 
 use crate::core::prelude::Coordinate;
@@ -27,5 +28,17 @@ impl RotFlipState {
         let cy = (rotated.row as f64 + 0.5) * square_size;
 
         (cx, cy)
+    }
+
+    pub fn total_letters(&self)-> usize{
+        self.columns() * self.rows()
+    }
+
+    pub fn columns(&self) -> usize{
+        (self.max_coordinate.column + 1).to_usize().unwrap()
+    }
+    
+    pub fn rows(&self) -> usize{
+        (self.max_coordinate.row + 1).to_usize().unwrap()
     }
 }

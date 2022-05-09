@@ -1,6 +1,5 @@
 use std::rc::Rc;
 
-use crate::core::prelude::*;
 use crate::state::chosenpositionsstate::*;
 use crate::state::fullstate::FullState;
 use crate::state::rotflipstate::RotFlipState;
@@ -12,7 +11,6 @@ use yewdux::prelude::*;
 
 #[function_component(RopeSVG)]
 pub fn rope_svg_g() -> Html {
-    let board = use_selector(|state: &FullState| state.board.clone());
     let chosen_positions = use_selector(|state: &FullState| state.chosen_positions.clone());
     let rot_flip = use_selector(|state: &FullState| state.rotflip.clone());
 
@@ -22,7 +20,7 @@ pub fn rope_svg_g() -> Html {
         "1"
     };
 
-    let rope_d = get_path_data(board, chosen_positions, rot_flip, SQUARE_SIZE);
+    let rope_d = get_path_data( chosen_positions, rot_flip, SQUARE_SIZE);
 
     html! {
                   <path
@@ -39,12 +37,11 @@ pub fn rope_svg_g() -> Html {
 }
 
 fn get_path_data(
-    board: Rc<Rc<Board>>,
     chosen_positions: Rc<ChosenPositionsState>,
     rot_flip: Rc<RotFlipState>,
     square_size: f64,
 ) -> String {
-    let coordinates = get_path_coordinates(board, chosen_positions, rot_flip, square_size);
+    let coordinates = get_path_coordinates( chosen_positions, rot_flip, square_size);
 
     let d = "M ".to_string()
         + &coordinates
@@ -55,8 +52,7 @@ fn get_path_data(
     d
 }
 
-fn get_path_coordinates(
-    board: Rc<Rc<Board>>,
+fn get_path_coordinates(    
     chosen_positions: Rc<ChosenPositionsState>,
     rot_flip: Rc<RotFlipState>,
     square_size: f64,
@@ -73,10 +69,13 @@ fn get_path_coordinates(
             .map(|x| rot_flip.get_location(x, square_size))
             .collect_vec();
 
-        (0..board.letters.len())
+        let total_letters = rot_flip.total_letters();
+
+        (0..total_letters)
             .map(|i| {
-                let index = (i * chosen_positions.positions.len()) / board.letters.len();
-                let remainder = (i * chosen_positions.positions.len()) % board.letters.len();
+                let den = chosen_positions.positions.len();
+                let index = (i * den) / total_letters;
+                let remainder = (i * den) % total_letters;
 
                 let loc = locations[index];
 
@@ -86,18 +85,18 @@ fn get_path_coordinates(
                     let next = locations[index + 1];
 
                     (
-                        get_inbetween(loc.0, next.0, remainder as f64, board.letters.len() as f64),
-                        get_inbetween(loc.1, next.1, remainder as f64, board.letters.len() as f64),
+                        get_inbetween(loc.0, next.0, remainder as f64, total_letters as f64),
+                        get_inbetween(loc.1, next.1, remainder as f64, total_letters as f64),
                     )
                 }
             })
             .collect_vec()
     } else {
         let centre = (
-            square_size * board.columns.to_f64().unwrap() / 2.0,
-            square_size * board.rows().to_f64().unwrap() / 2.0,
+            square_size * rot_flip.columns().to_f64().unwrap() / 2.0,
+            square_size * rot_flip.rows().to_f64().unwrap() / 2.0,
         );
-        let zero_vec = vec![centre; board.columns as usize];
+        let zero_vec = vec![centre; rot_flip.columns() as usize];
         zero_vec
     }
 }
