@@ -3,6 +3,13 @@ use crate::web::newgamebutton::*;
 use yew::prelude::*;
 use yewdux::prelude::*;
 
+
+#[function_component(FoundWordsTabHeader)]
+pub fn found_words_tab_header(index : usize) -> Html{
+
+}
+
+
 #[function_component(FoundWordsTableContent)]
 pub fn found_words_table_content() -> Html {
     let found_words_state = use_selector(|state: &FullState| state.found_words.clone());
