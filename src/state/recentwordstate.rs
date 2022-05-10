@@ -6,13 +6,21 @@ pub struct RecentWordState {
     pub recent_words: Vec<RecentWord>,
 }
 
+#[derive(PartialEq, Clone, Debug)]
+pub struct RecentWord {    
+    pub number: i32,
+    pub word_type: FoundWordType,
+    pub expiry_time: instant::Instant,
+    pub coordinate: Coordinate,
+}
+
 impl RecentWordState {
-    fn with_word(self, word: String, word_type: FoundWordType, coordinate: Coordinate) -> Self {
+    fn with_word(self, word: i32, word_type: FoundWordType, coordinate: Coordinate) -> Self {
         let now = instant::Instant::now();
         let linger = word_type.linger_duration_ms();
 
         let r_word = RecentWord {
-            word,
+            number: word,
             word_type,
             coordinate,
             expiry_time: now + instant::Duration::from_millis(linger),
@@ -49,7 +57,7 @@ impl RecentWordState {
     pub fn after_move_result(self, move_result: &MoveResult, is_new_word: bool) -> Self {
         match move_result {
             MoveResult::WordComplete { word, coordinates } => self.with_word(
-                word.result.to_string(),
+                word.result,
                 if is_new_word {
                     FoundWordType::Found
                 } else {
@@ -58,7 +66,7 @@ impl RecentWordState {
                 *coordinates.last().unwrap(),
             ),
             MoveResult::WordOutsideRange { word, coordinates } => self.with_word(
-                word.clone(),
+                word.result,
                 FoundWordType::NotInRange,
                 *coordinates.last().unwrap(),
             ),
@@ -115,10 +123,4 @@ impl RecentWord {
     }
 }
 
-#[derive(PartialEq, Clone, Debug)]
-pub struct RecentWord {
-    pub word: String,
-    pub word_type: FoundWordType,
-    pub expiry_time: instant::Instant,
-    pub coordinate: Coordinate,
-}
+

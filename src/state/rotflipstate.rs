@@ -3,7 +3,7 @@ use serde::*;
 
 use crate::core::prelude::Coordinate;
 
-#[derive(PartialEq, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Clone, Copy, Serialize, Deserialize)]
 pub struct RotFlipState {
     pub rotate: i8,
     pub flip: bool,

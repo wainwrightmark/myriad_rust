@@ -8,7 +8,7 @@ pub enum MoveResult {
         coordinates: Vec<Coordinate>,
     },
     WordOutsideRange{
-        word: String,
+        word: FoundWord,
         coordinates: Vec<Coordinate>,
     },
     WordIncomplete {

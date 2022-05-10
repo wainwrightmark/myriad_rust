@@ -18,6 +18,9 @@ impl Letter {
             '-' => Some(Letter::Operator {
                 operation: Operation::Minus,
             }),
+            '⨉' => Some(Letter::Operator {
+                operation: Operation::Plus,
+            }),
             '+' => Some(Letter::Operator {
                 operation: Operation::Plus,
             }),
@@ -82,7 +85,7 @@ impl std::fmt::Display for Operation {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let r = match self {
             Operation::Plus => "+",
-            Operation::Times => "*",
+            Operation::Times => "⨉",
             Operation::Minus => "-",
             Operation::Divide => "/",
         };

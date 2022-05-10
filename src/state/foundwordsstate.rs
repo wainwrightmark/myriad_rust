@@ -4,11 +4,12 @@ use num::{iter::Range, ToPrimitive};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
+
+
 #[derive(PartialEq, Clone, Serialize, Deserialize, Default)]
 pub struct FoundWordsState {
     pub words: BTreeMap<i32, FoundWord>,
     pub most_recent: Option<i32>,
-    pub locked_tab_index: Option<usize>,
 }
 
 impl FoundWordsState {
@@ -21,7 +22,6 @@ impl FoundWordsState {
         FoundWordsState {
             words: new_map,
             most_recent: Some(i),
-            locked_tab_index: self.locked_tab_index,
         }
     }
 
@@ -29,20 +29,13 @@ impl FoundWordsState {
         self.words.contains_key(&word.result)
     }
 
-    pub fn selected_index(&self) -> usize {
-        if let Some(i) = self.locked_tab_index {
-            i
-        } else if let Some(r) = self.most_recent {
-            ((r - 1) / 20).to_usize().unwrap_or(0)
-        } else {
-            0
-        }
-    }
 
-    pub fn is_goal_complete(&self, index: i32) -> bool {
+    pub fn is_goal_complete(&self, index: usize) -> bool {
+        let u = index.to_i32().unwrap();
+
         self.has_all_words(&mut num::iter::range(
-            (index * GOALSIZE) + 1,
-            ((index + 1) * GOALSIZE) + 1,
+            (u * GOALSIZE) + 1,
+            ((u + 1) * GOALSIZE) + 1,
         ))
     }
 
