@@ -1,32 +1,43 @@
+use std::ops::Deref;
+
 use crate::state::fullstate::*;
 use yew::prelude::*;
 use yewdux::prelude::*;
 use crate::web::SQUARE_SIZE;
 
+
 #[function_component(RecentWords)]
 pub fn recent_words() -> Html {
     let recent_words_state = use_selector(|state: &FullState| state.recent_words.clone());
     let rot_flip = use_selector(|state: &FullState| state.rotflip.clone());
+    let selected_index = use_selector(|state: &FullState| state.selected_tab_state.index).deref().clone();
 
     let recent_words = 
     recent_words_state.recent_words
         .iter()
         .rev()
         .map(|word| {
-            let key = format!("{}_({:?})", word.word, word.expiry_time);
+            let key = format!("{}_({:?})", word.number, word.expiry_time);
 
-            let (cx, cy) = rot_flip
+            let (mut startx, starty) = rot_flip
                 .get_location(&word.coordinate, SQUARE_SIZE);
 
-            let style = format!("animation-duration: {}ms;", word.linger_duration_ms());
+            if word.coordinate.column == 2{
+                startx = startx * 0.8; //little hack to
+            }
 
-            let text_anchor = if word.coordinate.column == 0 {
-                "start"
-            } else if word.coordinate.column == rot_flip.max_coordinate.column {
-                "end"
-            } else {
-                "middle"
-            };
+            let(endx, endy) = crate::web::foundwords::get_found_word_position(word.number, selected_index);
+
+            let style = format!("animation-duration: {}ms; --startx: {}px; --starty: {}px; --endx: {}px; --endy: {}px;",
+             word.linger_duration_ms(),
+             startx,
+             starty,
+             endx + 2.5,
+             endy + 5.0             
+            );
+
+            //word.word
+            let text = if word.number < 10 {format!(" {:0>1}",word.number)} else{format!("{:0>2}",word.number)} ;
 
             html! {
                 <text
@@ -35,12 +46,8 @@ pub fn recent_words() -> Html {
                 class="recentWord"
                 {style}
                 pointer-events="none"
-                
-                x={format!("{}", cx)}
-                y={format!("{}", cy)}
-                dominant-baseline="text-bottom"
-                text-anchor={text_anchor}>
-                {word.word.clone()}
+                >
+                {text}
 
               </text>
             }
