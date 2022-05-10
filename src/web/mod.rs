@@ -13,7 +13,7 @@ pub const TAB_HEADER_HEIGHT : f64 = 60.0;
 pub const FOUND_WORD_WIDTH : f64 = 30.0;
 pub const FOUND_WORD_HEIGHT : f64 = 30.0;
 pub const FOUND_WORD_MARGIN : f64 = 5.0;
-pub const FOUND_WORD_PADDING : f64 = SVG_WIDTH - (FOUND_WORD_WIDTH * 10.0 + FOUND_WORD_MARGIN * 9.0);
+pub const FOUND_WORD_PADDING : f64 = (SVG_WIDTH - (FOUND_WORD_WIDTH * 10.0 + FOUND_WORD_MARGIN * 9.0)) / 2.0;
 
 
 pub mod prelude {
