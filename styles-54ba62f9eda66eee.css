@@ -1,0 +1,149 @@
+.myriadSVG {
+  font-family: inherit;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  width: 100%;
+  font-weight: bold;
+}
+
+.square {
+  transition: 1s ease-out;
+}
+
+.circle {
+  stroke-width: 7.2;
+
+  transition: 3s cubic-bezier(0, 1.45, 0.72, 1.33)
+}
+
+.circle:hover {
+  transform: scale(1.1)
+}
+
+.circle-text {
+  font-size: 3em;
+  user-select: none;
+  pointer-events: none;
+}
+
+.recentWord {
+  font-family: monospace;
+  animation-name: disappearAnimation;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-out;
+  font-size: 3em;
+  dominant-baseline: hanging;
+  text-anchor: start;
+}
+
+
+@keyframes disappearAnimation {
+  0% {
+    opacity: 1;
+    transform: translate(var(--startx), var(--starty)) ;
+  }
+
+  50% {
+    opacity: 0.2;
+    transform: translate(var(--endx), var(--endy)) scale(0.5) ;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(var(--endx), var(--endy)) scale(0.5) ;
+  }
+}
+
+.container {
+  max-width: 400px;
+  margin: auto;
+}
+
+
+.rope {
+  stroke: LightBlue;
+  transition: 1s ease-out;
+  fill: none;
+  pointer-events: none;
+}
+
+
+/*
+Tab Header
+*/
+
+
+.tab-header{
+  stroke-width: 1;
+  stroke: black;
+  fill: white;
+}
+
+.selected-tab{
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+
+.locked-out-tab{
+  fill: gray;
+  opacity: 50%;
+}
+
+.complete-tab{
+  fill: green;
+}
+
+.tab-header-text{  
+  color: #111;
+  line-height: 1.5;
+  font-family: monospace;
+  font-weight: bold;
+  dominant-baseline: middle;
+  text-anchor: middle;
+  box-sizing: inherit;
+  font-size: 3em;
+  user-select: none;
+  pointer-events: none;
+  fill: white;
+   stroke: black;
+   transform: translate(30px, 30px);
+}
+
+/*
+Found Word
+*/
+
+.found-word-group{
+  transition: all 1s;
+}
+
+.found-word-text{
+  -webkit-text-size-adjust: 100%;
+  color: #111;
+  line-height: 1.5;
+  font-family: monospace;
+  font-weight: bold;
+  dominant-baseline: hanging;
+  text-anchor: start;
+  box-sizing: inherit;
+  font-size: 1.5em;
+  user-select: none;
+  pointer-events: none;
+  fill: white;
+   stroke: black;
+   transform: translate(2.5px, 5px);
+}
+
+.found-word-box{
+  stroke-width: 1;
+  stroke-linejoin: round;
+  fill: blue;
+  transition: fill 5s ease-in;
+}
+
+.found-word-box-success{
+  fill: green;
+}
