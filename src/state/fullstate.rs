@@ -35,7 +35,6 @@ impl FullState {
         match move_result {
             MoveResult::WordComplete {
                 word: _,
-                coordinates: _,
             } => ("darkgreen".to_string(), "pointer".to_string()),
             MoveResult::WordIncomplete {
                 word: _,
@@ -43,7 +42,6 @@ impl FullState {
             } => ("green".to_string(), "pointer".to_string()),
             MoveResult::WordOutsideRange {
                 word: _,
-                coordinates: _,
             } => ("green".to_string(), "pointer".to_string()),
             MoveResult::WordAbandoned => ("darkgreen".to_string(), "pointer".to_string()),
             MoveResult::MoveRetraced {
@@ -96,16 +94,8 @@ impl FullState {
 
             let word = self.board.get_word_text(&new_chosen_positions);
 
-            let nodes_iter = new_chosen_positions.iter().map(|c| {
-                let letter = &self.board.get_letter_at_coordinate(c);
-                Node {
-                    coordinate: *c,
-                    letter: *letter,
-                }
-            });
-
-            let nodes = nodes_iter.collect_vec();
-            let check_result = self.solver.check(&nodes);
+            
+            let check_result = self.board.check(&new_chosen_positions);
 
             let final_result = match check_result {
                 Ok(i) => {
@@ -113,17 +103,15 @@ impl FullState {
                         MoveResult::WordComplete {
                             word: FoundWord {
                                 result: i,
-                                path: nodes.iter().map(|x| x.coordinate).collect_vec(),
-                            },
-                            coordinates: new_chosen_positions,
+                                path: new_chosen_positions,
+                            }
                         }
                     } else {
                         MoveResult::WordOutsideRange {
                             word: FoundWord {
                                 result: i,
-                                path: nodes.iter().map(|x| x.coordinate).collect_vec(),
-                            },
-                            coordinates: new_chosen_positions,
+                                path: new_chosen_positions,
+                            }
                         }
                     }
                 }

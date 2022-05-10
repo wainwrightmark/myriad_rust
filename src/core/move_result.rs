@@ -4,12 +4,10 @@ use super::solver::FoundWord;
 #[derive(PartialEq, Clone, Debug)]
 pub enum MoveResult {
     WordComplete {
-        word: FoundWord,
-        coordinates: Vec<Coordinate>,
+        word: FoundWord
     },
     WordOutsideRange{
-        word: FoundWord,
-        coordinates: Vec<Coordinate>,
+        word: FoundWord
     },
     WordIncomplete {
         word: String,

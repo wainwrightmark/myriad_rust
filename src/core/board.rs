@@ -1,6 +1,7 @@
 use crate::core::prelude::*;
 use itertools::*;
 use serde::{Deserialize, Serialize};
+use crate::core::parser::*;
 
 #[derive(PartialEq, Debug, Eq, Hash, Clone, Serialize, Deserialize)]
 pub struct Board {
@@ -21,6 +22,15 @@ impl std::fmt::Display for Board {
 }
 
 impl Board {
+
+    pub fn check(&self, nodes: &Vec<Coordinate>) -> Result<i32, ParseFail> {
+        let mut input = nodes.iter()
+        .map(|x| self.get_letter_at_coordinate(x) ).peekable();
+        
+
+        crate::core::parser::parse_and_evaluate(&mut input)
+    }
+
     pub fn try_create(letters: &str) -> Option<Board> {
         let r: Option<Vec<Letter>> = letters.chars().map(Letter::try_create).collect();
 

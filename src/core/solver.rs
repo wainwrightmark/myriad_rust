@@ -1,4 +1,4 @@
-use crate::core::parser::ParseFail;
+use crate::core::{parser::ParseFail, board};
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet, VecDeque};
 
@@ -40,44 +40,26 @@ pub struct Solver {
     pub settings: SolveSettings,
 }
 
-#[derive(PartialEq, Debug, Clone, Copy, Serialize, Deserialize)]
-pub struct Node {
-    pub letter: Letter,
-    pub coordinate: Coordinate,
-}
 
-impl std::fmt::Display for Node {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{} at {}", self.letter, self.coordinate)
-    }
-}
 
 impl Solver {
-    pub fn check(&self, nodes: &Vec<Node>) -> Result<i32, ParseFail> {
-        // let text: String = nodes
-        //     .iter()
-        //     .map(|x| x.letter.to_string())
-        //     .collect::<Vec<String>>()
-        //     .join("");
-        let mut input = nodes     .iter()
-        .map(|x| x.letter).peekable();
-        
-
-        crate::core::parser::parse_and_evaluate(&mut input)
-    }
+    
 
     pub fn get_possible_solutions(&self, board: &Board) -> impl Iterator<Item = FoundWord> {
         let mut results = HashMap::<i32, FoundWord>::new();
-        let mut queue = VecDeque::<Vec<Node>>::new();
+        let mut queue = VecDeque::<Vec<Coordinate>>::new();
         let max_coordinate = board.max_coordinate();
 
+        
+
         fn check(
-            nodes: Vec<Node>,
+            coordinates: Vec<Coordinate>,
             solver: &Solver,
-            queue: &mut VecDeque<Vec<Node>>,
+            queue: &mut VecDeque<Vec<Coordinate>>,
             results: &mut HashMap<i32, FoundWord>,
+            board: &Board
         ) {
-            let check_result = solver.check(&nodes);
+            let check_result = board.check(&coordinates);
 
             match check_result {
                 Ok(i) => {
@@ -85,17 +67,17 @@ impl Solver {
                     if solver.settings.allow(i){
                         let found_word = FoundWord {
                             result: i,
-                            path: nodes.iter().map(|x| x.coordinate).collect_vec(),
+                            path: coordinates.clone(),
                         };
     
                         results.insert(i, found_word);
                     }
 
                     
-                    queue.push_back(nodes);
+                    queue.push_back(coordinates);
                 }
                 Err(ParseFail::PartialSuccess) => {
-                    queue.push_back(nodes);
+                    queue.push_back(coordinates);
                 }
                 Err(ParseFail::Failure) => {}
             }
@@ -103,32 +85,29 @@ impl Solver {
 
         for coordinate in board.max_coordinate().get_positions_up_to() {
             let letter = board.get_letter_at_coordinate(&coordinate);
-            let node = Node { letter, coordinate };
-            let nodes = vec![node];
+            
+            let coordinates = vec![coordinate];
 
-            check(nodes, self, &mut queue, &mut results)
+            check(coordinates, self, &mut queue, &mut results, board)
         }
 
         while !queue.is_empty() {
             let nodes = queue.pop_front().unwrap();
             let c = nodes.last().unwrap();
             let coordinates: HashSet<Coordinate> =
-                HashSet::from_iter(nodes.iter().rev().map(|x| x.coordinate));
+                HashSet::from_iter(nodes.iter().rev().map(|&x| x));
 
-            for adjacent in c.coordinate.get_adjacent_positions(&max_coordinate) {
+            for adjacent in c.get_adjacent_positions(&max_coordinate) {
                 if coordinates.contains(&adjacent) {
                     continue;
                 }
 
                 let letter = board.get_letter_at_coordinate(&adjacent);
-                let new_node = Node {
-                    letter,
-                    coordinate: adjacent,
-                };
+                
                 let mut new_nodes = nodes.clone();
-                new_nodes.push(new_node);
+                new_nodes.push(adjacent);
 
-                check(new_nodes, self, &mut queue, &mut results)
+                check(new_nodes, self, &mut queue, &mut results, board)
             }
         }
 

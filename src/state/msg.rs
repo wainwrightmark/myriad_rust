@@ -143,7 +143,6 @@ impl Reducer<FullState> for Msg {
                 let mut new_selected_tab_state = state.selected_tab_state;
                 let new_found_words: Rc<FoundWordsState> = if let MoveResult::WordComplete {
                     word: found_word,
-                    coordinates: _,
                 } = move_result.clone()
                 {
                     is_new_word = !state.found_words.has_word(&found_word);

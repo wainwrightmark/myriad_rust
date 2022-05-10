@@ -10,17 +10,15 @@ impl ChosenPositionsState {
     pub fn after_move_result(self, move_result: &MoveResult) -> Self {
         match move_result {
             MoveResult::WordComplete {
-                word: _,
-                coordinates,
+                word,
             } => Self {
-                positions: coordinates.to_owned(),
+                positions: word.path .to_owned(),
                 ..self
             },
             MoveResult::WordOutsideRange {
-                word: _,
-                coordinates,
+                word,
             } => Self {
-                positions: coordinates.to_owned(),
+                positions: word.path.to_owned(),
                 ..self
             },
             MoveResult::WordIncomplete {

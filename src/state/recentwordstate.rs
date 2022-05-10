@@ -56,19 +56,19 @@ impl RecentWordState {
 
     pub fn after_move_result(self, move_result: &MoveResult, is_new_word: bool) -> Self {
         match move_result {
-            MoveResult::WordComplete { word, coordinates } => self.with_word(
+            MoveResult::WordComplete { word } => self.with_word(
                 word.result,
                 if is_new_word {
                     FoundWordType::Found
                 } else {
                     FoundWordType::PreviouslyFound
                 },
-                *coordinates.last().unwrap(),
+                *word.path.last().unwrap(),
             ),
-            MoveResult::WordOutsideRange { word, coordinates } => self.with_word(
+            MoveResult::WordOutsideRange { word } => self.with_word(
                 word.result,
                 FoundWordType::NotInRange,
-                *coordinates.last().unwrap(),
+                *word.path.last().unwrap(),
             ),
             MoveResult::WordAbandoned => self.clear_expired(),
             MoveResult::MoveRetraced {
