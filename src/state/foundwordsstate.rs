@@ -4,8 +4,6 @@ use num::{iter::Range, ToPrimitive};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
-
-
 #[derive(PartialEq, Clone, Serialize, Deserialize, Default)]
 pub struct FoundWordsState {
     pub words: BTreeMap<i32, FoundWord>,
@@ -28,7 +26,6 @@ impl FoundWordsState {
     pub fn has_word(&self, word: &FoundWord) -> bool {
         self.words.contains_key(&word.result)
     }
-
 
     pub fn is_goal_complete(&self, index: usize) -> bool {
         let u = index.to_i32().unwrap();

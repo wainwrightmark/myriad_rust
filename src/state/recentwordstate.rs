@@ -7,7 +7,7 @@ pub struct RecentWordState {
 }
 
 #[derive(PartialEq, Clone, Debug)]
-pub struct RecentWord {    
+pub struct RecentWord {
     pub number: i32,
     pub word_type: FoundWordType,
     pub expiry_time: instant::Instant,
@@ -122,5 +122,3 @@ impl RecentWord {
         }
     }
 }
-
-

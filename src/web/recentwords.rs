@@ -9,8 +9,8 @@ use crate::web::SQUARE_SIZE;
 #[function_component(RecentWords)]
 pub fn recent_words() -> Html {
     let recent_words_state = use_selector(|state: &FullState| state.recent_words.clone());
-    let rot_flip = use_selector(|state: &FullState| state.rotflip.clone());
-    let selected_index = use_selector(|state: &FullState| state.selected_tab_state.index).deref().clone();
+    let rot_flip = use_selector(|state: &FullState| state.rotflip);
+    let selected_index = *use_selector(|state: &FullState| state.selected_tab_state.index).deref();
 
     let recent_words = 
     recent_words_state.recent_words
@@ -23,7 +23,7 @@ pub fn recent_words() -> Html {
                 .get_location(&word.coordinate, SQUARE_SIZE);
 
             if word.coordinate.column == 2{
-                startx = startx * 0.8; //little hack to
+                startx *= 0.8; //little hack to prevent large numbers from being offscreen
             }
 
             let(endx, endy) = crate::web::foundwords::get_found_word_position(word.number, selected_index, true);

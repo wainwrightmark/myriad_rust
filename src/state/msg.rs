@@ -1,8 +1,8 @@
 use crate::core::prelude::*;
+use crate::state::chosenpositionsstate::*;
 use crate::state::foundwordsstate::*;
 use crate::state::fullstate::*;
 use crate::web::prelude::*;
-use crate::state::chosenpositionsstate::*;
 use log::debug;
 
 use num::ToPrimitive;
@@ -11,14 +11,13 @@ use std::ops::Deref;
 use std::rc::Rc;
 use yewdux::prelude::*;
 
-
 pub enum Msg {
     NewGame,
     Move { coordinate: Coordinate },
     SelectTab { index: usize },
-    Find {number: i32},
-    FlipAndRotateAbsolute {rotate: i8, flip : bool},
-    FlipAndRotateRelative {rotate: i8, flip : bool}
+    Find { number: i32 },
+    FlipAndRotateAbsolute { rotate: i8, flip: bool },
+    FlipAndRotateRelative { rotate: i8, flip: bool },
 }
 
 fn get_emoji(i: i32) -> String {
@@ -41,62 +40,65 @@ fn get_emoji(i: i32) -> String {
 impl Reducer<FullState> for Msg {
     fn apply(&self, state: Rc<FullState>) -> Rc<FullState> {
         match self {
-
-            Msg::FlipAndRotateRelative { rotate, flip }=>{
-                FullState{
-                    board: state.board.clone(),
-                    solver: state.solver.clone(),
-                    rotflip: super::rotflipstate::RotFlipState { rotate: state.rotflip.rotate + rotate.clone(), flip: state.rotflip.flip ^ flip.clone(), max_coordinate: state.rotflip.max_coordinate },
-                    chosen_positions: state.chosen_positions.clone(),
-                    recent_words: state.recent_words.clone(),
-                    found_words: state.found_words.clone(),
-                    selected_tab_state: state.selected_tab_state
-                }.into()
+            Msg::FlipAndRotateRelative { rotate, flip } => FullState {
+                board: state.board.clone(),
+                solver: state.solver.clone(),
+                rotflip: super::rotflipstate::RotFlipState {
+                    rotate: state.rotflip.rotate + *rotate,
+                    flip: state.rotflip.flip ^ *flip,
+                    max_coordinate: state.rotflip.max_coordinate,
+                },
+                chosen_positions: state.chosen_positions.clone(),
+                recent_words: state.recent_words.clone(),
+                found_words: state.found_words.clone(),
+                selected_tab_state: state.selected_tab_state,
             }
+            .into(),
 
-            Msg::FlipAndRotateAbsolute { rotate, flip }=>{
-                FullState{
-                    board: state.board.clone(),
-                    solver: state.solver.clone(),
-                    rotflip: super::rotflipstate::RotFlipState { rotate: rotate.clone(), flip: flip.clone(), max_coordinate: state.rotflip.max_coordinate },
-                    chosen_positions: state.chosen_positions.clone(),
-                    recent_words: state.recent_words.clone(),
-                    found_words: state.found_words.clone(),
-                    selected_tab_state: state.selected_tab_state
-                }.into()
+            Msg::FlipAndRotateAbsolute { rotate, flip } => FullState {
+                board: state.board.clone(),
+                solver: state.solver.clone(),
+                rotflip: super::rotflipstate::RotFlipState {
+                    rotate: *rotate,
+                    flip: *flip,
+                    max_coordinate: state.rotflip.max_coordinate,
+                },
+                chosen_positions: state.chosen_positions.clone(),
+                recent_words: state.recent_words.clone(),
+                found_words: state.found_words.clone(),
+                selected_tab_state: state.selected_tab_state,
             }
+            .into(),
 
-            Msg::Find{number}=>{
-
-                    if let Some(word) = state.found_words.words.get(number){
-                        FullState{
-                            board: state.board.clone(),
-                            solver: state.solver.clone(),
-                            rotflip: state.rotflip.clone(),
-                            chosen_positions: ChosenPositionsState{positions: word.path.clone()},
-                            recent_words: state.recent_words.clone(),
-                            found_words: state.found_words.clone(),
-                            selected_tab_state: state.selected_tab_state
-                        }.into()
+            Msg::Find { number } => {
+                if let Some(word) = state.found_words.words.get(number) {
+                    FullState {
+                        board: state.board.clone(),
+                        solver: state.solver.clone(),
+                        rotflip: state.rotflip,
+                        chosen_positions: ChosenPositionsState {
+                            positions: word.path.clone(),
+                        },
+                        recent_words: state.recent_words.clone(),
+                        found_words: state.found_words.clone(),
+                        selected_tab_state: state.selected_tab_state,
                     }
-                    else{
-                        state
-                    }
-
-                
+                    .into()
+                } else {
+                    state
+                }
             }
 
-            Msg::SelectTab { index } => {
-                FullState{
-                    board: state.board.clone(),
-                    solver: state.solver.clone(),
-                    rotflip: state.rotflip.clone(),
-                    chosen_positions: state.chosen_positions.clone(),
-                    recent_words: state.recent_words.clone(),
-                    found_words: state.found_words.clone(),
-                    selected_tab_state: state.selected_tab_state.tab_clicked(index.clone())
-                }.into()
+            Msg::SelectTab { index } => FullState {
+                board: state.board.clone(),
+                solver: state.solver.clone(),
+                rotflip: state.rotflip,
+                chosen_positions: state.chosen_positions.clone(),
+                recent_words: state.recent_words.clone(),
+                found_words: state.found_words.clone(),
+                selected_tab_state: state.selected_tab_state.tab_clicked(*index),
             }
+            .into(),
 
             Msg::NewGame => {
                 let solver = Solver {
@@ -146,9 +148,9 @@ impl Reducer<FullState> for Msg {
                 {
                     is_new_word = !state.found_words.has_word(&found_word);
                     if is_new_word {
-                        new_selected_tab_state = new_selected_tab_state.number_found(found_word.result);
+                        new_selected_tab_state =
+                            new_selected_tab_state.number_found(found_word.result);
                         let ns = state.found_words.with_word(found_word);
-                        
 
                         let len = ns.words.len().to_i32().unwrap();
 
@@ -172,11 +174,11 @@ impl Reducer<FullState> for Msg {
                 FullState {
                     board: state.board.clone(),
                     solver: state.solver.clone(),
-                    rotflip: state.rotflip.clone(),
+                    rotflip: state.rotflip,
                     chosen_positions: new_chosen_positions,
                     recent_words: new_recent_words.into(),
                     found_words: new_found_words,
-                    selected_tab_state: new_selected_tab_state
+                    selected_tab_state: new_selected_tab_state,
                 }
                 .into()
             }

@@ -30,15 +30,15 @@ impl RotFlipState {
         (cx, cy)
     }
 
-    pub fn total_letters(&self)-> usize{
+    pub fn total_letters(&self) -> usize {
         self.columns() * self.rows()
     }
 
-    pub fn columns(&self) -> usize{
+    pub fn columns(&self) -> usize {
         (self.max_coordinate.column + 1).to_usize().unwrap()
     }
-    
-    pub fn rows(&self) -> usize{
+
+    pub fn rows(&self) -> usize {
         (self.max_coordinate.row + 1).to_usize().unwrap()
     }
 }
