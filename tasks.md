@@ -10,3 +10,4 @@
 - [ ] Select Found word to see solution
 - [ ] Cheat mode
 - [ ] Accessibility
+- [ ] Idle animations

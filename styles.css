@@ -119,6 +119,11 @@ Found Word
 .found-word-group{
   transition: all 1s;
 }
+.found-word-group :active{
+  transition: all 1s;
+  stroke-width: 5;
+  stroke: black;
+}
 
 .found-word-text{
   -webkit-text-size-adjust: 100%;

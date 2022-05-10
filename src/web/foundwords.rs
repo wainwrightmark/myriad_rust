@@ -38,7 +38,9 @@ pub fn more_tab_header(properties: &MoreTabHeaderProperties) -> Html {
         Some("selected-tab")
     } else if selected_tab_state.locked {
         Some("locked-out-tab")
-    }else{None};
+    } else {
+        None
+    };
 
     let class = classes!("tab-header", selected);
     let style = format!(
@@ -71,7 +73,9 @@ pub fn found_words_tab_header(
         Some("selected-tab")
     } else if selected_tab_state.locked {
         Some("locked-out-tab")
-    }else{None};
+    } else {
+        None
+    };
     let complete = if state.is_goal_complete(index) {
         Some("complete-tab")
     } else {
@@ -135,11 +139,11 @@ pub struct MoreTabProperties {
 }
 #[function_component(MoreTabContent)]
 pub fn more_tab_content(properties: &MoreTabProperties) -> Html {
-    let on_click: Option<Callback<MouseEvent>> = Some(Dispatch::new().apply_callback(|_| Msg::NewGame));
+    let on_click: Option<Callback<MouseEvent>> =
+        Some(Dispatch::new().apply_callback(|_| Msg::NewGame));
 
-    let (x, y) = get_found_word_position(101, properties.selected_tab);
-    let (x2, y2) = get_found_word_position(105, properties.selected_tab);
-
+    let (x, y) = get_found_word_position(101, properties.selected_tab, false);
+    let (x2, y2) = get_found_word_position(105, properties.selected_tab, false);
 
     html!(
         <>
@@ -147,7 +151,7 @@ pub fn more_tab_content(properties: &MoreTabProperties) -> Html {
         <FoundWordBox id={"score_counter"} text={format!("{:0>2}%", properties.total_found)} x={x2} y={y2} width_units={1.5} rect_class= {"found-word-box"} />
         </>
 
-     
+
     )
 }
 
@@ -157,6 +161,7 @@ pub fn found_words_word(properties: &FoundWordProperties) -> Html {
     //TODO allow swiping to change tabs
 
     let id = format!("found_words_word{}", properties.number);
+    let number = properties.number;
 
     let success = if properties.is_found {
         Some("found-word-box-success")
@@ -164,19 +169,27 @@ pub fn found_words_word(properties: &FoundWordProperties) -> Html {
         None
     };
 
+    let on_click: Option<Callback<MouseEvent>> = if properties.is_found {
+        Some(Dispatch::new().apply_callback(move |_| Msg::Find {
+            number,
+        }))
+    } else {
+        None
+    };
+
     let rect_class = classes!("found-word-box", success);
 
-    let text = if properties.number == 100 {
+    let text = if number == 100 {
         "💯".to_string()
     } else {
-        format!("{:0>2}", properties.number)
+        format!("{:0>2}", number)
     };
 
     //todo calculate position
-    let (x, y) = get_found_word_position(properties.number, properties.selected_tab);
-    
+    let (x, y) = get_found_word_position(number, properties.selected_tab, false);
+
     html!(
-        <FoundWordBox {id} {text} {x} {y} width_units={1.0} rect_class= {rect_class} />
+        <FoundWordBox {id} {text} {x} {y} width_units={1.0} rect_class= {rect_class} {on_click} />
     )
 }
 
@@ -188,28 +201,28 @@ pub struct FoundWordBoxProperties {
     pub x: f64,
     pub y: f64,
     pub width_units: f64,
-    pub on_click: Option<Callback<MouseEvent>>
+    pub on_click: Option<Callback<MouseEvent>>,
 }
 
 #[function_component(FoundWordBox)]
-pub fn found_word_box(properties: &FoundWordBoxProperties) ->Html{    
+pub fn found_word_box(properties: &FoundWordBoxProperties) -> Html {
     let x = properties.x;
     let y = properties.y;
     let style = format!("transform: translate({}px, {}px);", x, y);
 
     html!(
-        <g key={properties.id.clone()} {style} class="found-word-group" onclick={properties.on_click.clone()}>
-        <rect class={properties.rect_class.clone()} height={format!("{FOUND_WORD_HEIGHT}")} rx="5" width={format!("{}", FOUND_WORD_WIDTH * properties.width_units)}>
-        </rect>
-        <text class="found-word-text" fill="white" stroke="white">
-           {properties.text.clone()}
-        </text>
-   
-        </g>
-       )
+     <g key={properties.id.clone()} {style} class="found-word-group" role="button" onclick={properties.on_click.clone()}>
+     <rect class={properties.rect_class.clone()} height={format!("{FOUND_WORD_HEIGHT}")} rx="5" width={format!("{}", FOUND_WORD_WIDTH * properties.width_units)}>
+     </rect>
+     <text class="found-word-text" fill="white" stroke="white">
+        {properties.text.clone()}
+     </text>
+
+     </g>
+    )
 }
 
-pub fn get_found_word_position(number: i32, selected_index: usize) -> (f64, f64) {
+pub fn get_found_word_position(number: i32, selected_index: usize, clamp: bool) -> (f64, f64) {
     let row_number = ((number - 1) % GOALSIZE) / 10;
     let y = BOARD_HEIGHT
         + TAB_HEADER_HEIGHT
@@ -222,8 +235,12 @@ pub fn get_found_word_position(number: i32, selected_index: usize) -> (f64, f64)
         + row_position.to_f64().unwrap() * (FOUND_WORD_MARGIN + FOUND_WORD_WIDTH);
 
     let index = (number - 1) / GOALSIZE;
-    let index_offset = index - selected_index.to_i32().unwrap();
-    let offset_x = index_offset.to_f64().unwrap().min(1.0).max(-1.0) * SVG_WIDTH;
+    let mut index_offset = (index - selected_index.to_i32().unwrap()).to_f64().unwrap();
+    if clamp {
+        index_offset = index_offset.min(1.0).max(-1.0);
+    }
+
+    let offset_x = index_offset * SVG_WIDTH;
 
     let x = tab_x + offset_x;
     (x, y)

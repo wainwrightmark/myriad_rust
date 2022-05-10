@@ -2,8 +2,9 @@ use crate::core::prelude::*;
 use crate::state::foundwordsstate::*;
 use crate::state::fullstate::*;
 use crate::web::prelude::*;
-
+use crate::state::chosenpositionsstate::*;
 use log::debug;
+
 
 use num::ToPrimitive;
 use std::cell::RefCell;
@@ -16,6 +17,7 @@ pub enum Msg {
     NewGame,
     Move { coordinate: Coordinate },
     SelectTab { index: usize },
+    Find {number: i32}
 }
 
 fn get_emoji(i: i32) -> String {
@@ -38,6 +40,27 @@ fn get_emoji(i: i32) -> String {
 impl Reducer<FullState> for Msg {
     fn apply(&self, state: Rc<FullState>) -> Rc<FullState> {
         match self {
+
+            Msg::Find{number}=>{
+
+                    if let Some(word) = state.found_words.words.get(number){
+                        FullState{
+                            board: state.board.clone(),
+                            solver: state.solver.clone(),
+                            rotflip: state.rotflip.clone(),
+                            chosen_positions: ChosenPositionsState{positions: word.path.clone()},
+                            recent_words: state.recent_words.clone(),
+                            found_words: state.found_words.clone(),
+                            selected_tab_state: state.selected_tab_state
+                        }.into()
+                    }
+                    else{
+                        state
+                    }
+
+                
+            }
+
             Msg::SelectTab { index } => {
                 FullState{
                     board: state.board.clone(),
