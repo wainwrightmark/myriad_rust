@@ -5,7 +5,6 @@ use crate::web::prelude::*;
 use crate::state::chosenpositionsstate::*;
 use log::debug;
 
-
 use num::ToPrimitive;
 use std::cell::RefCell;
 use std::ops::Deref;
@@ -17,7 +16,9 @@ pub enum Msg {
     NewGame,
     Move { coordinate: Coordinate },
     SelectTab { index: usize },
-    Find {number: i32}
+    Find {number: i32},
+    FlipAndRotateAbsolute {rotate: i8, flip : bool},
+    FlipAndRotateRelative {rotate: i8, flip : bool}
 }
 
 fn get_emoji(i: i32) -> String {
@@ -40,6 +41,30 @@ fn get_emoji(i: i32) -> String {
 impl Reducer<FullState> for Msg {
     fn apply(&self, state: Rc<FullState>) -> Rc<FullState> {
         match self {
+
+            Msg::FlipAndRotateRelative { rotate, flip }=>{
+                FullState{
+                    board: state.board.clone(),
+                    solver: state.solver.clone(),
+                    rotflip: super::rotflipstate::RotFlipState { rotate: state.rotflip.rotate + rotate.clone(), flip: state.rotflip.flip ^ flip.clone(), max_coordinate: state.rotflip.max_coordinate },
+                    chosen_positions: state.chosen_positions.clone(),
+                    recent_words: state.recent_words.clone(),
+                    found_words: state.found_words.clone(),
+                    selected_tab_state: state.selected_tab_state
+                }.into()
+            }
+
+            Msg::FlipAndRotateAbsolute { rotate, flip }=>{
+                FullState{
+                    board: state.board.clone(),
+                    solver: state.solver.clone(),
+                    rotflip: super::rotflipstate::RotFlipState { rotate: rotate.clone(), flip: flip.clone(), max_coordinate: state.rotflip.max_coordinate },
+                    chosen_positions: state.chosen_positions.clone(),
+                    recent_words: state.recent_words.clone(),
+                    found_words: state.found_words.clone(),
+                    selected_tab_state: state.selected_tab_state
+                }.into()
+            }
 
             Msg::Find{number}=>{
 

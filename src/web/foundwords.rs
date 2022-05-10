@@ -2,8 +2,10 @@ use std::rc::Rc;
 
 use crate::state::foundwordsstate::FoundWordsState;
 use crate::state::selectedtabstate::SelectedTabState;
+
 use crate::state::{fullstate::*, msg::*, GOALSIZE};
 use crate::web::*;
+use crate::web::prelude::*;
 use num::ToPrimitive;
 use yew::prelude::*;
 use yewdux::prelude::*;
@@ -119,7 +121,10 @@ pub fn all_found_words() -> Html {
         <g>
             {words}
 
-            <MoreTabContent {total_found} {selected_tab}/>
+            <NewGameButton {selected_tab}/>
+            <ScoreCounter {total_found} {selected_tab}/>
+            <FlipButton  {selected_tab}/>
+            <RotateButton  {selected_tab}/>
 
         </g>
     )
@@ -132,28 +137,7 @@ pub struct FoundWordProperties {
     pub selected_tab: usize,
 }
 
-#[derive(PartialEq, Properties)]
-pub struct MoreTabProperties {
-    pub total_found: usize,
-    pub selected_tab: usize,
-}
-#[function_component(MoreTabContent)]
-pub fn more_tab_content(properties: &MoreTabProperties) -> Html {
-    let on_click: Option<Callback<MouseEvent>> =
-        Some(Dispatch::new().apply_callback(|_| Msg::NewGame));
 
-    let (x, y) = get_found_word_position(101, properties.selected_tab, false);
-    let (x2, y2) = get_found_word_position(105, properties.selected_tab, false);
-
-    html!(
-        <>
-        <FoundWordBox id={"new_game_button"} text={"new game"} {x} {y} width_units={3.5} rect_class= {"found-word-box"} {on_click} />
-        <FoundWordBox id={"score_counter"} text={format!("{:0>2}%", properties.total_found)} x={x2} y={y2} width_units={1.5} rect_class= {"found-word-box"} />
-        </>
-
-
-    )
-}
 
 #[function_component(FoundWordsWord)]
 pub fn found_words_word(properties: &FoundWordProperties) -> Html {

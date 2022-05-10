@@ -5,9 +5,9 @@
 - [ ] Touch to scroll FoundWords
 - [ ] Confetti Listener
 - [ ] Confetti in Rust
-- [ ] Flip and rotate
-- [ ] Recent words move to found words
-- [ ] Select Found word to see solution
+- [x] Flip and rotate
+- [x] Recent words move to found words
+- [x] Select Found word to see solution
 - [ ] Cheat mode
 - [ ] Accessibility
 - [ ] Idle animations
