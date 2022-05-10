@@ -1,4 +1,4 @@
-use crate::core::{parser::ParseFail, board};
+use crate::core::{parser::ParseFail};
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet, VecDeque};
 
