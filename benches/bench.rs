@@ -17,7 +17,7 @@ fn create_boards_and_solve(number_of_boards: usize) {
     };
 
     let settings = BoardCreateSettings {
-        branches_to_take: 2,
+        branches_to_take: 3,
         desired_solutions: 100,
         number_to_return: number_of_boards,
     };

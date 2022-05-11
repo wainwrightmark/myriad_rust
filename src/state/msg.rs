@@ -2,6 +2,7 @@ use crate::core::prelude::*;
 use crate::state::chosenpositionsstate::*;
 use crate::state::foundwordsstate::*;
 use crate::state::fullstate::*;
+use crate::state::rotflipstate::RotFlipState;
 use crate::web::prelude::*;
 use log::debug;
 
@@ -125,6 +126,7 @@ impl Reducer<FullState> for Msg {
                 FullState {
                     board: board.into(),
                     selected_tab_state: state.selected_tab_state,
+                    rotflip: RotFlipState{rotate: state.rotflip.rotate + 1 % 4, flip: !state.rotflip.flip, max_coordinate: state.rotflip.max_coordinate },
                     ..Default::default()
                 }
                 .into()

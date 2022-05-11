@@ -83,11 +83,8 @@ impl Solver {
             }
         }
 
-        for coordinate in board.max_coordinate().get_positions_up_to() {
-            let letter = board.get_letter_at_coordinate(&coordinate);
-            
+        for coordinate in board.max_coordinate().get_positions_up_to() {                        
             let coordinates = vec![coordinate];
-
             check(coordinates, self, &mut queue, &mut results, board)
         }
 
@@ -100,9 +97,7 @@ impl Solver {
             for adjacent in c.get_adjacent_positions(&max_coordinate) {
                 if coordinates.contains(&adjacent) {
                     continue;
-                }
-
-                let letter = board.get_letter_at_coordinate(&adjacent);
+                }                
                 
                 let mut new_nodes = nodes.clone();
                 new_nodes.push(adjacent);
