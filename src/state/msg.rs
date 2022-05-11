@@ -107,7 +107,7 @@ impl Reducer<FullState> for Msg {
                 };
 
                 let settings = BoardCreateSettings {
-                    branches_to_take: 2,
+                    branches_to_take: 3,
                     desired_solutions: 100,
                     number_to_return: 1,
                 };

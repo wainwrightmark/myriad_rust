@@ -60,6 +60,7 @@ impl Solver {
             board: &Board
         ) {
             let check_result = board.check(&coordinates);
+            
 
             match check_result {
                 Ok(i) => {
@@ -83,9 +84,12 @@ impl Solver {
             }
         }
 
+        let mut checks = 0;
         for coordinate in board.max_coordinate().get_positions_up_to() {                        
             let coordinates = vec![coordinate];
+            checks+=1;
             check(coordinates, self, &mut queue, &mut results, board)
+
         }
 
         while !queue.is_empty() {
@@ -102,9 +106,12 @@ impl Solver {
                 let mut new_nodes = nodes.clone();
                 new_nodes.push(adjacent);
 
+                checks+=1;
                 check(new_nodes, self, &mut queue, &mut results, board)
             }
         }
+
+        log::debug!("{}: {} checks, {} results", board.to_single_string(),  checks, results.len());
 
         results.into_values()
     }

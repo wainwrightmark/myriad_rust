@@ -131,4 +131,18 @@ impl Board {
 
         s
     }
+    
+    pub fn to_single_string(&self) -> String {
+        let mut s = String::with_capacity(self.letters.len() + self.rows() as usize);
+        for column in 0..self.columns {            
+            for row in 0..self.rows() {
+                let coordinate = Coordinate { row, column };
+                let l = self.get_letter_at_coordinate(&coordinate).to_string();
+
+                s.push_str(&l);
+            }
+        }
+
+        s
+    }
 }

@@ -126,14 +126,15 @@ pub(crate) fn parse_and_evaluate<J: Iterator<Item = Letter>>(
     {
         return Err(ParseFail::Failure);
     }
-    //if input == "+" {return Err(ParseFail::Failure);}
+    
     match parse(input) {
         Ok(expr) => {
-            if input.peek() == None {
-                Ok(expr)
-            } else {
-                Err(ParseFail::PartialSuccess)
+
+            match input.peek(){
+                Some(l) => if l == &Letter::Blank { Err(ParseFail::Failure)} else { Err(ParseFail::PartialSuccess)},
+                None => Ok(expr),
             }
+
         }
         Err(e) => Err(e),
     }
@@ -192,5 +193,9 @@ mod tests {
         t28:("+1", Err(Failure)),
         t29:("*", Err(Failure)),
         t30:("*1", Err(Failure)),
+
+        t31:("_", Err(Failure)),
+        t32:("1_", Err(Failure)),
+        t33:("_1", Err(Failure)),
     }
 }

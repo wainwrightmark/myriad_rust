@@ -25,6 +25,7 @@ board_tests!(
  t2: "7-6574+2/", //Check out 10
  t3: "-+718325+",
  t4: "7+58-2675",
+
 );
 
 fn test_board(letters: &str, expected_count: usize) {
@@ -57,7 +58,7 @@ fn test_create_boards() {
     };
 
     let settings = BoardCreateSettings {
-        branches_to_take: 2,
+        branches_to_take: 3,
         desired_solutions: 100,
         number_to_return: 10,
     };
