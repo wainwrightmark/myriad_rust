@@ -1,4 +1,4 @@
-use crate::core::{parser::ParseFail};
+use crate::core::parser::ParseFail;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet, VecDeque};
 
@@ -40,41 +40,32 @@ pub struct Solver {
     pub settings: SolveSettings,
 }
 
-
-
 impl Solver {
-    
-
     pub fn get_possible_solutions(&self, board: &Board) -> impl Iterator<Item = FoundWord> {
         let mut results = HashMap::<i32, FoundWord>::new();
         let mut queue = VecDeque::<Vec<Coordinate>>::new();
         let max_coordinate = board.max_coordinate();
-
-        
 
         fn check(
             coordinates: Vec<Coordinate>,
             solver: &Solver,
             queue: &mut VecDeque<Vec<Coordinate>>,
             results: &mut HashMap<i32, FoundWord>,
-            board: &Board
+            board: &Board,
         ) {
             let check_result = board.check(&coordinates);
-            
 
             match check_result {
                 Ok(i) => {
-
-                    if solver.settings.allow(i){
+                    if solver.settings.allow(i) {
                         let found_word = FoundWord {
                             result: i,
                             path: coordinates.clone(),
                         };
-    
+
                         results.insert(i, found_word);
                     }
 
-                    
                     queue.push_back(coordinates);
                 }
                 Err(ParseFail::PartialSuccess) => {
@@ -84,12 +75,11 @@ impl Solver {
             }
         }
 
-        let mut checks = 0;
-        for coordinate in board.max_coordinate().get_positions_up_to() {                        
+        //let mut checks = 0;
+        for coordinate in board.max_coordinate().get_positions_up_to() {
             let coordinates = vec![coordinate];
-            checks+=1;
+            //checks+=1;
             check(coordinates, self, &mut queue, &mut results, board)
-
         }
 
         while !queue.is_empty() {
@@ -101,17 +91,17 @@ impl Solver {
             for adjacent in c.get_adjacent_positions(&max_coordinate) {
                 if coordinates.contains(&adjacent) {
                     continue;
-                }                
-                
+                }
+
                 let mut new_nodes = nodes.clone();
                 new_nodes.push(adjacent);
 
-                checks+=1;
+                //checks+=1;
                 check(new_nodes, self, &mut queue, &mut results, board)
             }
         }
 
-        log::debug!("{}: {} checks, {} results", board.to_single_string(),  checks, results.len());
+        //log::debug!("{}: {} checks, {} results", board.to_single_string(),  checks, results.len());
 
         results.into_values()
     }

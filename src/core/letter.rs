@@ -51,9 +51,6 @@ impl Letter {
                 operation: Operation::Divide,
             },
         ];
-        //let others = [Letter::Blank];
-
-        //.chain(others.into_iter());
         nums.chain(ops.into_iter())
     }
 

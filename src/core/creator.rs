@@ -78,7 +78,7 @@ pub fn create_boards(
         rng: &RefCell<StdRng>,
         existing_boards: &mut HashSet<String>,
         settings: &BoardCreateSettings,
-    ) -> Vec<SolvedBoard> // impl Iterator<Item = (Board, usize)>
+    ) -> Vec<SolvedBoard> //TODO replace this with an iterator
     {
         let mut r = rng.borrow_mut().to_owned();
 
