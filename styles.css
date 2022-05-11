@@ -107,8 +107,8 @@ Tab Header
   font-size: 3em;
   user-select: none;
   pointer-events: none;
-  fill: white;
-   stroke: black;
+  fill: black;
+   stroke: transparent;
    transform: translate(30px, 30px);
 }
 
@@ -119,15 +119,14 @@ Found Word
 .found-word-group{
   transition: all 1s;
 }
-.found-word-group :active{
+.found-word-group-button :active{
   transition: all 1s;
-  stroke-width: 5;
+  stroke-width: 10;
   stroke: black;
 }
 
-.found-word-text{
-  -webkit-text-size-adjust: 100%;
-  color: #111;
+
+.button-text{
   line-height: 1.5;
   font-family: monospace;
   font-weight: bold;
@@ -137,15 +136,36 @@ Found Word
   font-size: 1.5em;
   user-select: none;
   pointer-events: none;
+  fill: black;
+  stroke: transparent;
+  transform: translate(2.5px, 5px);
+}
+
+.found-word-text{
+  line-height: 1.5;
+  font-family: monospace;
+  font-weight: bold;
+  dominant-baseline: hanging;
+  text-anchor: middle;
+  box-sizing: inherit;
+  font-size: 1.5em;
+  user-select: none;
+  pointer-events: none;
   fill: white;
-   stroke: black;
-   transform: translate(2.5px, 5px);
+  stroke: black;
+  transform: translate(15px, 5px);
+  transition: all 5s ease-in;
+}
+.found-word-text-success{
+  fill: black;
+  stroke: transparent;
 }
 
 .found-word-box{
   stroke-width: 1;
   stroke-linejoin: round;
-  fill: blue;
+  fill: white;
+  stroke: black;
   transition: fill 5s ease-in;
 }
 

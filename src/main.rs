@@ -1,8 +1,6 @@
 use yew::prelude::*;
 
 use crate::web::prelude::*;
-use crate::web::SVG_HEIGHT;
-use crate::web::SVG_WIDTH;
 pub mod core;
 pub mod state;
 pub mod web;

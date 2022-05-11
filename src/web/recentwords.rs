@@ -3,7 +3,7 @@ use std::ops::Deref;
 use crate::state::fullstate::*;
 use yew::prelude::*;
 use yewdux::prelude::*;
-use crate::web::SQUARE_SIZE;
+use crate::web::prelude::*;
 
 
 #[function_component(RecentWords)]
@@ -37,7 +37,7 @@ pub fn recent_words() -> Html {
             );
 
             //word.word
-            let text = if word.number < 10 {format!(" {:0>1}",word.number)} else{format!("{:0>2}",word.number)} ;
+            let text = format_number(word.number); 
 
             html! {
                 <text

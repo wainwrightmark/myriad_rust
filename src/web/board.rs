@@ -1,7 +1,7 @@
 use crate::core::prelude::*;
 use crate::state::fullstate::*;
 use crate::state::msg::*;
-use crate::web::SQUARE_SIZE;
+use crate::web::prelude::*;
 use yew::prelude::*;
 use yewdux::prelude::*;
 
