@@ -16,7 +16,8 @@
 .circle {
   stroke-width: 7.2;
 
-  transition: 3s cubic-bezier(0, 1.45, 0.72, 1.33)
+  transition: 3s cubic-bezier(0, 1.45, 0.72, 1.33);
+  -webkit-transition: 3s cubic-bezier(0, 1.45, 0.72, 1.33);
 }
 
 .circle:hover {
@@ -32,6 +33,7 @@
 .recentWord {
   font-family: monospace;
   animation-name: disappearAnimation;
+  -webkit-animation-name: disappearAnimation;
   animation-fill-mode: forwards;
   animation-timing-function: ease-out;
   font-size: 3em;
@@ -66,6 +68,7 @@
 .rope {
   stroke: LightBlue;
   transition: 1s ease-out;
+  -webkit-transition: 1s ease-out;
   fill: none;
   pointer-events: none;
 }
@@ -118,6 +121,7 @@ Found Word
 
 .found-word-group{
   transition: all 1s;
+  -webkit-transition: all 1s;
 }
 .found-word-group-button :active{
   transition: all 1s;
