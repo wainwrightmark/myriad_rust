@@ -39,25 +39,25 @@ impl Reducer<DragState> for DragMsg {
                 }
                 .into()
             }
-
-            DragMsg::TouchStart { coordinate } => DragState {
-                touch_coordinate: Some(coordinate.clone()),
-                ..Default::default()
-            }
-            .into(),
-            DragMsg::TouchEnd { coordinate: end } => {
-                if let Some(start) = state.touch_coordinate {
-                    if let Some(msg) =
-                        find_message(start, end.clone(), Coordinate { row: 2, column: 2 })
-                    {
-                        Dispatch::new().apply(msg);
-                    }
-                }
-                DragState {
-                    ..Default::default()
-                }
-                .into()
-            }
+            _ => state
+            // DragMsg::TouchStart { coordinate } => DragState {
+            //     touch_coordinate: Some(coordinate.clone()),
+            //     ..Default::default()
+            // }
+            // .into(),
+            // DragMsg::TouchEnd { coordinate: end } => {
+            //     if let Some(start) = state.touch_coordinate {
+            //         if let Some(msg) =
+            //             find_message(start, end.clone(), Coordinate { row: 2, column: 2 })
+            //         {
+            //             Dispatch::new().apply(msg);
+            //         }
+            //     }
+            //     DragState {
+            //         ..Default::default()
+            //     }
+            //     .into()
+            // }
         }
     }
 }
