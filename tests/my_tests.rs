@@ -55,6 +55,8 @@ fn test_board(letters: &str, expected_count: usize) {
 #[test]
 fn test_create_boards() {
     let solve_settings = SolveSettings { min: 1, max: 100 };
+    let one_thousand_solve_settings = SolveSettings { min: 1, max: 1000 };
+    let ten_thousand_solve_settings = SolveSettings { min: 1, max: 10000 };
 
     let settings = BoardCreateSettings {
         branches_to_take: 3,
@@ -67,7 +69,10 @@ fn test_create_boards() {
     let boards = &create_boards(solve_settings, 9, &settings, &rng_cell);
 
     for board in boards {        
-        eprintln!("{}", board.to_single_string());
+        let one_thousand_solutions = one_thousand_solve_settings.solve(board.clone()).count();
+        let ten_thousand_solutions = ten_thousand_solve_settings.solve(board.clone()).count();
+
+        eprintln!("{} ({}, {})", board.to_single_string(), one_thousand_solutions, ten_thousand_solutions);
     }
 
     assert!(boards.len() >= settings.number_to_return);
