@@ -42,7 +42,7 @@
 }
 
 
-@keyframes disappearAnimation-webkit {
+@webkit-keyframes disappearAnimation {
   0% {
     opacity: 1;
     -webkit-transform: translate(var(--startx), var(--starty)) ;
