@@ -26,6 +26,7 @@ pub struct FullState {
 
     #[serde(skip)]
     pub selected_tab_state: SelectedTabState,
+    
 }
 
 impl FullState {

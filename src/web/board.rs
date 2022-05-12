@@ -2,20 +2,14 @@ use std::ops::Deref;
 
 use crate::core::prelude::*;
 use crate::state::fullstate::*;
-use crate::state::msg::*;
 use crate::web::prelude::*;
+use crate::state::drag::DragMsg;
 use yew::prelude::*;
 use yewdux::prelude::*;
 
-// #[derive(PartialEq, Store, Clone, Default)]
-// pub struct DragState{
-//   coordinate: Option<Coordinate>
-// }
 
 #[function_component(CirclesSVG)]
 pub fn circles_svg() -> Html {
-    //let (game_state, _) = use_store::<FullState>();
-
     let mc = use_selector(|state: &FullState| state.rotflip.max_coordinate.clone());
 
     let circles = mc
@@ -56,7 +50,12 @@ fn circle(properties: &CircleProperties) -> Html {
     .deref()
     .clone();
 
-    //(selector, eq, deps) gamestate.rotflip.get_location(&coordinate, SQUARE_SIZE);
+    let ontouchend = Dispatch::new().apply_callback(move |_: TouchEvent| DragMsg::TouchEnd { coordinate });
+    let onmousedown = Dispatch::new().apply_callback(move |_: MouseEvent| DragMsg::MouseDown { coordinate });
+
+    let ontouchstart = Dispatch::new().apply_callback(move |_: TouchEvent| DragMsg::TouchStart { coordinate: coordinate });
+    let onmouseup = Dispatch::new().apply_callback(move |_: MouseEvent| DragMsg::MouseUp { coordinate: coordinate });
+
     let cx = location.0;
     let cy = location.1;
 
@@ -69,13 +68,18 @@ fn circle(properties: &CircleProperties) -> Html {
         " -webkit-transform: translate({cx}px, {cy}px); transform: translate({cx}px, {cy}px);"
     );
 
-    let onclick = Dispatch::new().apply_callback(move |_| Msg::Move { coordinate });
+    //let onclick = Dispatch::new().apply_callback(move |_| Msg::Move { coordinate });
 
     html! {
         <g class="square"
        style={g_style}
        cursor={cursor}
-       {onclick}
+       //{onclick}
+       {onmousedown}
+       {onmouseup}
+       {ontouchstart}
+       {ontouchend}
+       draggable="true"
        >
       <circle
         id={circle_id}
