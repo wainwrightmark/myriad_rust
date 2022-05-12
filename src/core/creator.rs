@@ -31,95 +31,78 @@ pub struct BoardCreateSettings {
     pub branching_factor: usize,
 }
 
-impl BoardCreateSettings{
-    pub fn create_boards(self, board_size: usize,        
+impl BoardCreateSettings {
+    pub fn create_boards(
+        self,
+        board_size: usize,
         solve_settings: SolveSettings,
-        rng: StdRng) ->impl Iterator<Item = Board>{
-            CreatorIterator::new(self, board_size, solve_settings, rng)
-        }
+        rng: StdRng,
+    ) -> impl Iterator<Item = Board> {
+        CreatorIterator::new(self, board_size, solve_settings, rng)
+    }
 }
 
-
-struct CreatorIterator{
+struct CreatorIterator {
     create_settings: BoardCreateSettings,
     solve_settings: SolveSettings,
     desired_solutions: usize,
-    board_size: usize,
     rng: StdRng,
+    letter_positions: Vec<(usize, Letter)>,
 
-    created_boards: HashSet::<String>,
-    heap: BinaryHeap::<SolvedBoard>
+    created_boards: HashSet<String>,
+    heap: BinaryHeap<SolvedBoard>,
 }
 
-impl CreatorIterator{
+impl CreatorIterator {
     pub fn new(
         create_settings: BoardCreateSettings,
-        board_size: usize,        
+        board_size: usize,
         solve_settings: SolveSettings,
         rng: StdRng,
-    )-> Self{
+    ) -> Self {
+        let board1 = Board::try_create(&str::repeat("_", board_size)).unwrap();
 
-        let board1 = Board::try_create(&str::repeat("_", board_size)).unwrap();                        
-    
         let mut heap = BinaryHeap::<SolvedBoard>::new();
         heap.push(SolvedBoard {
             board: board1,
             solutions: 0,
         });
 
+        let letter_positions = (0..board_size)
+        .cartesian_product(Letter::legal_letters().collect_vec())                                
+        .collect_vec();
 
-        Self { 
-            create_settings, 
-            desired_solutions: solve_settings.total_solutions(), 
-            solve_settings,             
-            board_size, 
-            rng, 
-            created_boards : Default::default(), 
-            heap
-         }
-
+        Self {
+            create_settings,
+            desired_solutions: solve_settings.total_solutions(),
+            solve_settings,
+            rng,
+            created_boards: Default::default(),
+            heap,
+            letter_positions
+        }
     }
+}
 
-    fn get_next_boards(&mut self,
-        board : &SolvedBoard
-    ) -> Vec<SolvedBoard> 
-    {        
-        let bf = self.create_settings.branching_factor;
+impl Iterator for CreatorIterator {
+    type Item = Board;
 
-        let mut indexes = (0..self.board_size)
-            .cartesian_product(Letter::legal_letters().collect_vec())
-            .collect_vec();
-        indexes.shuffle(&mut self.rng);
+    fn next(&mut self) -> Option<Self::Item> {
+        while let Some(sb) = self.heap.pop() {
+            //Check if this is a solution
+            if sb.solutions >= self.desired_solutions {
+                return Some(sb.board);
+            }
 
-        let solutions = indexes.into_iter().filter_map(|(index, letter)| {
-            self.mutate_board(board, letter, index)
-        });
-        solutions.take(bf).collect()
-    }
+            //It is not a solution - mutate it
+            let board = &sb;
+            let bf = self.create_settings.branching_factor;
 
-    fn mutate_board(
-        &mut self,
-        board: &SolvedBoard,
-        letter: Letter,
-        index: usize
-    ) -> Option<SolvedBoard> {
-        let current_letter = board.board.get_letter_at_index(index);
-        if current_letter == letter {
-            return None;
-        };
+            let solutions = self.letter_positions.choose_multiple(&mut self.rng, bf * 2)
+                .filter_map(|(index, letter)| mutate_board( board, self.solve_settings, &mut self.created_boards, letter.clone(), index.clone()));
 
-        let new_board = board.board.with_set_letter(letter, index);
-
-        if self.created_boards.insert(new_board.get_unique_string()) {
-
-            let solutions = self.solve_settings.solve(new_board.clone());            
-            let solution_count = solutions.count();
-
-            if solution_count >= board.solutions {
-                return Some(SolvedBoard {
-                    board: new_board,
-                    solutions: solution_count,
-                });
+            for sol in solutions.take(bf){
+                self.heap.push(sol);
             }
         }
 
@@ -127,23 +110,31 @@ impl CreatorIterator{
     }
 }
 
-impl Iterator for CreatorIterator{
-    type Item = Board;
+fn mutate_board(        
+    board: &SolvedBoard,
+    solve_settings: SolveSettings,
+    created_boards: &mut HashSet<String>,
+    letter: Letter,
+    index: usize,
+) -> Option<SolvedBoard> {
+    let current_letter = board.board.get_letter_at_index(index);
+    if current_letter == letter {
+        return None;
+    };
 
-    fn next(&mut self) -> Option<Self::Item> {
-        while let Some(sb) = self.heap.pop() {
+    let new_board = board.board.with_set_letter(letter, index);
 
-            //Check if this is a solution
-            if sb.solutions >= self.desired_solutions{
-                return Some(sb.board);
-            }           
+    if created_boards.insert(new_board.get_unique_string()) {
+        let solutions = solve_settings.solve(new_board.clone());
+        let solution_count = solutions.count();
 
-            //It is not a solution - mutate it
-            let solutions = self.get_next_boards(&sb);    
-            self.heap.append(&mut BinaryHeap::from(solutions.clone()));    
-    
+        if solution_count >= board.solutions {
+            return Some(SolvedBoard {
+                board: new_board,
+                solutions: solution_count,
+            });
         }
-
-        None
     }
+
+    None
 }
