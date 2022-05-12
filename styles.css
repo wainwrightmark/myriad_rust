@@ -197,6 +197,21 @@ Found Word
   transition: fill 5s ease-in;
 }
 
+
+.score-counter-box{
+  stroke-width: 1;
+  stroke-linejoin: round;
+  fill: transparent;
+  stroke: black;
+}
+
+.score-counter-progress{
+  fill: green;
+  stroke: transparent;
+  -webkit-transition: all 1s;
+  transition: all 1s;
+}
+
 .found-word-box-success{
   fill: green;
   stroke: black;
