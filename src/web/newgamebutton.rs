@@ -46,28 +46,28 @@ pub fn score_counter(properties: &ScoreCounterProperties) -> Html {
     )
 }
 
-#[function_component(RotateButton)]
-pub fn rotate_button(properties: &NewGameButtonProperties) -> Html{
-    let on_click: Option<Callback<MouseEvent>> =
-        Some(Dispatch::new().apply_callback(|_| Msg::FlipAndRotateRelative { rotate: 1, flip: false }));
+// #[function_component(RotateButton)]
+// pub fn rotate_button(properties: &NewGameButtonProperties) -> Html{
+//     let on_click: Option<Callback<MouseEvent>> =
+//         Some(Dispatch::new().apply_callback(|_| Msg::FlipAndRotateRelative { rotate: 1, flip: false }));
 
-    let (x, y) = get_found_word_position(111, properties.selected_tab, false);
+//     let (x, y) = get_found_word_position(111, properties.selected_tab, false);
 
-    let rect_class = classes!("found-word-box", "found-word-box-button");
-    let text_class = classes!("button-text");
+//     let rect_class = classes!("found-word-box", "found-word-box-button");
+//     let text_class = classes!("button-text");
 
-    html!(<FoundWordBox id={"rotate_button"} text={"Rotate"} {x} {y} width_units={3.5} {rect_class} {text_class} {on_click} />)
-}
+//     html!(<FoundWordBox id={"rotate_button"} text={"Rotate"} {x} {y} width_units={3.5} {rect_class} {text_class} {on_click} />)
+// }
 
-#[function_component(FlipButton)]
-pub fn flip_button(properties: &NewGameButtonProperties) -> Html{
-    let on_click: Option<Callback<MouseEvent>> =
-        Some(Dispatch::new().apply_callback(|_| Msg::FlipAndRotateRelative { rotate: 0, flip: true }));
+// #[function_component(FlipButton)]
+// pub fn flip_button(properties: &NewGameButtonProperties) -> Html{
+//     let on_click: Option<Callback<MouseEvent>> =
+//         Some(Dispatch::new().apply_callback(|_| Msg::FlipAndRotateRelative { rotate: 0, flip: true }));
 
-    let (x, y) = get_found_word_position(115, properties.selected_tab, false);
+//     let (x, y) = get_found_word_position(115, properties.selected_tab, false);
 
-    let rect_class = classes!("found-word-box", "found-word-box-button");
-    let text_class = classes!("button-text");
+//     let rect_class = classes!("found-word-box", "found-word-box-button");
+//     let text_class = classes!("button-text");
 
-    html!(<FoundWordBox id={"flip_button"} text={"Flip"} {x} {y} width_units={3.5} {rect_class} {text_class} {on_click} />)
-}
+//     html!(<FoundWordBox id={"flip_button"} text={"Flip"} {x} {y} width_units={3.5} {rect_class} {text_class} {on_click} />)
+// }

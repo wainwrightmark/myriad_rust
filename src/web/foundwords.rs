@@ -122,8 +122,8 @@ pub fn all_found_words() -> Html {
 
             <NewGameButton {selected_tab}/>
             <ScoreCounter {total_found} {selected_tab}/>
-            <FlipButton  {selected_tab}/>
-            <RotateButton  {selected_tab}/>
+            // <FlipButton  {selected_tab}/>
+            // <RotateButton  {selected_tab}/>
 
         </g>
     )
