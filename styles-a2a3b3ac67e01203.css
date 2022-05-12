@@ -174,8 +174,8 @@ Found Word
   font-size: 1.5em;
   user-select: none;
   pointer-events: none;
-  fill: white;
-  stroke: black;
+  fill: grey;
+  stroke: transparent;
   transform: translate(15px, 5px);
   -webkit-transition: all 5s ease-in;
   transition: all 5s ease-in;
