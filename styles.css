@@ -31,7 +31,7 @@
 
 .recentWord {
   font-family: monospace;
-  -webkit-animation-name: disappearAnimation-webkit;
+  -webkit-animation-name: disappearAnimation;
   animation-name: disappearAnimation;
   
   animation-fill-mode: forwards;
@@ -42,20 +42,23 @@
 }
 
 
-@keyframes disappearAnimation-webkit {
+@-webkit-keyframes disappearAnimation {
   0% {
     opacity: 1;
     -webkit-transform: translate(var(--startx), var(--starty)) ;
+    transform: translate(var(--startx), var(--starty)) ;
   }
 
   50% {
     opacity: 0.2;
     -webkit-transform: translate(var(--endx), var(--endy)) scale(0.5) ;
+    transform: translate(var(--endx), var(--endy)) scale(0.5) ;
   }
 
   100% {
     opacity: 0;
     -webkit-transform: translate(var(--endx), var(--endy)) scale(0.5) ;
+    transform: translate(var(--endx), var(--endy)) scale(0.5) ;
   }
 }
 
@@ -174,8 +177,8 @@ Found Word
   font-size: 1.5em;
   user-select: none;
   pointer-events: none;
-  fill: white;
-  stroke: black;
+  fill: gray;
+  stroke: transparent;
   transform: translate(15px, 5px);
   -webkit-transition: all 5s ease-in;
   transition: all 5s ease-in;
@@ -189,11 +192,12 @@ Found Word
   stroke-width: 1;
   stroke-linejoin: round;
   fill: white;
-  stroke: black;
+  stroke: transparent;
   -webkit-transition: fill 5s ease-in;
   transition: fill 5s ease-in;
 }
 
 .found-word-box-success{
   fill: green;
+  stroke: black;
 }
