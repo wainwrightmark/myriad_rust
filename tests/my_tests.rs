@@ -4,11 +4,6 @@ use std::cell::RefCell;
 use itertools::Itertools;
 use myriad::core::prelude::*;
 
-#[test]
-fn from_string_test() {
-    test_board("98_-7+524", 100);
-}
-
 macro_rules! board_tests {
     ($($name:ident: $value:expr,)*) => {
         $(
@@ -37,7 +32,7 @@ fn test_board(letters: &str, expected_count: usize) {
     let settings = SolveSettings { min: 1, max: 100 };
 
     let solutions = settings
-        .solve(&board)
+        .solve(board.clone())
         .collect::<Vec<FoundWord>>();
 
     for r in solutions
@@ -68,8 +63,8 @@ fn test_create_boards() {
     let boards = &create_boards(solve_settings, 9, &settings, &rng_cell);
 
     for board in boards {        
-        let one_thousand_solutions = one_thousand_solve_settings.solve(board).count();
-        let ten_thousand_solutions = ten_thousand_solve_settings.solve(board).count();
+        let one_thousand_solutions = one_thousand_solve_settings.solve(board.clone()).count();
+        let ten_thousand_solutions = ten_thousand_solve_settings.solve(board.clone()).count();
 
         eprintln!("{} ({}, {})", board.to_single_string(), one_thousand_solutions, ten_thousand_solutions);
     }

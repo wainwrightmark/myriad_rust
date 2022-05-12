@@ -155,8 +155,8 @@ impl Board {
         let mut strings =  Vec::<String>::new();
     
         strings.push(self.to_single_string());
-        strings.push(one_thousand_solve_settings.solve(self).count().to_string());
-        strings.push(ten_thousand_solve_settings.solve(self).count().to_string());
+        strings.push(one_thousand_solve_settings.solve(self.clone()).count().to_string());
+        strings.push(ten_thousand_solve_settings.solve(self.clone()).count().to_string());
     
         let mut nums =0;
         let mut operators = 0;

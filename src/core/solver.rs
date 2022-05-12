@@ -19,7 +19,7 @@ impl SolveSettings {
         self.min <= num && num <= self.max
     }
 
-    pub fn solve<'a> (self, board: &'a Board) -> impl Iterator<Item = FoundWord> + 'a{
+    pub fn solve (self, board: Board) -> impl Iterator<Item = FoundWord> + {
         let solution_iter = SolutionIter::new(board, self);
         solution_iter
     }    
@@ -47,21 +47,21 @@ impl std::fmt::Display for FoundWord {
     }
 }
 
-struct SolutionIter<'a> {
+struct SolutionIter {
     results: HashSet<i32>,
     settings: SolveSettings,
     queue: VecDeque<Vec<Coordinate>>,
-    board: &'a Board,
+    board: Board,
     max_coordinate: Coordinate,
 }
 
-impl<'a> SolutionIter<'a> {
-    pub fn new(board: &'a Board, settings: SolveSettings) -> Self {
+impl SolutionIter {
+    pub fn new(board: Board, settings: SolveSettings) -> Self {
         Self {
             results: Default::default(),
             max_coordinate: board.max_coordinate(),
             queue: VecDeque::from(vec![vec![]]),
-            board: &board,
+            board,
             settings,
         }
     }
@@ -85,7 +85,7 @@ impl<'a> SolutionIter<'a> {
     }
 }
 
-impl<'a> Iterator for SolutionIter<'a> {
+impl Iterator for SolutionIter {
     type Item = FoundWord;
 
     fn next(&mut self) -> Option<Self::Item> {

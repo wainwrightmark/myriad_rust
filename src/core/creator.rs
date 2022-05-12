@@ -27,10 +27,22 @@ impl PartialOrd for SolvedBoard {
     }
 }
 
+#[derive(Clone, Copy, Eq, PartialEq)]
 pub struct BoardCreateSettings {
     pub number_to_return: usize,
     pub branching_factor: usize,
 }
+
+
+// struct CreatorIterator{
+//     create_settings: BoardCreateSettings,
+//     solve_settings: SolveSettings,
+//     size: usize,
+//     rng: &RefCell<StdRng>,
+
+//     created_boards: HashSet::<String>,
+//     heap: BinaryHeap::<SolvedBoard>
+// }
 
 pub fn create_boards(
     solve_settings: SolveSettings,
@@ -109,7 +121,7 @@ pub fn create_boards(
 
         if existing_boards.insert(new_board.get_unique_string()) {
 
-            let solutions = solve_settings.solve(&new_board);            
+            let solutions = solve_settings.solve(new_board.clone());            
             let solution_count = solutions.count();
 
             if solution_count >= board.solutions {
