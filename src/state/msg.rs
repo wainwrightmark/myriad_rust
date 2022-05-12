@@ -7,7 +7,6 @@ use crate::web::prelude::*;
 use log::debug;
 
 use num::ToPrimitive;
-use std::cell::RefCell;
 use std::ops::Deref;
 use std::rc::Rc;
 use yewdux::prelude::*;
@@ -106,16 +105,14 @@ impl Reducer<FullState> for Msg {
 
                 let settings = BoardCreateSettings {
                     branching_factor: 3,
-                    number_to_return: 1,
                 };
                 let seed: u64 = rand::random();
                 let start_instant = instant::Instant::now();
                 debug!("Generating new board with seed {:?}", seed);
                 let rng = rand::SeedableRng::seed_from_u64(seed);
-                let rng_cell = RefCell::new(rng);
 
-                let boards = create_boards(solve_settings, 9, &settings, &rng_cell);
-                let board = boards[0].to_owned();
+                let mut boards = settings.create_boards(9, solve_settings, rng);
+                let board = boards.next().unwrap();
                 let diff = instant::Instant::now() - start_instant;
 
                 debug!("Board '{:?}' generated in {:?}", board, diff);

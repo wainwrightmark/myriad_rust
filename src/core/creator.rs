@@ -1,4 +1,3 @@
-use std::cell::RefCell;
 use std::collections::{BinaryHeap, HashSet};
 
 use itertools::Itertools;
@@ -29,88 +28,80 @@ impl PartialOrd for SolvedBoard {
 
 #[derive(Clone, Copy, Eq, PartialEq)]
 pub struct BoardCreateSettings {
-    pub number_to_return: usize,
     pub branching_factor: usize,
 }
 
-
-// struct CreatorIterator{
-//     create_settings: BoardCreateSettings,
-//     solve_settings: SolveSettings,
-//     size: usize,
-//     rng: &RefCell<StdRng>,
-
-//     created_boards: HashSet::<String>,
-//     heap: BinaryHeap::<SolvedBoard>
-// }
-
-pub fn create_boards(
-    solve_settings: SolveSettings,
-    size: usize,
-    board_create_settings: &BoardCreateSettings,
-    rng: &RefCell<StdRng>,
-) -> Vec<Board> {
-    let board1 = Board::try_create(&str::repeat("_", size)).unwrap();
-    let desired_solutions = solve_settings.total_solutions();
-
-    let mut results = Vec::<Board>::new();
-
-    let mut existing_boards = HashSet::<String>::new();
-    existing_boards.insert(board1.get_unique_string());
-
-    let mut heap = BinaryHeap::<SolvedBoard>::new();
-    heap.push(SolvedBoard {
-        board: board1,
-        solutions: 0,
-    });
-
-    while let Some(sb) = heap.pop() {
-        let solutions = get_all_solutions(&sb, solve_settings, rng, &mut existing_boards, board_create_settings);
-
-        heap.append(&mut BinaryHeap::from(solutions.clone()));
-
-        results.append(
-            &mut solutions
-                .into_iter()
-                .filter(|b| b.solutions >= desired_solutions)
-                .map(|b| b.board)
-                .collect_vec(),
-        );
-
-        if results.len() >= board_create_settings.number_to_return {
-            return results;
+impl BoardCreateSettings{
+    pub fn create_boards(self, board_size: usize,        
+        solve_settings: SolveSettings,
+        rng: StdRng) ->impl Iterator<Item = Board>{
+            CreatorIterator::new(self, board_size, solve_settings, rng)
         }
+}
+
+
+struct CreatorIterator{
+    create_settings: BoardCreateSettings,
+    solve_settings: SolveSettings,
+    desired_solutions: usize,
+    board_size: usize,
+    rng: StdRng,
+
+    created_boards: HashSet::<String>,
+    heap: BinaryHeap::<SolvedBoard>
+}
+
+impl CreatorIterator{
+    pub fn new(
+        create_settings: BoardCreateSettings,
+        board_size: usize,        
+        solve_settings: SolveSettings,
+        rng: StdRng,
+    )-> Self{
+
+        let board1 = Board::try_create(&str::repeat("_", board_size)).unwrap();                        
+    
+        let mut heap = BinaryHeap::<SolvedBoard>::new();
+        heap.push(SolvedBoard {
+            board: board1,
+            solutions: 0,
+        });
+
+
+        Self { 
+            create_settings, 
+            desired_solutions: solve_settings.total_solutions(), 
+            solve_settings,             
+            board_size, 
+            rng, 
+            created_boards : Default::default(), 
+            heap
+         }
+
     }
 
-    return results;
+    fn get_next_boards(&mut self,
+        board : &SolvedBoard
+    ) -> Vec<SolvedBoard> 
+    {        
+        let bf = self.create_settings.branching_factor;
 
-    fn get_all_solutions(
-        board: &SolvedBoard,
-        solve_settings: SolveSettings,
-        rng: &RefCell<StdRng>,
-        existing_boards: &mut HashSet<String>,
-        settings: &BoardCreateSettings,
-    ) -> Vec<SolvedBoard> //TODO replace this with an iterator
-    {
-        let mut r = rng.borrow_mut().to_owned();
-
-        let mut indexes = (0..board.board.letters.len())
+        let mut indexes = (0..self.board_size)
             .cartesian_product(Letter::legal_letters().collect_vec())
             .collect_vec();
-        indexes.shuffle(&mut r);
+        indexes.shuffle(&mut self.rng);
 
         let solutions = indexes.into_iter().filter_map(|(index, letter)| {
-            get_better_solutions(board, solve_settings, letter, index, existing_boards)
+            self.mutate_board(board, letter, index)
         });
-        solutions.take(settings.branching_factor).collect()
+        solutions.take(bf).collect()
     }
 
-    fn get_better_solutions(
+    fn mutate_board(
+        &mut self,
         board: &SolvedBoard,
-        solve_settings: SolveSettings,
         letter: Letter,
-        index: usize,
-        existing_boards: &mut HashSet<String>,
+        index: usize
     ) -> Option<SolvedBoard> {
         let current_letter = board.board.get_letter_at_index(index);
         if current_letter == letter {
@@ -119,9 +110,9 @@ pub fn create_boards(
 
         let new_board = board.board.with_set_letter(letter, index);
 
-        if existing_boards.insert(new_board.get_unique_string()) {
+        if self.created_boards.insert(new_board.get_unique_string()) {
 
-            let solutions = solve_settings.solve(new_board.clone());            
+            let solutions = self.solve_settings.solve(new_board.clone());            
             let solution_count = solutions.count();
 
             if solution_count >= board.solutions {
@@ -130,6 +121,27 @@ pub fn create_boards(
                     solutions: solution_count,
                 });
             }
+        }
+
+        None
+    }
+}
+
+impl Iterator for CreatorIterator{
+    type Item = Board;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        while let Some(sb) = self.heap.pop() {
+
+            //Check if this is a solution
+            if sb.solutions >= self.desired_solutions{
+                return Some(sb.board);
+            }           
+
+            //It is not a solution - mutate it
+            let solutions = self.get_next_boards(&sb);    
+            self.heap.append(&mut BinaryHeap::from(solutions.clone()));    
+    
         }
 
         None

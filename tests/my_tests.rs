@@ -1,5 +1,4 @@
 #[cfg(test)]
-use std::cell::RefCell;
 
 use itertools::Itertools;
 use myriad::core::prelude::*;
@@ -49,27 +48,26 @@ fn test_board(letters: &str, expected_count: usize) {
 
 #[test]
 fn test_create_boards() {
+    let number_to_return = 10;
     let solve_settings = SolveSettings { min: 1, max: 100 };
     let one_thousand_solve_settings = SolveSettings { min: 1, max: 1000 };
     let ten_thousand_solve_settings = SolveSettings { min: 1, max: 10000 };
 
     let settings = BoardCreateSettings {
         branching_factor: 3,
-        number_to_return: 10,
     };
     let rng = rand::SeedableRng::seed_from_u64(100);
-    let rng_cell = RefCell::new(rng);
 
-    let boards = &create_boards(solve_settings, 9, &settings, &rng_cell);
+    let boards = settings.create_boards(9, solve_settings, rng).take(number_to_return).collect_vec();
+
+    assert!(boards.len() >= number_to_return);
 
     for board in boards {        
         let one_thousand_solutions = one_thousand_solve_settings.solve(board.clone()).count();
         let ten_thousand_solutions = ten_thousand_solve_settings.solve(board.clone()).count();
 
         eprintln!("{} ({}, {})", board.to_single_string(), one_thousand_solutions, ten_thousand_solutions);
-    }
-
-    assert!(boards.len() >= settings.number_to_return);
+    }    
 }
 
 
