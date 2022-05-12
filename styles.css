@@ -15,9 +15,8 @@
 
 .circle {
   stroke-width: 7.2;
-
-  transition: 3s cubic-bezier(0, 1.45, 0.72, 1.33);
   -webkit-transition: 3s cubic-bezier(0, 1.45, 0.72, 1.33);
+  transition: 3s cubic-bezier(0, 1.45, 0.72, 1.33);  
 }
 
 .circle:hover {
@@ -32,8 +31,9 @@
 
 .recentWord {
   font-family: monospace;
+  -webkit-animation-name: disappearAnimation-webkit;
   animation-name: disappearAnimation;
-  -webkit-animation-name: disappearAnimation;
+  
   animation-fill-mode: forwards;
   animation-timing-function: ease-out;
   font-size: 3em;
@@ -41,6 +41,23 @@
   text-anchor: start;
 }
 
+
+@keyframes disappearAnimation-webkit {
+  0% {
+    opacity: 1;
+    -webkit-transform: translate(var(--startx), var(--starty)) ;
+  }
+
+  50% {
+    opacity: 0.2;
+    -webkit-transform: translate(var(--endx), var(--endy)) scale(0.5) ;
+  }
+
+  100% {
+    opacity: 0;
+    -webkit-transform: translate(var(--endx), var(--endy)) scale(0.5) ;
+  }
+}
 
 @keyframes disappearAnimation {
   0% {
@@ -67,8 +84,8 @@
 
 .rope {
   stroke: LightBlue;
-  transition: 1s ease-out;
   -webkit-transition: 1s ease-out;
+  transition: 1s ease-out;  
   fill: none;
   pointer-events: none;
 }
@@ -120,12 +137,14 @@ Found Word
 */
 
 .found-word-group{
-  transition: all 1s;
   -webkit-transition: all 1s;
+  transition: all 1s;
+  
 }
 .found-word-group-button :active{
+  -webkit-transition: all 1s;
   transition: all 1s;
-  stroke-width: 10;
+  stroke-width: 5;
   stroke: black;
 }
 
@@ -158,6 +177,7 @@ Found Word
   fill: white;
   stroke: black;
   transform: translate(15px, 5px);
+  -webkit-transition: all 5s ease-in;
   transition: all 5s ease-in;
 }
 .found-word-text-success{
@@ -170,6 +190,7 @@ Found Word
   stroke-linejoin: round;
   fill: white;
   stroke: black;
+  -webkit-transition: fill 5s ease-in;
   transition: fill 5s ease-in;
 }
 
