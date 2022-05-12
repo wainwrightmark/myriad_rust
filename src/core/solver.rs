@@ -63,7 +63,9 @@ impl Solver {
                             path: coordinates.clone(),
                         };
 
-                        results.insert(i, found_word);
+                        if let std::collections::hash_map::Entry::Vacant(v) = results.entry(i){
+                            v.insert(found_word);
+                        }
                     }
 
                     queue.push_back(coordinates);

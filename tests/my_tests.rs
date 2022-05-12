@@ -22,9 +22,12 @@ macro_rules! board_tests {
 
 board_tests!(
  t1: "98_-7+524",
- t2: "7-6574+2/", //Check out 10
+ t2: "7-6574+2/",
  t3: "-+718325+",
  t4: "7+58-2675",
+ t5: "34+*2651+",
+ t6: "813+*-372",
+ t7: "-+718325+",
 
 );
 
@@ -67,11 +70,8 @@ fn test_create_boards() {
 
     let boards = &create_boards(&solver, 9, &settings, &rng_cell);
 
-    for board in boards {
-        eprintln!();
-        eprintln!("{}", board.to_multiline_string());
-
-        eprintln!();
+    for board in boards {        
+        eprintln!("{}", board.to_single_string());
     }
 
     assert!(boards.len() >= settings.number_to_return);

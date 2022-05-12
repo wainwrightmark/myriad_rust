@@ -11,3 +11,4 @@
 - [ ] Cheat mode
 - [ ] Accessibility
 - [ ] Idle animations
+- [ ] Share on facebook
