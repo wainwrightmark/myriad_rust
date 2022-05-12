@@ -8,6 +8,7 @@ pub mod prelude {
     pub use crate::web::newgamebutton::*;
     pub use crate::web::recentwords::*;
     pub use crate::web::rope::*;
+    pub use crate::web::app::*;
 
     pub fn format_number(num: i32) -> String {
         if num == 100 {
