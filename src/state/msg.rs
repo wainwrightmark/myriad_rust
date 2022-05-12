@@ -105,8 +105,7 @@ impl Reducer<FullState> for Msg {
                 let solve_settings  = SolveSettings { min: 1, max: 100 };
 
                 let settings = BoardCreateSettings {
-                    branches_to_take: 3,
-                    desired_solutions: 100,
+                    branching_factor: 3,
                     number_to_return: 1,
                 };
                 let seed: u64 = rand::random();

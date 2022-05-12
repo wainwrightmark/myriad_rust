@@ -37,7 +37,7 @@ fn test_board(letters: &str, expected_count: usize) {
     let settings = SolveSettings { min: 1, max: 100 };
 
     let solutions = settings
-        .solve(board.clone())
+        .solve(&board)
         .collect::<Vec<FoundWord>>();
 
     for r in solutions
@@ -59,8 +59,7 @@ fn test_create_boards() {
     let ten_thousand_solve_settings = SolveSettings { min: 1, max: 10000 };
 
     let settings = BoardCreateSettings {
-        branches_to_take: 3,
-        desired_solutions: 100,
+        branching_factor: 3,
         number_to_return: 10,
     };
     let rng = rand::SeedableRng::seed_from_u64(100);
@@ -69,11 +68,13 @@ fn test_create_boards() {
     let boards = &create_boards(solve_settings, 9, &settings, &rng_cell);
 
     for board in boards {        
-        let one_thousand_solutions = one_thousand_solve_settings.solve(board.clone()).count();
-        let ten_thousand_solutions = ten_thousand_solve_settings.solve(board.clone()).count();
+        let one_thousand_solutions = one_thousand_solve_settings.solve(board).count();
+        let ten_thousand_solutions = ten_thousand_solve_settings.solve(board).count();
 
         eprintln!("{} ({}, {})", board.to_single_string(), one_thousand_solutions, ten_thousand_solutions);
     }
 
     assert!(boards.len() >= settings.number_to_return);
 }
+
+

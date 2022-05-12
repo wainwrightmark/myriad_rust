@@ -1,6 +1,7 @@
 use crate::core::parser::ParseFail;
 use crate::core::prelude::*;
 use itertools::Itertools;
+use num::ToPrimitive;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashSet, VecDeque};
 
@@ -18,10 +19,14 @@ impl SolveSettings {
         self.min <= num && num <= self.max
     }
 
-    pub fn solve(self, board: Board) -> impl Iterator<Item = FoundWord>{
+    pub fn solve<'a> (self, board: &'a Board) -> impl Iterator<Item = FoundWord> + 'a{
         let solution_iter = SolutionIter::new(board, self);
         solution_iter
     }    
+
+    pub fn total_solutions(&self)-> usize{
+        (self.max - self.min + 1).to_usize().unwrap()
+    }
 }
 
 impl Default for SolveSettings {
@@ -42,21 +47,21 @@ impl std::fmt::Display for FoundWord {
     }
 }
 
-struct SolutionIter {
+struct SolutionIter<'a> {
     results: HashSet<i32>,
     settings: SolveSettings,
     queue: VecDeque<Vec<Coordinate>>,
-    board: Board,
+    board: &'a Board,
     max_coordinate: Coordinate,
 }
 
-impl SolutionIter {
-    pub fn new(board: Board, settings: SolveSettings) -> Self {
+impl<'a> SolutionIter<'a> {
+    pub fn new(board: &'a Board, settings: SolveSettings) -> Self {
         Self {
             results: Default::default(),
             max_coordinate: board.max_coordinate(),
             queue: VecDeque::from(vec![vec![]]),
-            board,
+            board: &board,
             settings,
         }
     }
@@ -80,7 +85,7 @@ impl SolutionIter {
     }
 }
 
-impl Iterator for SolutionIter {
+impl<'a> Iterator for SolutionIter<'a> {
     type Item = FoundWord;
 
     fn next(&mut self) -> Option<Self::Item> {

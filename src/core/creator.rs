@@ -28,18 +28,18 @@ impl PartialOrd for SolvedBoard {
 }
 
 pub struct BoardCreateSettings {
-    pub desired_solutions: usize,
     pub number_to_return: usize,
-    pub branches_to_take: usize,
+    pub branching_factor: usize,
 }
 
 pub fn create_boards(
     solve_settings: SolveSettings,
     size: usize,
-    settings: &BoardCreateSettings,
+    board_create_settings: &BoardCreateSettings,
     rng: &RefCell<StdRng>,
 ) -> Vec<Board> {
     let board1 = Board::try_create(&str::repeat("_", size)).unwrap();
+    let desired_solutions = solve_settings.total_solutions();
 
     let mut results = Vec::<Board>::new();
 
@@ -53,19 +53,19 @@ pub fn create_boards(
     });
 
     while let Some(sb) = heap.pop() {
-        let solutions = get_all_solutions(&sb, solve_settings, rng, &mut existing_boards, settings);
+        let solutions = get_all_solutions(&sb, solve_settings, rng, &mut existing_boards, board_create_settings);
 
         heap.append(&mut BinaryHeap::from(solutions.clone()));
 
         results.append(
             &mut solutions
                 .into_iter()
-                .filter(|b| b.solutions >= settings.desired_solutions)
+                .filter(|b| b.solutions >= desired_solutions)
                 .map(|b| b.board)
                 .collect_vec(),
         );
 
-        if results.len() >= settings.number_to_return {
+        if results.len() >= board_create_settings.number_to_return {
             return results;
         }
     }
@@ -90,7 +90,7 @@ pub fn create_boards(
         let solutions = indexes.into_iter().filter_map(|(index, letter)| {
             get_better_solutions(board, solve_settings, letter, index, existing_boards)
         });
-        solutions.take(settings.branches_to_take).collect()
+        solutions.take(settings.branching_factor).collect()
     }
 
     fn get_better_solutions(
@@ -109,7 +109,7 @@ pub fn create_boards(
 
         if existing_boards.insert(new_board.get_unique_string()) {
 
-            let solutions = solve_settings.solve(new_board.clone() );            
+            let solutions = solve_settings.solve(&new_board);            
             let solution_count = solutions.count();
 
             if solution_count >= board.solutions {

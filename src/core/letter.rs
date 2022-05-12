@@ -36,7 +36,7 @@ impl Letter {
     }
 
     pub fn legal_letters() -> impl Iterator<Item = Letter> {
-        let nums = (1..9).map(|x| Letter::Number { value: x });
+        let nums = (1..10).map(|x| Letter::Number { value: x });
         let ops = [
             Letter::Operator {
                 operation: Operation::Plus,
