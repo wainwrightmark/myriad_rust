@@ -17,7 +17,7 @@ pub struct FullState {
     #[serde(skip)]
     pub chosen_positions: ChosenPositionsState,
     pub found_words: Rc<FoundWordsState>,
-    pub solver: Solver,
+    pub solve_settings: SolveSettings,
     #[serde(skip)]
     pub rotflip: RotFlipState,
 
@@ -99,7 +99,7 @@ impl FullState {
 
             let final_result = match check_result {
                 Ok(i) => {
-                    if self.solver.settings.allow(i) {
+                    if self.solve_settings.allow(i) {
                         MoveResult::WordComplete {
                             word: FoundWord {
                                 result: i,

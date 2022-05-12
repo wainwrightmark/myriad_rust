@@ -12,11 +12,9 @@ fn bench_find_solutions(bench: &mut Bencher) {
 }
 
 fn create_boards_and_solve(number_of_boards: usize) {
-    let solver = Solver {
-        settings: SolveSettings { min: 1, max: 100 },
-    };
+    let solve_settings = SolveSettings { min: 1, max: 100 };
 
-    let settings = BoardCreateSettings {
+    let board_create_settings = BoardCreateSettings {
         branches_to_take: 3,
         desired_solutions: 100,
         number_to_return: number_of_boards,
@@ -24,14 +22,10 @@ fn create_boards_and_solve(number_of_boards: usize) {
     let rng = rand::SeedableRng::seed_from_u64(100);
     let rng_cell = core::cell::RefCell::new(rng);
 
-    let boards = &create_boards(&solver, 9, &settings, &rng_cell);
+    let boards = &create_boards(solve_settings, 9, &board_create_settings, &rng_cell);
 
-    for board in boards {
-        let solver = Solver {
-            settings: SolveSettings { min: 1, max: 100 },
-        };
-        let solutions = solver
-            .get_possible_solutions(board)
+    for board in boards {        
+        let solutions = solve_settings.solve(board.clone())            
             .collect::<Vec<FoundWord>>();
 
         assert_eq!(100, solutions.len());

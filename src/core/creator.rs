@@ -34,7 +34,7 @@ pub struct BoardCreateSettings {
 }
 
 pub fn create_boards(
-    solver: &Solver,
+    solve_settings: SolveSettings,
     size: usize,
     settings: &BoardCreateSettings,
     rng: &RefCell<StdRng>,
@@ -53,7 +53,7 @@ pub fn create_boards(
     });
 
     while let Some(sb) = heap.pop() {
-        let solutions = get_all_solutions(&sb, solver, rng, &mut existing_boards, settings);
+        let solutions = get_all_solutions(&sb, solve_settings, rng, &mut existing_boards, settings);
 
         heap.append(&mut BinaryHeap::from(solutions.clone()));
 
@@ -74,7 +74,7 @@ pub fn create_boards(
 
     fn get_all_solutions(
         board: &SolvedBoard,
-        solver: &Solver,
+        solve_settings: SolveSettings,
         rng: &RefCell<StdRng>,
         existing_boards: &mut HashSet<String>,
         settings: &BoardCreateSettings,
@@ -88,14 +88,14 @@ pub fn create_boards(
         indexes.shuffle(&mut r);
 
         let solutions = indexes.into_iter().filter_map(|(index, letter)| {
-            get_better_solutions(board, solver, letter, index, existing_boards)
+            get_better_solutions(board, solve_settings, letter, index, existing_boards)
         });
         solutions.take(settings.branches_to_take).collect()
     }
 
     fn get_better_solutions(
         board: &SolvedBoard,
-        solver: &Solver,
+        solve_settings: SolveSettings,
         letter: Letter,
         index: usize,
         existing_boards: &mut HashSet<String>,
@@ -108,7 +108,9 @@ pub fn create_boards(
         let new_board = board.board.with_set_letter(letter, index);
 
         if existing_boards.insert(new_board.get_unique_string()) {
-            let solution_count = solver.get_possible_solutions(&new_board).count();
+
+            let solutions = solve_settings.solve(new_board.clone() );            
+            let solution_count = solutions.count();
 
             if solution_count >= board.solutions {
                 return Some(SolvedBoard {

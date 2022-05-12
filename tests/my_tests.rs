@@ -34,12 +34,10 @@ board_tests!(
 fn test_board(letters: &str, expected_count: usize) {
     let board = Board::try_create(letters).expect("board should be created");
 
-    let solver = Solver {
-        settings: SolveSettings { min: 1, max: 100 },
-    };
+    let settings = SolveSettings { min: 1, max: 100 };
 
-    let solutions = solver
-        .get_possible_solutions(&board)
+    let solutions = settings
+        .solve(board.clone())
         .collect::<Vec<FoundWord>>();
 
     for r in solutions
@@ -56,9 +54,7 @@ fn test_board(letters: &str, expected_count: usize) {
 
 #[test]
 fn test_create_boards() {
-    let solver = Solver {
-        settings: SolveSettings { min: 1, max: 100 },
-    };
+    let solve_settings = SolveSettings { min: 1, max: 100 };
 
     let settings = BoardCreateSettings {
         branches_to_take: 3,
@@ -68,7 +64,7 @@ fn test_create_boards() {
     let rng = rand::SeedableRng::seed_from_u64(100);
     let rng_cell = RefCell::new(rng);
 
-    let boards = &create_boards(&solver, 9, &settings, &rng_cell);
+    let boards = &create_boards(solve_settings, 9, &settings, &rng_cell);
 
     for board in boards {        
         eprintln!("{}", board.to_single_string());

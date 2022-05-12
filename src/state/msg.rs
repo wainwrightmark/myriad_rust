@@ -43,7 +43,7 @@ impl Reducer<FullState> for Msg {
         match self {
             Msg::FlipAndRotateRelative { rotate, flip } => FullState {
                 board: state.board.clone(),
-                solver: state.solver.clone(),
+                solve_settings: state.solve_settings,
                 rotflip: super::rotflipstate::RotFlipState {
                     rotate: state.rotflip.rotate + *rotate,
                     flip: state.rotflip.flip ^ *flip,
@@ -58,7 +58,7 @@ impl Reducer<FullState> for Msg {
 
             Msg::FlipAndRotateAbsolute { rotate, flip } => FullState {
                 board: state.board.clone(),
-                solver: state.solver.clone(),
+                solve_settings: state.solve_settings,
                 rotflip: super::rotflipstate::RotFlipState {
                     rotate: *rotate,
                     flip: *flip,
@@ -75,7 +75,7 @@ impl Reducer<FullState> for Msg {
                 if let Some(word) = state.found_words.words.get(number) {
                     FullState {
                         board: state.board.clone(),
-                        solver: state.solver.clone(),
+                        solve_settings: state.solve_settings,
                         rotflip: state.rotflip,
                         chosen_positions: ChosenPositionsState {
                             positions: word.path.clone(),
@@ -92,7 +92,7 @@ impl Reducer<FullState> for Msg {
 
             Msg::SelectTab { index } => FullState {
                 board: state.board.clone(),
-                solver: state.solver.clone(),
+                solve_settings: state.solve_settings,
                 rotflip: state.rotflip,
                 chosen_positions: state.chosen_positions.clone(),
                 recent_words: state.recent_words.clone(),
@@ -102,9 +102,7 @@ impl Reducer<FullState> for Msg {
             .into(),
 
             Msg::NewGame => {
-                let solver = Solver {
-                    settings: SolveSettings { min: 1, max: 100 },
-                };
+                let solve_settings  = SolveSettings { min: 1, max: 100 };
 
                 let settings = BoardCreateSettings {
                     branches_to_take: 3,
@@ -117,7 +115,7 @@ impl Reducer<FullState> for Msg {
                 let rng = rand::SeedableRng::seed_from_u64(seed);
                 let rng_cell = RefCell::new(rng);
 
-                let boards = create_boards(&solver, 9, &settings, &rng_cell);
+                let boards = create_boards(solve_settings, 9, &settings, &rng_cell);
                 let board = boards[0].to_owned();
                 let diff = instant::Instant::now() - start_instant;
 
@@ -174,7 +172,7 @@ impl Reducer<FullState> for Msg {
 
                 FullState {
                     board: state.board.clone(),
-                    solver: state.solver.clone(),
+                    solve_settings: state.solve_settings,
                     rotflip: state.rotflip,
                     chosen_positions: new_chosen_positions,
                     recent_words: new_recent_words.into(),
