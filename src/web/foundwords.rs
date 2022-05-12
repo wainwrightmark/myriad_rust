@@ -46,8 +46,8 @@ pub fn more_tab_header(properties: &MoreTabHeaderProperties) -> Html {
     let class = classes!("tab-header", selected);
     let style = format!(
         "transform: translate({}px, {}px);",
-        index.to_f64().unwrap() * TAB_HEADER_WIDTH,
-        SQUARE_SIZE * 3.0
+        TAB_HEADER_PADDING +( index.to_f64().unwrap() * (TAB_HEADER_WIDTH + TAB_HEADER_MARGIN)),
+        (SQUARE_SIZE * 3.0) + TAB_HEADER_TOP_MARGIN
     );
 
     html!(
@@ -86,8 +86,8 @@ pub fn found_words_tab_header(
     let class = classes!("tab-header", selected, complete);
     let style = format!(
         "transform: translate({}px, {}px);",
-        index.to_f64().unwrap() * TAB_HEADER_WIDTH,
-        SQUARE_SIZE * 3.0
+        TAB_HEADER_PADDING +( index.to_f64().unwrap() * (TAB_HEADER_WIDTH + TAB_HEADER_MARGIN)),
+        (SQUARE_SIZE * 3.0) + TAB_HEADER_TOP_MARGIN
     );
     html!(
     <g {key} {style} {onclick}>
@@ -214,6 +214,7 @@ pub fn get_found_word_position(number: i32, selected_index: usize, clamp: bool) 
     let row_number = ((number - 1) % GOALSIZE) / 10;
     let y = BOARD_HEIGHT
         + TAB_HEADER_HEIGHT
+        + TAB_HEADER_TOP_MARGIN
         + FOUND_WORD_MARGIN
         + (FOUND_WORD_HEIGHT + FOUND_WORD_MARGIN) * row_number.to_f64().unwrap();
 

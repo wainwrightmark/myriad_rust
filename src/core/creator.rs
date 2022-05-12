@@ -1,12 +1,9 @@
 use std::collections::{BinaryHeap, HashSet};
 
 use itertools::Itertools;
-use num::ToPrimitive;
-use rand::prelude::{IteratorRandom, SliceRandom, StdRng};
+use rand::prelude::{ SliceRandom, StdRng};
 
 use crate::core::prelude::*;
-
-use super::{letter, coordinate};
 
 #[derive(Clone, Eq, PartialEq)]
 struct SolvedBoard {
