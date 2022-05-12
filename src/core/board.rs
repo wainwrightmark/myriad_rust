@@ -42,10 +42,10 @@ impl Board {
                 let max_co = Coordinate::get_max_coordinate_for_square_grid(len as u8);
 
                 Some(Board {
-                    columns: max_co.column,
+                    columns: max_co.column + 1,
                     letters: vector
                         .into_iter()
-                        .pad_using((max_co.row * max_co.column) as usize, |_| Letter::Blank)
+                        .pad_using(((max_co.row + 1) * (max_co.column + 1)) as usize, |_| Letter::Blank)
                         .collect(),
                 })
             }

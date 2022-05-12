@@ -45,13 +45,13 @@ fn test_board(letters: &str, expected_count: usize) {
 
 #[test]
 fn test_create_boards() {
-    let number_to_return = 10;
+    let number_to_return = 1;
     let solve_settings = SolveSettings { min: 1, max: 100 };
     let one_thousand_solve_settings = SolveSettings { min: 1, max: 1000 };
     let ten_thousand_solve_settings = SolveSettings { min: 1, max: 10000 };
 
     let settings = BoardCreateSettings {
-        branching_factor: 3,
+        branching_factor: 1,
     };
     let rng = rand::SeedableRng::seed_from_u64(100);
 

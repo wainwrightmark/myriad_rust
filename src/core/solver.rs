@@ -19,6 +19,7 @@ impl SolveSettings {
         self.min <= num && num <= self.max
     }
 
+    ///Get all solutions to this board within the range
     pub fn solve (self, board: Board) -> impl Iterator<Item = FoundWord> + {
         
         SolutionIter::new(board, self)

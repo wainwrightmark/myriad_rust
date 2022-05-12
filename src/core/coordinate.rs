@@ -194,8 +194,8 @@ impl Coordinate {
         }
 
         Coordinate {
-            row: root,
-            column: root,
+            row: root -1,
+            column: root -1,
         }
     }
 }
