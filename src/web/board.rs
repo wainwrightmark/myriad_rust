@@ -1,3 +1,5 @@
+use std::ops::Deref;
+
 use crate::core::prelude::*;
 use crate::state::fullstate::*;
 use crate::state::msg::*;
@@ -5,15 +7,20 @@ use crate::web::prelude::*;
 use yew::prelude::*;
 use yewdux::prelude::*;
 
+// #[derive(PartialEq, Store, Clone, Default)]
+// pub struct DragState{
+//   coordinate: Option<Coordinate>
+// }
+
 #[function_component(CirclesSVG)]
 pub fn circles_svg() -> Html {
-    let (game_state, _) = use_store::<FullState>();
-    
-    let circles = game_state
-        .board
-        .max_coordinate()
+    //let (game_state, _) = use_store::<FullState>();
+
+    let mc = use_selector(|state: &FullState| state.rotflip.max_coordinate.clone());
+
+    let circles = mc
         .get_positions_up_to()
-        .map(|c| make_circle(&game_state, c))
+        .map(|coordinate| html!(<Circle {coordinate} />))
         .collect::<Html>();
 
     html! {
@@ -24,12 +31,35 @@ pub fn circles_svg() -> Html {
       }
 }
 
-fn make_circle(gamestate: &FullState, coordinate: Coordinate) -> Html {
-    let location = gamestate.rotflip.get_location(&coordinate, SQUARE_SIZE);
+#[derive(PartialEq, Properties)]
+pub struct CircleProperties {
+    coordinate: Coordinate,
+}
+#[function_component(Circle)]
+fn circle(properties: &CircleProperties) -> Html {
+    let coordinate = properties.coordinate;
+
+    let location = use_selector_with_deps(
+        |state: &FullState, co| state.rotflip.get_location(&co, SQUARE_SIZE),
+        coordinate,
+    );
+
+    let (color, cursor) =
+        use_selector_with_deps(|state: &FullState, co| state.get_color(&co), coordinate)
+            .deref()
+            .clone();
+
+    let letter = use_selector_with_deps(
+        |state: &FullState, co| state.board.get_letter_at_coordinate(&co),
+        coordinate,
+    )
+    .deref()
+    .clone();
+
+    //(selector, eq, deps) gamestate.rotflip.get_location(&coordinate, SQUARE_SIZE);
     let cx = location.0;
     let cy = location.1;
-    let (color, cursor) = gamestate.get_color(&coordinate);
-    let letter = gamestate.board.get_letter_at_coordinate(&coordinate);
+
     let text = letter.word_text();
     let circle_id = format!("{coordinate}_bigCircle");
     let text_id = format!("{coordinate}_text");
