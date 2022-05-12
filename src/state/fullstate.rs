@@ -33,16 +33,16 @@ impl FullState {
         let move_result = self.get_move_result(coordinate);
 
         match move_result {
-            MoveResult::WordComplete {
-                word: _,
-            } => ("darkgreen".to_string(), "pointer".to_string()),
+            MoveResult::WordComplete { word: _ } => {
+                ("darkgreen".to_string(), "pointer".to_string())
+            }
             MoveResult::WordIncomplete {
                 word: _,
                 coordinates: _,
             } => ("green".to_string(), "pointer".to_string()),
-            MoveResult::WordOutsideRange {
-                word: _,
-            } => ("green".to_string(), "pointer".to_string()),
+            MoveResult::WordOutsideRange { word: _ } => {
+                ("green".to_string(), "pointer".to_string())
+            }
             MoveResult::WordAbandoned => ("darkgreen".to_string(), "pointer".to_string()),
             MoveResult::MoveRetraced {
                 word: _,
@@ -94,7 +94,6 @@ impl FullState {
 
             let word = self.board.get_word_text(&new_chosen_positions);
 
-            
             let check_result = self.board.check(&new_chosen_positions);
 
             let final_result = match check_result {
@@ -104,14 +103,14 @@ impl FullState {
                             word: FoundWord {
                                 result: i,
                                 path: new_chosen_positions,
-                            }
+                            },
                         }
                     } else {
                         MoveResult::WordOutsideRange {
                             word: FoundWord {
                                 result: i,
                                 path: new_chosen_positions,
-                            }
+                            },
                         }
                     }
                 }

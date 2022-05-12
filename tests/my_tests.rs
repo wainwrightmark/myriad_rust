@@ -1,5 +1,4 @@
 #[cfg(test)]
-
 use itertools::Itertools;
 use myriad::core::prelude::*;
 
@@ -30,9 +29,7 @@ fn test_board(letters: &str, expected_count: usize) {
 
     let settings = SolveSettings { min: 1, max: 100 };
 
-    let solutions = settings
-        .solve(board.clone())
-        .collect::<Vec<FoundWord>>();
+    let solutions = settings.solve(board.clone()).collect::<Vec<FoundWord>>();
 
     for r in solutions
         .iter()
@@ -58,16 +55,22 @@ fn test_create_boards() {
     };
     let rng = rand::SeedableRng::seed_from_u64(100);
 
-    let boards = settings.create_boards(9, solve_settings, rng).take(number_to_return).collect_vec();
+    let boards = settings
+        .create_boards(9, solve_settings, rng)
+        .take(number_to_return)
+        .collect_vec();
 
     assert!(boards.len() >= number_to_return);
 
-    for board in boards {        
+    for board in boards {
         let one_thousand_solutions = one_thousand_solve_settings.solve(board.clone()).count();
         let ten_thousand_solutions = ten_thousand_solve_settings.solve(board.clone()).count();
 
-        eprintln!("{} ({}, {})", board.to_single_string(), one_thousand_solutions, ten_thousand_solutions);
-    }    
+        eprintln!(
+            "{} ({}, {})",
+            board.to_single_string(),
+            one_thousand_solutions,
+            ten_thousand_solutions
+        );
+    }
 }
-
-

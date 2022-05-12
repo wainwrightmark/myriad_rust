@@ -101,7 +101,7 @@ impl Reducer<FullState> for Msg {
             .into(),
 
             Msg::NewGame => {
-                let solve_settings  = SolveSettings { min: 1, max: 100 };
+                let solve_settings = SolveSettings { min: 1, max: 100 };
 
                 let settings = BoardCreateSettings {
                     branching_factor: 3,
@@ -120,7 +120,11 @@ impl Reducer<FullState> for Msg {
                 FullState {
                     board: board.into(),
                     selected_tab_state: state.selected_tab_state,
-                    rotflip: RotFlipState{rotate: state.rotflip.rotate + 1 % 4, flip: !state.rotflip.flip, max_coordinate: state.rotflip.max_coordinate },
+                    rotflip: RotFlipState {
+                        rotate: state.rotflip.rotate + 1 % 4,
+                        flip: !state.rotflip.flip,
+                        max_coordinate: state.rotflip.max_coordinate,
+                    },
                     ..Default::default()
                 }
                 .into()
@@ -137,28 +141,26 @@ impl Reducer<FullState> for Msg {
                 let mut is_new_word: bool = false;
 
                 let mut new_selected_tab_state = state.selected_tab_state;
-                let new_found_words: Rc<FoundWordsState> = if let MoveResult::WordComplete {
-                    word: found_word,
-                } = move_result.clone()
-                {
-                    is_new_word = !state.found_words.has_word(&found_word);
-                    if is_new_word {
-                        new_selected_tab_state =
-                            new_selected_tab_state.number_found(found_word.result);
-                        let ns = state.found_words.with_word(found_word);
+                let new_found_words: Rc<FoundWordsState> =
+                    if let MoveResult::WordComplete { word: found_word } = move_result.clone() {
+                        is_new_word = !state.found_words.has_word(&found_word);
+                        if is_new_word {
+                            new_selected_tab_state =
+                                new_selected_tab_state.number_found(found_word.result);
+                            let ns = state.found_words.with_word(found_word);
 
-                        let len = ns.words.len().to_i32().unwrap();
+                            let len = ns.words.len().to_i32().unwrap();
 
-                        if len % 10 == 0 {
-                            make_confetti(get_emoji(len / 10), 10 + len);
+                            if len % 10 == 0 {
+                                make_confetti(get_emoji(len / 10), 10 + len);
+                            }
+                            ns.into()
+                        } else {
+                            state.found_words.clone()
                         }
-                        ns.into()
                     } else {
                         state.found_words.clone()
-                    }
-                } else {
-                    state.found_words.clone()
-                };
+                    };
 
                 let new_recent_words = state
                     .recent_words

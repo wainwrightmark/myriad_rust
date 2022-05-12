@@ -9,17 +9,11 @@ pub struct ChosenPositionsState {
 impl ChosenPositionsState {
     pub fn after_move_result(self, move_result: &MoveResult) -> Self {
         match move_result {
-            MoveResult::WordComplete {
-                word,
-            } => Self {
-                positions: word.path .to_owned(),
-                ..self
-            },
-            MoveResult::WordOutsideRange {
-                word,
-            } => Self {
+            MoveResult::WordComplete { word } => Self {
                 positions: word.path.to_owned(),
-                ..self
+            },
+            MoveResult::WordOutsideRange { word } => Self {
+                positions: word.path.to_owned(),
             },
             MoveResult::WordIncomplete {
                 word: _,
@@ -30,14 +24,12 @@ impl ChosenPositionsState {
             },
             MoveResult::WordAbandoned => Self {
                 positions: Default::default(),
-                ..self
             },
             MoveResult::MoveRetraced {
                 word: _,
                 coordinates,
             } => Self {
                 positions: coordinates.clone(),
-                ..self
             },
             MoveResult::IllegalMove => self,
         }

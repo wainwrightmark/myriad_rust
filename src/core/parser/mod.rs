@@ -126,16 +126,18 @@ pub(crate) fn parse_and_evaluate<J: Iterator<Item = Letter>>(
     {
         return Err(ParseFail::Failure);
     }
-    
+
     match parse(input) {
-        Ok(expr) => {
-
-            match input.peek(){
-                Some(l) => if l == &Letter::Blank { Err(ParseFail::Failure)} else { Err(ParseFail::PartialSuccess)},
-                None => Ok(expr),
+        Ok(expr) => match input.peek() {
+            Some(l) => {
+                if l == &Letter::Blank {
+                    Err(ParseFail::Failure)
+                } else {
+                    Err(ParseFail::PartialSuccess)
+                }
             }
-
-        }
+            None => Ok(expr),
+        },
         Err(e) => Err(e),
     }
 }

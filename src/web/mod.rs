@@ -10,7 +10,6 @@ pub mod prelude {
     pub use crate::web::rope::*;
 
     pub fn format_number(num: i32) -> String {
-
         if num == 100 {
             "💯".to_string()
         } else if num < 10 {

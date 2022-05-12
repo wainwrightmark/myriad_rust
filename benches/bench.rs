@@ -21,13 +21,13 @@ fn create_boards_and_solve(number_of_boards: usize) {
 
     let rng = rand::SeedableRng::seed_from_u64(seed);
 
-    let boards = board_create_settings.create_boards(9, solve_settings, rng)
-    .take(number_of_boards);
+    let boards = board_create_settings
+        .create_boards(9, solve_settings, rng)
+        .take(number_of_boards);
 
-    for board in boards {        
-        let solutions = solve_settings.solve(board)            
-            .collect::<Vec<FoundWord>>();
+    for board in boards {
+        let solutions_len = solve_settings.solve(board).count();
 
-        assert_eq!(100, solutions.len());
+        assert_eq!(100, solutions_len);
     }
 }

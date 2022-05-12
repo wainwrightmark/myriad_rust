@@ -20,8 +20,8 @@ impl SolveSettings {
     }
 
     pub fn solve (self, board: Board) -> impl Iterator<Item = FoundWord> + {
-        let solution_iter = SolutionIter::new(board, self);
-        solution_iter
+        
+        SolutionIter::new(board, self)
     }    
 
     pub fn total_solutions(&self)-> usize{
