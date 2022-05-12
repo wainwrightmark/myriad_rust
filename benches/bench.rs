@@ -8,7 +8,7 @@ benchmark_group!(benches, bench_find_solutions);
 benchmark_main!(benches);
 
 fn bench_find_solutions(bench: &mut Bencher) {
-    bench.iter(|| create_boards_and_solve(1));
+    bench.iter(|| create_boards_and_solve(10));
 }
 
 fn create_boards_and_solve(number_of_boards: usize) {
@@ -18,7 +18,9 @@ fn create_boards_and_solve(number_of_boards: usize) {
         branching_factor: 3,
         number_to_return: number_of_boards,
     };
-    let rng = rand::SeedableRng::seed_from_u64(100);
+    let seed: u64 = rand::random();
+
+    let rng = rand::SeedableRng::seed_from_u64(seed);
     let rng_cell = core::cell::RefCell::new(rng);
 
     let boards = create_boards(solve_settings, 9, &board_create_settings, &rng_cell);
