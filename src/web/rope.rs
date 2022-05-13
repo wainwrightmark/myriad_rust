@@ -71,13 +71,14 @@ fn get_path_coordinates(
             .map(|x| rot_flip.get_location(x, square_size))
             .collect_vec();
 
-        let total_letters = rot_flip.total_letters();
+        //let total_letters = rot_flip.total_letters();
+        const ROPEPOINTS: usize = 60;
 
-        (0..total_letters)
+        (0..ROPEPOINTS)
             .map(|i| {
                 let den = chosen_positions.positions.len();
-                let index = (i * den) / total_letters;
-                let remainder = (i * den) % total_letters;
+                let index = (i * den) / ROPEPOINTS;
+                let remainder = (i * den) % ROPEPOINTS;
 
                 let loc = locations[index];
 
@@ -87,8 +88,8 @@ fn get_path_coordinates(
                     let next = locations[index + 1];
 
                     (
-                        get_inbetween(loc.0, next.0, remainder as f64, total_letters as f64),
-                        get_inbetween(loc.1, next.1, remainder as f64, total_letters as f64),
+                        get_inbetween(loc.0, next.0, remainder as f64, ROPEPOINTS as f64),
+                        get_inbetween(loc.1, next.1, remainder as f64, ROPEPOINTS as f64),
                     )
                 }
             })
