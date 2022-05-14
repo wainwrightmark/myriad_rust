@@ -35,6 +35,8 @@
   animation-name: disappearAnimation;
   
   animation-fill-mode: forwards;
+
+  -webkit-animation-fill-mode: forwards;
   animation-timing-function: ease-out;
   font-size: 3em;
   dominant-baseline: hanging;
