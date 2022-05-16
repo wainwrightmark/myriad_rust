@@ -285,7 +285,7 @@ async function load(module, imports) {
 
 async function init(input) {
     if (typeof input === 'undefined') {
-        input = new URL('myriad-826bd50df5921af2_bg.wasm', import.meta.url);
+        input = new URL('myriad-cb9294aaa21c96a3_bg.wasm', import.meta.url);
     }
     const imports = {};
     imports.wbg = {};
@@ -654,11 +654,11 @@ async function init(input) {
         const ret = getObject(arg0).sessionStorage;
         return isLikeNone(ret) ? 0 : addHeapObject(ret);
     }, arguments) };
-    imports.wbg.__wbindgen_closure_wrapper1227 = function(arg0, arg1, arg2) {
+    imports.wbg.__wbindgen_closure_wrapper1216 = function(arg0, arg1, arg2) {
         const ret = makeMutClosure(arg0, arg1, 48, __wbg_adapter_22);
         return addHeapObject(ret);
     };
-    imports.wbg.__wbindgen_closure_wrapper1961 = function(arg0, arg1, arg2) {
+    imports.wbg.__wbindgen_closure_wrapper1950 = function(arg0, arg1, arg2) {
         const ret = makeMutClosure(arg0, arg1, 48, __wbg_adapter_25);
         return addHeapObject(ret);
     };
