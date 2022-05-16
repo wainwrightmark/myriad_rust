@@ -1,5 +1,5 @@
 use crate::core::prelude::*;
-use crate::state::GOALSIZE;
+use crate::state::prelude::*;
 use num::{iter::Range, ToPrimitive};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;

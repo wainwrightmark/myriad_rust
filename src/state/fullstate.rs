@@ -23,9 +23,6 @@ pub struct FullState {
 
     #[serde(skip)]
     pub recent_words: Rc<RecentWordState>,
-
-    #[serde(skip)]
-    pub selected_tab_state: SelectedTabState,
     
 }
 

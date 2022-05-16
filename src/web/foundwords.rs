@@ -3,7 +3,7 @@ use std::rc::Rc;
 use crate::state::foundwordsstate::FoundWordsState;
 use crate::state::selectedtabstate::SelectedTabState;
 
-use crate::state::{fullstate::*, msg::*, GOALSIZE};
+use crate::state::prelude::*;
 use crate::web::prelude::*;
 use num::ToPrimitive;
 use yew::prelude::*;
@@ -12,7 +12,7 @@ use yewdux::prelude::*;
 #[function_component(FoundWordsTabHeaders)]
 pub fn found_words_tab_headers() -> Html {
     let state = use_selector(|state: &FullState| state.found_words.clone());
-    let selected_tab_state = use_selector(|state: &FullState| state.selected_tab_state);
+    let selected_tab_state = use_store_value::<SelectedTabState>();
 
     let buttons = (0..5)
         .map(|index| found_words_tab_header(index, state.clone(), selected_tab_state.clone()))
@@ -32,7 +32,7 @@ pub fn more_tab_header(properties: &MoreTabHeaderProperties) -> Html {
     let index = properties.index;
     let selected_tab_state = &properties.selected_tab_state;
 
-    let onclick = Dispatch::new().apply_callback(move |_| Msg::SelectTab { index });
+    let onclick = Dispatch::new().apply_callback(move |_| TabSelectedMsg { index });
 
     let key = format!("found_words_tab_header{index}");
     let selected = if selected_tab_state.index == index {
@@ -67,7 +67,7 @@ pub fn found_words_tab_header(
     state: Rc<Rc<FoundWordsState>>,
     selected_tab_state: Rc<SelectedTabState>,
 ) -> Html {
-    let onclick = Dispatch::new().apply_callback(move |_| Msg::SelectTab { index });
+    let onclick = Dispatch::new().apply_callback(move |_| TabSelectedMsg { index });
 
     let key = format!("found_words_tab_header{index}");
     let selected = if selected_tab_state.index == index {
@@ -104,7 +104,7 @@ pub fn found_words_tab_header(
 #[function_component(AllFoundWords)]
 pub fn all_found_words() -> Html {
     let state = use_selector(|state: &FullState| state.found_words.clone());
-    let selected_tab_state = use_selector(|state: &FullState| state.selected_tab_state);
+    let selected_tab_state =  use_store_value::<SelectedTabState>();
     let selected_tab = selected_tab_state.index;
 
     let total_found = state.words.len();
