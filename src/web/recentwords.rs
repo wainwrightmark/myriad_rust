@@ -9,7 +9,7 @@ use crate::web::prelude::*;
 #[function_component(RecentWords)]
 pub fn recent_words() -> Html {
     let recent_words_state = use_store_value::<RecentWordState>();
-    let rot_flip = use_selector(|state: &FullState| state.rotflip);
+    let rot_flip = use_store_value::<RotFlipState>();
     let selected_index = *use_selector(|state: &SelectedTabState| state.index).deref();
 
     let recent_words = 

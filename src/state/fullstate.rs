@@ -14,8 +14,6 @@ pub struct FullState {
     pub chosen_positions: ChosenPositionsState,
     pub found_words: Rc<FoundWordsState>,
     pub solve_settings: SolveSettings,
-    #[serde(skip)]
-    pub rotflip: RotFlipState,
     
 }
 

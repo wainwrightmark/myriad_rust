@@ -12,7 +12,7 @@ use yewdux::prelude::*;
 #[function_component(RopeSVG)]
 pub fn rope_svg_g() -> Html {
     let chosen_positions = use_selector(|state: &FullState| state.chosen_positions.clone());
-    let rot_flip = use_selector(|state: &FullState| state.rotflip);
+    let rot_flip = use_store_value::<RotFlipState>();
 
     let opacity = if chosen_positions.positions.is_empty() {
         "0"

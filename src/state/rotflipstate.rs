@@ -1,9 +1,25 @@
 use num::ToPrimitive;
 use serde::*;
-
+use yewdux::prelude::*;
 use crate::core::prelude::Coordinate;
 
-#[derive(PartialEq, Clone, Copy, Serialize, Deserialize)]
+pub struct RotFlipMsg{    
+    rotate: i8, 
+    flip: bool 
+}
+
+impl Reducer<RotFlipState> for RotFlipMsg{
+    fn apply(&self, state: std::rc::Rc<RotFlipState>) -> std::rc::Rc<RotFlipState> {
+        RotFlipState {
+            rotate: state.rotate + self.rotate,
+            flip: state.flip ^ self.flip,
+            max_coordinate: state.max_coordinate,
+        }.into()
+    }
+}
+
+
+#[derive(PartialEq, Clone, Copy, Serialize, Deserialize, Store, Debug)]
 pub struct RotFlipState {
     pub rotate: i8,
     pub flip: bool,
@@ -40,5 +56,11 @@ impl RotFlipState {
 
     pub fn rows(&self) -> usize {
         (self.max_coordinate.row + 1).to_usize().unwrap()
+    }
+
+    pub fn new_game(&mut self){        
+
+        self.rotate = (self.rotate + 1) % 4;
+        self.flip = !self.flip;
     }
 }

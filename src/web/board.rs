@@ -2,6 +2,7 @@ use std::ops::Deref;
 
 use crate::core::prelude::*;
 use crate::state::fullstate::*;
+use crate::state::prelude::RotFlipState;
 use crate::web::prelude::*;
 //use crate::state::drag::DragMsg;
 use crate::state::msg::*;
@@ -13,7 +14,7 @@ use yewdux::prelude::*;
 
 #[function_component(CirclesSVG)]
 pub fn circles_svg() -> Html {
-    let mc = use_selector(|state: &FullState| state.rotflip.max_coordinate.clone());
+    let mc = use_selector(|state: &FullState| state.board.max_coordinate());
 
     let circles = mc
         .get_positions_up_to()
@@ -37,7 +38,7 @@ fn circle(properties: &CircleProperties) -> Html {
     let coordinate = properties.coordinate;
 
     let location = use_selector_with_deps(
-        |state: &FullState, co| state.rotflip.get_location(&co, SQUARE_SIZE),
+        |state: &RotFlipState, co| state.get_location(&co, SQUARE_SIZE),
         coordinate,
     );
 

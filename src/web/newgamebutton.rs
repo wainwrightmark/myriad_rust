@@ -12,7 +12,7 @@ pub struct NewGameButtonProperties {
 #[function_component(NewGameButton)]
 pub fn new_game_button(properties: &NewGameButtonProperties) -> Html {
     let on_click: Option<Callback<MouseEvent>> =
-        Some(Dispatch::new().apply_callback(|_| Msg::NewGame));
+        Some(Dispatch::new().apply_callback(|_| NewGameMsg{}));
 
     let (x, y) = get_found_word_position(101, properties.selected_tab, false);
 
