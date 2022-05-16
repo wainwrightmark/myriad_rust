@@ -32,12 +32,14 @@
 .recentWord {
   font-family: monospace;
   -webkit-animation-name: disappearAnimation;
-  animation-name: disappearAnimation;
-  
-  animation-fill-mode: forwards;
+  animation-name: disappearAnimation;  
 
   -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+  
+  -webkit-animation-timing-function: ease-out;
   animation-timing-function: ease-out;
+
   font-size: 3em;
   dominant-baseline: hanging;
   text-anchor: start;
@@ -89,8 +91,8 @@
 
 .rope {
   stroke: LightBlue;
-  -webkit-transition: 1s ease-out;
-  transition: 1s ease-out;  
+  -webkit-transition: d 1s ease-out;
+  transition: d 1s ease-out;  
   fill: none;
   pointer-events: none;
 }
@@ -191,10 +193,10 @@ Found Word
 }
 
 .found-word-box{
-  stroke-width: 1;
+  stroke-width: 0;
   stroke-linejoin: round;
   fill: white;
-  stroke: transparent;
+  stroke: black;
   -webkit-transition: fill 5s ease-in;
   transition: fill 5s ease-in;
 }
@@ -216,5 +218,4 @@ Found Word
 
 .found-word-box-success{
   fill: green;
-  stroke: black;
 }

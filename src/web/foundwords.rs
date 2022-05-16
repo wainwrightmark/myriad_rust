@@ -94,7 +94,7 @@ pub fn found_words_tab_header(
     <rect {class} height={format!("{TAB_HEADER_HEIGHT}")} rx="5" width={format!("{TAB_HEADER_WIDTH}")}>
     </rect>
     <text class="tab-header-text" fill="Black" stroke="White">
-       {format_number ((index.to_i32().unwrap() * GOALSIZE) + 1)}
+       {format_number ((index.to_i32().unwrap()  + 1) * GOALSIZE)}
     </text>
 
     </g>
