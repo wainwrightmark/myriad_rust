@@ -3,7 +3,10 @@ use std::ops::Deref;
 use crate::core::prelude::*;
 use crate::state::fullstate::*;
 use crate::web::prelude::*;
-use crate::state::drag::DragMsg;
+//use crate::state::drag::DragMsg;
+use crate::state::msg::*;
+
+
 use yew::prelude::*;
 use yewdux::prelude::*;
 
@@ -50,11 +53,13 @@ fn circle(properties: &CircleProperties) -> Html {
     .deref()
     .clone();
 
-    let ontouchend = Dispatch::new().apply_callback(move |_: TouchEvent| DragMsg::TouchEnd { coordinate });
-    let onmousedown = Dispatch::new().apply_callback(move |_: MouseEvent| DragMsg::MouseDown { coordinate });
+    //let ontouchend = Dispatch::new().apply_callback(move |_: TouchEvent| DragMsg::TouchEnd { coordinate });
+    //let onmousedown = Dispatch::new().apply_callback(move |_: MouseEvent| DragMsg::MouseDown { coordinate });
 
-    let ontouchstart = Dispatch::new().apply_callback(move |_: TouchEvent| DragMsg::TouchStart { coordinate: coordinate });
-    let onmouseup = Dispatch::new().apply_callback(move |_: MouseEvent| DragMsg::MouseUp { coordinate: coordinate });
+    //let ontouchstart = Dispatch::new().apply_callback(move |_: TouchEvent| DragMsg::TouchStart { coordinate: coordinate });
+    //let onmouseup = Dispatch::new().apply_callback(move |_: MouseEvent| DragMsg::MouseUp { coordinate: coordinate });
+
+    let onclick = Dispatch::new().apply_callback(move |_: MouseEvent| Msg::Move { coordinate: coordinate });
 
     let cx = location.0;
     let cy = location.1;
@@ -74,11 +79,11 @@ fn circle(properties: &CircleProperties) -> Html {
         <g class="square"
        style={g_style}
        cursor={cursor}
-       //{onclick}
-       {onmousedown}
-       {onmouseup}
-       {ontouchstart}
-       {ontouchend}
+       {onclick}
+       //{onmousedown}
+       //{onmouseup}
+       //{ontouchstart}
+       //{ontouchend}
        draggable="true"
        >
       <circle

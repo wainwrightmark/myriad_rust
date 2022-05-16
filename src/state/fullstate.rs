@@ -55,8 +55,11 @@ impl FullState {
 
     pub fn get_move_result(&self, coordinate: &Coordinate) -> MoveResult {
         if !self.chosen_positions.positions.is_empty()
-            && (self.chosen_positions.positions.first().unwrap() == coordinate
-                || self.chosen_positions.positions.last().unwrap() == coordinate)
+            &&
+             //(self.chosen_positions.positions.first().unwrap() == coordinate
+                //||
+                 self.chosen_positions.positions.last().unwrap() == coordinate
+                //)
         {
             return MoveResult::WordAbandoned;
         }
