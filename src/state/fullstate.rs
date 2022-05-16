@@ -1,10 +1,6 @@
 use crate::core::parser::ParseFail;
 use crate::core::prelude::*;
-use crate::state::chosenpositionsstate::*;
-use crate::state::foundwordsstate::*;
-use crate::state::recentwordstate::*;
-use crate::state::rotflipstate::*;
-use crate::state::selectedtabstate::*;
+use crate::state::prelude::*;
 use itertools::Itertools;
 use serde::*;
 use std::rc::Rc;
@@ -20,9 +16,6 @@ pub struct FullState {
     pub solve_settings: SolveSettings,
     #[serde(skip)]
     pub rotflip: RotFlipState,
-
-    #[serde(skip)]
-    pub recent_words: Rc<RecentWordState>,
     
 }
 

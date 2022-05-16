@@ -4,7 +4,6 @@ use crate::web::prelude::*;
 use log::debug;
 
 use num::ToPrimitive;
-use std::ops::Deref;
 use std::rc::Rc;
 use yewdux::prelude::*;
 
@@ -47,7 +46,6 @@ impl Reducer<FullState> for Msg {
                     max_coordinate: state.rotflip.max_coordinate,
                 },
                 chosen_positions: state.chosen_positions.clone(),
-                recent_words: state.recent_words.clone(),
                 found_words: state.found_words.clone(),
             }
             .into(),
@@ -61,7 +59,6 @@ impl Reducer<FullState> for Msg {
                     max_coordinate: state.rotflip.max_coordinate,
                 },
                 chosen_positions: state.chosen_positions.clone(),
-                recent_words: state.recent_words.clone(),
                 found_words: state.found_words.clone(),
             }
             .into(),
@@ -75,7 +72,6 @@ impl Reducer<FullState> for Msg {
                         chosen_positions: ChosenPositionsState {
                             positions: word.path.clone(),
                         },
-                        recent_words: state.recent_words.clone(),
                         found_words: state.found_words.clone(),
                     }
                     .into()
@@ -146,18 +142,13 @@ impl Reducer<FullState> for Msg {
                         state.found_words.clone()
                     };
 
-                let new_recent_words = state
-                    .recent_words
-                    .deref()
-                    .clone()
-                    .after_move_result(&move_result, is_new_word);
+                Dispatch::new().apply(WordFoundMsg{move_result: move_result, is_new_word});
 
                 FullState {
                     board: state.board.clone(),
                     solve_settings: state.solve_settings,
                     rotflip: state.rotflip,
                     chosen_positions: new_chosen_positions,
-                    recent_words: new_recent_words.into(),
                     found_words: new_found_words,
                 }
                 .into()

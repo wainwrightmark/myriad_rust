@@ -1,6 +1,6 @@
 use std::ops::Deref;
 
-use crate::state::{fullstate::*, prelude::SelectedTabState};
+use crate::state::prelude::*;
 use yew::prelude::*;
 use yewdux::prelude::*;
 use crate::web::prelude::*;
@@ -8,7 +8,7 @@ use crate::web::prelude::*;
 
 #[function_component(RecentWords)]
 pub fn recent_words() -> Html {
-    let recent_words_state = use_selector(|state: &FullState| state.recent_words.clone());
+    let recent_words_state = use_store_value::<RecentWordState>();
     let rot_flip = use_selector(|state: &FullState| state.rotflip);
     let selected_index = *use_selector(|state: &SelectedTabState| state.index).deref();
 

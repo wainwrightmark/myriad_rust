@@ -1,7 +1,24 @@
+
+use std::rc::Rc;
+
 use crate::core::prelude::*;
 use itertools::Itertools;
+use yewdux::prelude::*;
 
-#[derive(PartialEq, Clone, Default)]
+
+pub struct WordFoundMsg{
+    pub move_result: MoveResult,
+    pub is_new_word: bool
+}
+
+impl Reducer<RecentWordState> for WordFoundMsg{
+    fn apply(&self, state: std::rc::Rc<RecentWordState>) -> std::rc::Rc<RecentWordState> {
+        RecentWordState::after_move_result(state, &self.move_result, self.is_new_word).into()
+    }
+}
+
+
+#[derive(PartialEq, Clone, Default, Store)]
 pub struct RecentWordState {
     pub recent_words: Vec<RecentWord>,
 }
@@ -15,7 +32,7 @@ pub struct RecentWord {
 }
 
 impl RecentWordState {
-    fn with_word(self, word: i32, word_type: FoundWordType, coordinate: Coordinate) -> Self {
+    fn with_word(&self, word: i32, word_type: FoundWordType, coordinate: Coordinate) -> Self {
         let now = instant::Instant::now();
         let linger = word_type.linger_duration_ms();
 
@@ -26,27 +43,27 @@ impl RecentWordState {
             expiry_time: now + instant::Duration::from_millis(linger),
         };
 
-        let new_words = self
-            .recent_words
-            .into_iter()
-            .chain(std::iter::once(r_word))
-            .collect_vec();
+        let mut new_words = self
+            .recent_words.clone();
+
+        new_words.push(r_word);
 
         Self {
             recent_words: new_words,
         }
     }
 
-    pub fn clear_expired(self) -> Self {
+    pub fn clear_expired(&self) -> Self {
         if self.recent_words.is_empty() {
-            return self;
+            return Default::default();
         };
 
         let now = instant::Instant::now();
         let new_words = self
-            .recent_words
-            .into_iter()
-            .filter(|x| x.expiry_time > now)
+            .recent_words.iter()
+            
+            .filter(|&x| x.expiry_time > now)
+            .cloned()
             .collect_vec();
 
         Self {
@@ -54,9 +71,9 @@ impl RecentWordState {
         }
     }
 
-    pub fn after_move_result(self, move_result: &MoveResult, is_new_word: bool) -> Self {
+    pub fn after_move_result(this: Rc::<Self>, move_result: &MoveResult, is_new_word: bool) -> Rc<Self> {
         match move_result {
-            MoveResult::WordComplete { word } => self.with_word(
+            MoveResult::WordComplete { word } => this.with_word(
                 word.result,
                 if is_new_word {
                     FoundWordType::Found
@@ -64,22 +81,22 @@ impl RecentWordState {
                     FoundWordType::PreviouslyFound
                 },
                 *word.path.last().unwrap(),
-            ),
-            MoveResult::WordOutsideRange { word } => self.with_word(
+            ).into(),
+            MoveResult::WordOutsideRange { word } => this.with_word(
                 word.result,
                 FoundWordType::NotInRange,
                 *word.path.last().unwrap(),
-            ),
-            MoveResult::WordAbandoned => self.clear_expired(),
+            ).into(),
+            MoveResult::WordAbandoned => this.clear_expired().into(),
             MoveResult::MoveRetraced {
                 word: _,
                 coordinates: _,
-            } => self,
-            MoveResult::IllegalMove => self,
+            } => this,
+            MoveResult::IllegalMove => this,
             MoveResult::WordIncomplete {
                 word: _,
                 coordinates: _,
-            } => self,
+            } => this,
         }
     }
 }
