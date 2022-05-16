@@ -1,4 +1,9 @@
-automod::dir!("src/core");
+mod board;
+mod coordinate;
+mod creator;
+mod letter;
+mod move_result;
+mod solver;
 
 pub mod parser;
 

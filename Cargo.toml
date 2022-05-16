@@ -21,7 +21,6 @@ yewdux = { git = "https://github.com/intendednull/yewdux.git" }
 
 wasm-bindgen-futures = "0.4"
 wasm-bindgen= { version = "0.2.80", features = ["serde"] }
-automod = "1.0"
 instant = { version = "0.1", features = [ "wasm-bindgen", "inaccurate" ] }
 
 [dependencies.web-sys]

@@ -1,4 +1,11 @@
-automod::dir!("src/web");
+mod board;
+mod confetti;
+mod foundwords;
+mod newgamebutton;
+mod recentwords;
+mod rope;
+mod app;
+mod circle;
 
 pub mod prelude {
 
@@ -9,6 +16,7 @@ pub mod prelude {
     pub use crate::web::recentwords::*;
     pub use crate::web::rope::*;
     pub use crate::web::app::*;
+    pub use crate::web::circle::*;
 
     pub fn format_number(num: i32) -> String {
         if num == 100 {
