@@ -6,6 +6,7 @@ pub mod recentwordstate;
 pub mod rotflipstate;
 pub mod selectedtabstate;
 pub mod drag;
+pub mod circletype;
 
 
 
@@ -20,6 +21,7 @@ pub mod prelude {
     pub use crate::state::recentwordstate::*;
     pub use crate::state::rotflipstate::*;
     pub use crate::state::selectedtabstate::*;
+    pub use crate::state::circletype::*;
 
     pub const GOALSIZE: i32 = 20;
 }

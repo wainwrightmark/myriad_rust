@@ -17,29 +17,10 @@ pub struct FullState {
     
 }
 
-impl FullState {
-    pub fn get_color(&self, coordinate: &Coordinate) -> (String, String) {
-        let move_result = self.get_move_result(coordinate);
 
-        match move_result {
-            MoveResult::WordComplete { word: _ } => {
-                ("darkgreen".to_string(), "pointer".to_string())
-            }
-            MoveResult::WordIncomplete {
-                word: _,
-                coordinates: _,
-            } => ("green".to_string(), "pointer".to_string()),
-            MoveResult::WordOutsideRange { word: _ } => {
-                ("green".to_string(), "pointer".to_string())
-            }
-            MoveResult::WordAbandoned => ("darkgreen".to_string(), "pointer".to_string()),
-            MoveResult::MoveRetraced {
-                word: _,
-                coordinates: _,
-            } => ("blue".to_string(), "pointer".to_string()),
-            MoveResult::IllegalMove => ("grey".to_string(), "not-allowed".to_string()),
-        }
-    }
+
+impl FullState {
+    
 
     pub fn get_move_result(&self, coordinate: &Coordinate) -> MoveResult {
         if !self.chosen_positions.positions.is_empty()

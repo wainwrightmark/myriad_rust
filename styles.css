@@ -13,6 +13,7 @@
   transition: 1s ease-out;
 }
 
+
 .circle {
   stroke-width: 7.2;
   -webkit-transition: 3s cubic-bezier(0, 1.45, 0.72, 1.33);
@@ -20,7 +21,7 @@
 }
 
 .circle:hover {
-  transform: scale(1.1)
+  transform: scale(1.1);
 }
 
 .circle-text {
@@ -218,4 +219,25 @@ Found Word
 
 .found-word-box-success{
   fill: green;
+}
+
+/*
+Crosshairs
+*/
+
+.crosshair-group{
+  transform: translate(-60px, -60px);
+}
+
+.crosshair{
+  stroke-width: 7.2;
+  -webkit-transition: all 1s;
+  transition: all 10s;
+  opacity: 1.0;
+  stroke-linecap: round;
+}
+
+.invisible{
+  opacity: 0.0;
+
 }
