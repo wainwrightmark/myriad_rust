@@ -26,8 +26,6 @@
 
 .circle-legal:hover {
   transform: scale(1.1);
-  fill: green;
-  fill-opacity: 0.1;
 }
 
 .circle-disabled:hover {
@@ -246,7 +244,7 @@ Crosshairs
   -webkit-transition: all 1s;
   transition: all 1s;
   opacity: 1.0;
-  stroke-linecap: round;
+  stroke-linecap: round;  
 }
 
 .invisible{

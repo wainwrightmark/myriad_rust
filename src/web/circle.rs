@@ -16,9 +16,6 @@ pub const CROSSHAIR_LENGTH: f64 = 15.0;
 pub const HALF_CROSSHAIR_LENGTH: f64 = CROSSHAIR_LENGTH / 2.0;
 pub const CROSSHAIR_INSET: f64 = 12.5;
 
-pub const CROSSHAIR_OFFSET: f64 = (SQUARE_SIZE ) / 2.0;
-
-pub const CROSSHAIR_ROT_OFFSET: f64 = 0.0;// (-CROSSHAIR_LENGTH) / 2.0;
 
 #[function_component(Crosshair)]
 pub fn crosshairs(properties: &CrossHairProperties) -> Html {
@@ -34,28 +31,28 @@ pub fn crosshairs(properties: &CrossHairProperties) -> Html {
     };
 
     let line1_style = if properties.circle_type == CircleType::LastPosition{
-        format!("transform: translate({}px, {}px) rotate(0deg);", CROSSHAIR_ROT_OFFSET + CROSSHAIR_INSET, SQUARE_MIDPOINT)
+        format!("transform: translate({}px, {}px) rotate(0deg);",CROSSHAIR_INSET, SQUARE_MIDPOINT)
     }else{
-        format!("transform: translate({}px, {}px) rotate(90deg);", CROSSHAIR_INSET, CROSSHAIR_OFFSET) 
+        format!("transform: translate({}px, {}px) rotate(90deg);", CROSSHAIR_INSET, SQUARE_MIDPOINT) 
     };
 
     let line2_style = if properties.circle_type == CircleType::LastPosition{
-        format!("transform: translate({}px, {}px) rotate(0deg);", CROSSHAIR_ROT_OFFSET + SQUARE_SIZE - CROSSHAIR_INSET , SQUARE_MIDPOINT)
+        format!("transform: translate({}px, {}px) rotate(0deg);",  SQUARE_SIZE - CROSSHAIR_INSET , SQUARE_MIDPOINT)
     }else{
-        format!("transform: translate({}px, {}px) rotate(90deg);",SQUARE_SIZE - CROSSHAIR_INSET, CROSSHAIR_OFFSET) 
+        format!("transform: translate({}px, {}px) rotate(90deg);",SQUARE_SIZE - CROSSHAIR_INSET, SQUARE_MIDPOINT) 
     };
     
     
     let line3_style = if properties.circle_type == CircleType::LastPosition{
-        format!("transform: translate({}px, {}px) rotate(90deg);", SQUARE_MIDPOINT, CROSSHAIR_ROT_OFFSET +  CROSSHAIR_INSET , )
+        format!("transform: translate({}px, {}px) rotate(-90deg);", SQUARE_MIDPOINT,  CROSSHAIR_INSET , )
     }else{
-        format!("transform: translate({}px, {}px) rotate(0deg);", CROSSHAIR_OFFSET, CROSSHAIR_INSET) 
+        format!("transform: translate({}px, {}px) rotate(0deg);", SQUARE_MIDPOINT, CROSSHAIR_INSET) 
     };
 
     let line4_style = if properties.circle_type == CircleType::LastPosition{
-        format!("transform: translate({}px, {}px) rotate(90deg);",SQUARE_MIDPOINT, CROSSHAIR_ROT_OFFSET + SQUARE_SIZE - CROSSHAIR_INSET )
+        format!("transform: translate({}px, {}px) rotate(-90deg);",SQUARE_MIDPOINT,  SQUARE_SIZE - CROSSHAIR_INSET )
     }else{
-        format!("transform: translate({}px, {}px) rotate(0deg);",CROSSHAIR_OFFSET, SQUARE_SIZE - CROSSHAIR_INSET) 
+        format!("transform: translate({}px, {}px) rotate(0deg);",SQUARE_MIDPOINT, SQUARE_SIZE - CROSSHAIR_INSET) 
     };
 
 
