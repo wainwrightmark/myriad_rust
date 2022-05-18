@@ -16,12 +16,35 @@
 
 .circle {
   stroke-width: 7.2;
+  fill: black;
+  fill-opacity: 0.01;
   -webkit-transition: 3s cubic-bezier(0, 1.45, 0.72, 1.33);
   transition: 3s cubic-bezier(0, 1.45, 0.72, 1.33);  
 }
 
-.circle:hover {
+.circle-disabled{
+}
+
+.circle-legal{
+}
+
+.circle-final{
+}
+
+.circle-intermediate{
+}
+
+
+.circle-legal:hover {
   transform: scale(1.1);
+  fill: green;
+  fill-opacity: 0.1;
+}
+
+.circle-disabled:hover {
+  transform: scale(0.9);
+  fill: red;
+  fill-opacity: 0.1;
 }
 
 .circle-text {
@@ -232,7 +255,7 @@ Crosshairs
 .crosshair{
   stroke-width: 7.2;
   -webkit-transition: all 1s;
-  transition: all 10s;
+  transition: all 1s;
   opacity: 1.0;
   stroke-linecap: round;
 }

@@ -41,10 +41,10 @@ pub fn crosshairs(properties: &CrossHairProperties) -> Html {
         //CircleType::IntermediatePosition { next: _ } => todo!(),
         _ => html!(
             <g key="crosshair" class={class} {style}>
-            <line key="line1" x1={(CROSSHAIR_INSET.to_string())} x2={(CROSSHAIR_INSET.to_string())} y1={CROSSHAIR_OFFSET1.to_string()} y2={CROSSHAIR_OFFSET2.to_string()}  class={"crosshair invisible"} />
+            <line key="line1" x1={CROSSHAIR_INSET.to_string()} x2={CROSSHAIR_INSET.to_string()}y1={CROSSHAIR_OFFSET1.to_string()} y2={CROSSHAIR_OFFSET2.to_string()}  class={"crosshair invisible"} />
             <line key="line2" x1={(SQUARE_SIZE - CROSSHAIR_INSET).to_string()} x2={(SQUARE_SIZE - CROSSHAIR_INSET).to_string()} y1={CROSSHAIR_OFFSET1.to_string()} y2={CROSSHAIR_OFFSET2.to_string()}  class={"crosshair invisible"} />
 
-            <line key="line3" y1={(CROSSHAIR_INSET.to_string())} y2={(CROSSHAIR_INSET.to_string())} x1={CROSSHAIR_OFFSET1.to_string()} x2={CROSSHAIR_OFFSET2.to_string()}  class={"crosshair invisible"} />
+            <line key="line3" y1={CROSSHAIR_INSET.to_string()} y2={CROSSHAIR_INSET.to_string()} x1={CROSSHAIR_OFFSET1.to_string()} x2={CROSSHAIR_OFFSET2.to_string()}  class={"crosshair invisible"} />
             <line key="line4" y1={(SQUARE_SIZE - CROSSHAIR_INSET).to_string()} y2={(SQUARE_SIZE - CROSSHAIR_INSET).to_string()} x1={CROSSHAIR_OFFSET1.to_string()} x2={CROSSHAIR_OFFSET2.to_string()}  class={"crosshair invisible"} />
             </g>
         ),
@@ -104,6 +104,18 @@ pub fn circle(properties: &CircleProperties) -> Html {
         " -webkit-transform: translate({cx}px, {cy}px); transform: translate({cx}px, {cy}px);"
     );
 
+    
+    let circle_type_class  = match circle_type{
+        CircleType::Disabled => "circle-disabled",
+        CircleType::LegalMove => "circle-legal",
+        CircleType::LastPosition => "circle-final",
+        CircleType::IntermediatePosition { next:_ } => "circle-intermediate",
+        
+
+    };
+
+    let circle_classes = classes!("circle", circle_type_class);
+
     //let onclick = Dispatch::new().apply_callback(move |_| Msg::Move { coordinate });
 
     html! {
@@ -120,10 +132,8 @@ pub fn circle(properties: &CircleProperties) -> Html {
        >
       <circle
         id={circle_id}
-        class="circle"
+        class={circle_classes}
         stroke={color}
-        fill="black"
-        fill-opacity="0.01"
         r={radius}
         >
       </circle>
