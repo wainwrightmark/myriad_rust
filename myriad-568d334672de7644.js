@@ -285,7 +285,7 @@ async function load(module, imports) {
 
 async function init(input) {
     if (typeof input === 'undefined') {
-        input = new URL('myriad-cb9294aaa21c96a3_bg.wasm', import.meta.url);
+        input = new URL('myriad-568d334672de7644_bg.wasm', import.meta.url);
     }
     const imports = {};
     imports.wbg = {};
@@ -299,10 +299,20 @@ async function init(input) {
         getInt32Memory0()[arg0 / 4 + 1] = len0;
         getInt32Memory0()[arg0 / 4 + 0] = ptr0;
     }, arguments) };
+    imports.wbg.__wbg_makeconfetti_47418d881443316e = function(arg0, arg1, arg2) {
+        try {
+            make_confetti(getStringFromWasm0(arg0, arg1), arg2);
+        } finally {
+            wasm.__wbindgen_free(arg0, arg1);
+        }
+    };
     imports.wbg.__wbg_now_e6c39c10a5e8aec7 = function() {
         const ret = Date.now();
         return ret;
     };
+    imports.wbg.__wbg_set_c1c03b67e32b49ce = function() { return handleError(function (arg0, arg1, arg2, arg3, arg4) {
+        getObject(arg0)[getStringFromWasm0(arg1, arg2)] = getStringFromWasm0(arg3, arg4);
+    }, arguments) };
     imports.wbg.__wbindgen_string_new = function(arg0, arg1) {
         const ret = getStringFromWasm0(arg0, arg1);
         return addHeapObject(ret);
@@ -322,16 +332,6 @@ async function init(input) {
         const ret = getObject(arg0).removeChild(getObject(arg1));
         return addHeapObject(ret);
     }, arguments) };
-    imports.wbg.__wbg_set_c1c03b67e32b49ce = function() { return handleError(function (arg0, arg1, arg2, arg3, arg4) {
-        getObject(arg0)[getStringFromWasm0(arg1, arg2)] = getStringFromWasm0(arg3, arg4);
-    }, arguments) };
-    imports.wbg.__wbg_makeconfetti_47418d881443316e = function(arg0, arg1, arg2) {
-        try {
-            make_confetti(getStringFromWasm0(arg0, arg1), arg2);
-        } finally {
-            wasm.__wbindgen_free(arg0, arg1);
-        }
-    };
     imports.wbg.__wbg_new_693216e109162396 = function() {
         const ret = new Error();
         return addHeapObject(ret);
@@ -654,11 +654,11 @@ async function init(input) {
         const ret = getObject(arg0).sessionStorage;
         return isLikeNone(ret) ? 0 : addHeapObject(ret);
     }, arguments) };
-    imports.wbg.__wbindgen_closure_wrapper1216 = function(arg0, arg1, arg2) {
+    imports.wbg.__wbindgen_closure_wrapper1244 = function(arg0, arg1, arg2) {
         const ret = makeMutClosure(arg0, arg1, 48, __wbg_adapter_22);
         return addHeapObject(ret);
     };
-    imports.wbg.__wbindgen_closure_wrapper1950 = function(arg0, arg1, arg2) {
+    imports.wbg.__wbindgen_closure_wrapper1978 = function(arg0, arg1, arg2) {
         const ret = makeMutClosure(arg0, arg1, 48, __wbg_adapter_25);
         return addHeapObject(ret);
     };
