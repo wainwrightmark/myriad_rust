@@ -13,42 +13,62 @@ pub struct CrossHairProperties {
 }
 
 pub const CROSSHAIR_LENGTH: f64 = 15.0;
+pub const HALF_CROSSHAIR_LENGTH: f64 = CROSSHAIR_LENGTH / 2.0;
 pub const CROSSHAIR_INSET: f64 = 12.5;
 
-    pub const CROSSHAIR_OFFSET1: f64 = (SQUARE_SIZE - CROSSHAIR_LENGTH) / 2.0;
-    pub const CROSSHAIR_OFFSET2: f64 = (SQUARE_SIZE + CROSSHAIR_LENGTH) / 2.0;
+pub const CROSSHAIR_OFFSET: f64 = (SQUARE_SIZE ) / 2.0;
 
-
-    pub const CROSSHAIR_ROT_OFFSET1: f64 = (-CROSSHAIR_LENGTH) / 2.0 ;
-    pub const CROSSHAIR_ROT_OFFSET2: f64 = (CROSSHAIR_LENGTH) / 2.0;
+pub const CROSSHAIR_ROT_OFFSET: f64 = 0.0;// (-CROSSHAIR_LENGTH) / 2.0;
 
 #[function_component(Crosshair)]
 pub fn crosshairs(properties: &CrossHairProperties) -> Html {
-
     let style = format!("stroke: {};", properties.circle_type.get_color());
     let class = "crosshair-group";
 
-    match properties.circle_type {
-        CircleType::LastPosition => html!(
-            <g key="crosshair" class={class} {style}>
-            <line key="line1" x1={(CROSSHAIR_ROT_OFFSET1 + CROSSHAIR_INSET).to_string()} x2={(CROSSHAIR_ROT_OFFSET2 + CROSSHAIR_INSET).to_string()} y1={SQUARE_MIDPOINT.to_string()} y2={SQUARE_MIDPOINT.to_string()}  class={"crosshair"} />
-            <line key="line2" x1={(SQUARE_SIZE + CROSSHAIR_ROT_OFFSET1 - CROSSHAIR_INSET).to_string()} x2={(SQUARE_SIZE + CROSSHAIR_ROT_OFFSET2 - CROSSHAIR_INSET).to_string()} y1={SQUARE_MIDPOINT.to_string()} y2={SQUARE_MIDPOINT.to_string()}  class={"crosshair"} />
+    
 
-            <line key="line3" y1={(CROSSHAIR_ROT_OFFSET1 + CROSSHAIR_INSET).to_string()} y2={(CROSSHAIR_ROT_OFFSET2 + CROSSHAIR_INSET).to_string()} x1={SQUARE_MIDPOINT.to_string()} x2={SQUARE_MIDPOINT.to_string()}  class={"crosshair"} />
-            <line key="line4" y1={(SQUARE_SIZE + CROSSHAIR_ROT_OFFSET1 - CROSSHAIR_INSET).to_string()} y2={(SQUARE_SIZE + CROSSHAIR_ROT_OFFSET2 - CROSSHAIR_INSET).to_string()} x1={SQUARE_MIDPOINT.to_string()} x2={SQUARE_MIDPOINT.to_string()}  class={"crosshair"} />
-            </g>
-        ),
-        //CircleType::IntermediatePosition { next: _ } => todo!(),
-        _ => html!(
-            <g key="crosshair" class={class} {style}>
-            <line key="line1" x1={CROSSHAIR_INSET.to_string()} x2={CROSSHAIR_INSET.to_string()}y1={CROSSHAIR_OFFSET1.to_string()} y2={CROSSHAIR_OFFSET2.to_string()}  class={"crosshair invisible"} />
-            <line key="line2" x1={(SQUARE_SIZE - CROSSHAIR_INSET).to_string()} x2={(SQUARE_SIZE - CROSSHAIR_INSET).to_string()} y1={CROSSHAIR_OFFSET1.to_string()} y2={CROSSHAIR_OFFSET2.to_string()}  class={"crosshair invisible"} />
+    let line_class =  if properties.circle_type == CircleType::LastPosition{ 
+        classes!("crosshair") 
+    }else{
+        classes!("crosshair", "invisible") 
+    };
 
-            <line key="line3" y1={CROSSHAIR_INSET.to_string()} y2={CROSSHAIR_INSET.to_string()} x1={CROSSHAIR_OFFSET1.to_string()} x2={CROSSHAIR_OFFSET2.to_string()}  class={"crosshair invisible"} />
-            <line key="line4" y1={(SQUARE_SIZE - CROSSHAIR_INSET).to_string()} y2={(SQUARE_SIZE - CROSSHAIR_INSET).to_string()} x1={CROSSHAIR_OFFSET1.to_string()} x2={CROSSHAIR_OFFSET2.to_string()}  class={"crosshair invisible"} />
-            </g>
-        ),
-    }
+    let line1_style = if properties.circle_type == CircleType::LastPosition{
+        format!("transform: translate({}px, {}px) rotate(0deg);", CROSSHAIR_ROT_OFFSET + CROSSHAIR_INSET, SQUARE_MIDPOINT)
+    }else{
+        format!("transform: translate({}px, {}px) rotate(90deg);", CROSSHAIR_INSET, CROSSHAIR_OFFSET) 
+    };
+
+    let line2_style = if properties.circle_type == CircleType::LastPosition{
+        format!("transform: translate({}px, {}px) rotate(0deg);", CROSSHAIR_ROT_OFFSET + SQUARE_SIZE - CROSSHAIR_INSET , SQUARE_MIDPOINT)
+    }else{
+        format!("transform: translate({}px, {}px) rotate(90deg);",SQUARE_SIZE - CROSSHAIR_INSET, CROSSHAIR_OFFSET) 
+    };
+    
+    
+    let line3_style = if properties.circle_type == CircleType::LastPosition{
+        format!("transform: translate({}px, {}px) rotate(90deg);", SQUARE_MIDPOINT, CROSSHAIR_ROT_OFFSET +  CROSSHAIR_INSET , )
+    }else{
+        format!("transform: translate({}px, {}px) rotate(0deg);", CROSSHAIR_OFFSET, CROSSHAIR_INSET) 
+    };
+
+    let line4_style = if properties.circle_type == CircleType::LastPosition{
+        format!("transform: translate({}px, {}px) rotate(90deg);",SQUARE_MIDPOINT, CROSSHAIR_ROT_OFFSET + SQUARE_SIZE - CROSSHAIR_INSET )
+    }else{
+        format!("transform: translate({}px, {}px) rotate(0deg);",CROSSHAIR_OFFSET, SQUARE_SIZE - CROSSHAIR_INSET) 
+    };
+
+
+    html!(
+        <g key="crosshair" class={class} {style}>
+
+        <line key="line1" x1={(-HALF_CROSSHAIR_LENGTH).to_string()} x2={HALF_CROSSHAIR_LENGTH.to_string()} y1={0.0.to_string()} y2={0.0.to_string()}  class={line_class.clone()} style={line1_style} />
+        <line key="line2" x1={(-HALF_CROSSHAIR_LENGTH).to_string()} x2={HALF_CROSSHAIR_LENGTH.to_string()} y1={0.0.to_string()} y2={0.0.to_string()}  class={line_class.clone()} style={line2_style}/>
+
+        <line key="line3" x1={(-HALF_CROSSHAIR_LENGTH).to_string()} x2={HALF_CROSSHAIR_LENGTH.to_string()} y1={0.0.to_string()} y2={0.0.to_string()}  class={line_class.clone()} style={line3_style} />
+        <line key="line4" x1={(-HALF_CROSSHAIR_LENGTH).to_string()} x2={HALF_CROSSHAIR_LENGTH.to_string()} y1={0.0.to_string()} y2={0.0.to_string()}  class={line_class} style={line4_style} />
+        </g>
+    )
 }
 
 #[derive(PartialEq, Properties)]
@@ -104,14 +124,11 @@ pub fn circle(properties: &CircleProperties) -> Html {
         " -webkit-transform: translate({cx}px, {cy}px); transform: translate({cx}px, {cy}px);"
     );
 
-    
-    let circle_type_class  = match circle_type{
+    let circle_type_class = match circle_type {
         CircleType::Disabled => "circle-disabled",
         CircleType::LegalMove => "circle-legal",
         CircleType::LastPosition => "circle-final",
-        CircleType::IntermediatePosition { next:_ } => "circle-intermediate",
-        
-
+        CircleType::IntermediatePosition { next: _ } => "circle-intermediate",
     };
 
     let circle_classes = classes!("circle", circle_type_class);
