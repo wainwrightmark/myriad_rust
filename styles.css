@@ -22,17 +22,6 @@
   transition: 3s cubic-bezier(0, 1.45, 0.72, 1.33);  
 }
 
-.circle-disabled{
-}
-
-.circle-legal{
-}
-
-.circle-final{
-}
-
-.circle-intermediate{
-}
 
 
 .circle-legal:hover {
