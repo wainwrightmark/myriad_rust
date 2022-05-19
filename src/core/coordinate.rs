@@ -74,10 +74,10 @@ impl Coordinate {
     }
 
     pub fn get_angle(&self, other: Coordinate) -> f64 {
-        let x_diff = other.column - self.column;
-        let y_diff = other.row - self.row;
+        let x_diff = other.column as f64 - self.column as f64;
+        let y_diff = other.row as f64 - self.row as f64;
 
-        (y_diff as f64).atan2(x_diff as f64).to_degrees()
+        (y_diff).atan2(x_diff).to_degrees()
     }
 
     pub fn is_adjacent(&self, other: &Coordinate) -> bool {

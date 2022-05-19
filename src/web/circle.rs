@@ -4,20 +4,39 @@ use crate::core::prelude::*;
 use crate::state::prelude::*;
 use crate::web::prelude::*;
 
+use num::ToPrimitive;
 use yew::prelude::*;
 use yewdux::prelude::*;
 
 #[derive(PartialEq, Properties)]
 pub struct CrossHairProperties {
     circle_type: CircleType,
+    coordinate: Coordinate
 }
 
 pub const CROSSHAIR_LENGTH: f64 = 15.0;
 pub const HALF_CROSSHAIR_LENGTH: f64 = CROSSHAIR_LENGTH / 2.0;
 pub const CROSSHAIR_INSET: f64 = 12.5;
 
+fn get_line_position(c1 : Coordinate, c2 : Coordinate, index: u8, rf: RotFlipState) -> (f64,  f64,  f64){
+
+    let c1a = c1.rotate_and_flip(rf.max_coordinate, rf.rotate, rf.flip);
+    let c2a = c2.rotate_and_flip(rf.max_coordinate, rf.rotate, rf.flip);
+
+    let x = ((c2a.column.to_f64().unwrap() - c1a.column.to_f64().unwrap()) / 4.0 * index.to_f64().unwrap() * SQUARE_SIZE) + SQUARE_MIDPOINT;
+    let y = ((c2a.row.to_f64().unwrap() - c1a.row.to_f64().unwrap()) / 4.0 * index.to_f64().unwrap() * SQUARE_SIZE) + SQUARE_MIDPOINT;
+
+    let rot = c1a.get_angle(c2a);
+
+    (x,y,rot)
+}
+
 #[function_component(Crosshair)]
 pub fn crosshairs(properties: &CrossHairProperties) -> Html {
+
+    let rot_flip_state = use_store_value::<RotFlipState>();
+    let rot_flip = RotFlipState{rotate: rot_flip_state.rotate, flip: rot_flip_state.flip, max_coordinate: rot_flip_state.max_coordinate, };
+
     let style = format!("stroke: {};", properties.circle_type.get_color());
     let line_classes = match properties.circle_type {
         CircleType::Disabled => "crosshair invisible",
@@ -28,74 +47,74 @@ pub fn crosshairs(properties: &CrossHairProperties) -> Html {
 
     let l1x = match properties.circle_type {
         CircleType::LastPosition => CROSSHAIR_INSET,
-        CircleType::IntermediatePosition { next: _ } => CROSSHAIR_INSET,
+        CircleType::IntermediatePosition { next } => get_line_position(properties.coordinate, next, 0, rot_flip).0,
         _ => CROSSHAIR_INSET,
     };
 
     let l1y = match properties.circle_type {
         CircleType::LastPosition => SQUARE_MIDPOINT,
-        CircleType::IntermediatePosition { next: _ } => SQUARE_MIDPOINT,
+        CircleType::IntermediatePosition { next } =>  get_line_position(properties.coordinate, next, 0, rot_flip).1,
         _ => SQUARE_MIDPOINT,
     };
 
     let l1rot = match properties.circle_type {
-        CircleType::LastPosition => 0,
-        CircleType::IntermediatePosition { next: _ } => 90,
-        _ => 90,
+        CircleType::LastPosition => 0.0,
+        CircleType::IntermediatePosition { next } =>  get_line_position(properties.coordinate, next, 0, rot_flip).2,
+        _ => 90.0,
     };
 
     let l2x = match properties.circle_type {
         CircleType::LastPosition => SQUARE_SIZE - CROSSHAIR_INSET,
-        CircleType::IntermediatePosition { next: _ } => SQUARE_SIZE - CROSSHAIR_INSET,
+        CircleType::IntermediatePosition { next } =>  get_line_position(properties.coordinate, next, 1, rot_flip).0,
         _ => SQUARE_SIZE - CROSSHAIR_INSET,
     };
 
     let l2y = match properties.circle_type {
         CircleType::LastPosition => SQUARE_MIDPOINT,
-        CircleType::IntermediatePosition { next: _ } => SQUARE_MIDPOINT,
+        CircleType::IntermediatePosition { next} => get_line_position(properties.coordinate, next, 1, rot_flip).1,
         _ => SQUARE_MIDPOINT,
     };
 
     let l2rot = match properties.circle_type {
-        CircleType::LastPosition => 0,
-        CircleType::IntermediatePosition { next: _ } => 90,
-        _ => 90,
+        CircleType::LastPosition => 0.0,
+        CircleType::IntermediatePosition { next } => get_line_position(properties.coordinate, next, 1, rot_flip).2,
+        _ => 90.0,
     };
 
     let l3x = match properties.circle_type {
         CircleType::LastPosition => SQUARE_MIDPOINT,
-        CircleType::IntermediatePosition { next: _ } => SQUARE_MIDPOINT,
+        CircleType::IntermediatePosition { next } => get_line_position(properties.coordinate, next, 2, rot_flip).0,
         _ => SQUARE_MIDPOINT,
     };
 
     let l3y = match properties.circle_type {
         CircleType::LastPosition => CROSSHAIR_INSET,
-        CircleType::IntermediatePosition { next: _ } => CROSSHAIR_INSET,
+        CircleType::IntermediatePosition { next } => get_line_position(properties.coordinate, next, 2, rot_flip).1,
         _ => CROSSHAIR_INSET,
     };
 
     let l3rot = match properties.circle_type {
-        CircleType::LastPosition => -90,
-        CircleType::IntermediatePosition { next: _ } => 0,
-        _ => 0,
+        CircleType::LastPosition => -90.0,
+        CircleType::IntermediatePosition { next } => get_line_position(properties.coordinate, next, 2, rot_flip).2,
+        _ => 0.0,
     };
 
     let l4x = match properties.circle_type {
         CircleType::LastPosition => SQUARE_MIDPOINT,
-        CircleType::IntermediatePosition { next: _ } => SQUARE_MIDPOINT,
+        CircleType::IntermediatePosition { next } => get_line_position(properties.coordinate, next, 3, rot_flip).0,
         _ => SQUARE_MIDPOINT,
     };
 
     let l4y = match properties.circle_type {
         CircleType::LastPosition => SQUARE_SIZE - CROSSHAIR_INSET,
-        CircleType::IntermediatePosition { next: _ } => SQUARE_SIZE - CROSSHAIR_INSET,
+        CircleType::IntermediatePosition { next } => get_line_position(properties.coordinate, next, 3, rot_flip).1,
         _ => SQUARE_SIZE - CROSSHAIR_INSET,
     };
 
     let l4rot = match properties.circle_type {
-        CircleType::LastPosition => -90,
-        CircleType::IntermediatePosition { next: _ } => 0,
-        _ => 0,
+        CircleType::LastPosition => -90.0,
+        CircleType::IntermediatePosition { next } => get_line_position(properties.coordinate, next,3, rot_flip).2,
+        _ => 0.0,
     };
 
     html!(
@@ -194,7 +213,7 @@ pub fn circle(properties: &CircleProperties) -> Html {
         >
       </circle>
 
-      <Crosshair {circle_type} />
+      <Crosshair {circle_type} {coordinate} />
 
       <text
         id={text_id}
