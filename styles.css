@@ -42,6 +42,8 @@
 
 .recentWord {
   font-family: monospace;
+  -webkit-transform: translate(var(--endx), var(--endy)) scale(0.5) ;
+    transform: translate(var(--endx), var(--endy)) scale(0.5) ;
   -webkit-animation-name: disappearAnimation;
   animation-name: disappearAnimation;  
 
@@ -236,6 +238,7 @@ Crosshairs
 */
 
 .crosshair-group{
+  pointer-events: none;
 }
 
 .crosshair{
