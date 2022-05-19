@@ -14,17 +14,23 @@ pub struct CrossHairProperties {
     coordinate: Coordinate
 }
 
-pub const CROSSHAIR_LENGTH: f64 = 15.0;
+pub const CROSSHAIR_LENGTH: f64 =  15.0;
+//pub const EXTENDED_CROSSHAIR_SCALE : f64 = (SQUARE_SIZE / 5.0 * 1.42) / CROSSHAIR_LENGTH; //1.42 = Root Two
 pub const HALF_CROSSHAIR_LENGTH: f64 = CROSSHAIR_LENGTH / 2.0;
 pub const CROSSHAIR_INSET: f64 = 12.5;
+pub const EXTENDED_SCALE: f64 = 2.27; //(SQUARE_SIZE / 5.0 * root 2) / CROSSHAIR_LENGTH;
 
 fn get_line_position(c1 : Coordinate, c2 : Coordinate, index: u8, rf: RotFlipState) -> (f64,  f64,  f64){
 
     let c1a = c1.rotate_and_flip(rf.max_coordinate, rf.rotate, rf.flip);
     let c2a = c2.rotate_and_flip(rf.max_coordinate, rf.rotate, rf.flip);
 
-    let x = ((c2a.column.to_f64().unwrap() - c1a.column.to_f64().unwrap()) / 4.0 * index.to_f64().unwrap() * SQUARE_SIZE) + SQUARE_MIDPOINT;
-    let y = ((c2a.row.to_f64().unwrap() - c1a.row.to_f64().unwrap()) / 4.0 * index.to_f64().unwrap() * SQUARE_SIZE) + SQUARE_MIDPOINT;
+    let x_dir =c2a.column.to_f64().unwrap() - c1a.column.to_f64().unwrap();
+    let y_dir = c2a.row.to_f64().unwrap() - c1a.row.to_f64().unwrap();
+
+
+    let x = (x_dir * HALF_CROSSHAIR_LENGTH  * EXTENDED_SCALE) + (x_dir / 4.0 * index.to_f64().unwrap() * SQUARE_SIZE) + SQUARE_MIDPOINT;
+    let y = (y_dir * HALF_CROSSHAIR_LENGTH * EXTENDED_SCALE) + (y_dir / 4.0 * index.to_f64().unwrap() * SQUARE_SIZE) + SQUARE_MIDPOINT;
 
     let rot = c1a.get_angle(c2a);
 
@@ -42,7 +48,7 @@ pub fn crosshairs(properties: &CrossHairProperties) -> Html {
         CircleType::Disabled => "crosshair invisible",
         CircleType::LegalMove => "crosshair invisible",
         CircleType::LastPosition => "crosshair",
-        CircleType::IntermediatePosition { next: _ } => "crosshair",
+        CircleType::IntermediatePosition { next: _ } => "crosshair crosshair-extended",
     };
 
     let l1x = match properties.circle_type {
@@ -117,14 +123,16 @@ pub fn crosshairs(properties: &CrossHairProperties) -> Html {
         _ => 0.0,
     };
 
+    let scale = if matches!(properties.circle_type, CircleType::IntermediatePosition{next:_}) {2.27} else{1.0};
+
     html!(
         <g key="crosshair" class={"crosshair-group"} {style}>
 
-        <line key="line1" x1={(-HALF_CROSSHAIR_LENGTH).to_string()} x2={HALF_CROSSHAIR_LENGTH.to_string()} y1={0.0.to_string()} y2={0.0.to_string()}  class={line_classes.clone()} style={format!("transform: translate({}px, {}px) rotate({}deg);", l1x, l1y, l1rot )} />
-        <line key="line2" x1={(-HALF_CROSSHAIR_LENGTH).to_string()} x2={HALF_CROSSHAIR_LENGTH.to_string()} y1={0.0.to_string()} y2={0.0.to_string()}  class={line_classes.clone()} style={format!("transform: translate({}px, {}px) rotate({}deg);", l2x, l2y, l2rot )}/>
+        <line key="line1" x1={(-HALF_CROSSHAIR_LENGTH).to_string()} x2={HALF_CROSSHAIR_LENGTH.to_string()} y1={0.0.to_string()} y2={0.0.to_string()}  class={line_classes.clone()} style={format!("transform: translate({}px, {}px) rotate({}deg) scale({scale});", l1x, l1y, l1rot )} />
+        <line key="line2" x1={(-HALF_CROSSHAIR_LENGTH).to_string()} x2={HALF_CROSSHAIR_LENGTH.to_string()} y1={0.0.to_string()} y2={0.0.to_string()}  class={line_classes.clone()} style={format!("transform: translate({}px, {}px) rotate({}deg) scale({scale});", l2x, l2y, l2rot )}/>
 
-        <line key="line3" x1={(-HALF_CROSSHAIR_LENGTH).to_string()} x2={HALF_CROSSHAIR_LENGTH.to_string()} y1={0.0.to_string()} y2={0.0.to_string()}  class={line_classes.clone()} style={format!("transform: translate({}px, {}px) rotate({}deg);", l3x, l3y, l3rot )} />
-        <line key="line4" x1={(-HALF_CROSSHAIR_LENGTH).to_string()} x2={HALF_CROSSHAIR_LENGTH.to_string()} y1={0.0.to_string()} y2={0.0.to_string()}  class={line_classes} style={format!("transform: translate({}px, {}px) rotate({}deg);", l4x, l4y, l4rot )} />
+        <line key="line3" x1={(-HALF_CROSSHAIR_LENGTH).to_string()} x2={HALF_CROSSHAIR_LENGTH.to_string()} y1={0.0.to_string()} y2={0.0.to_string()}  class={line_classes.clone()} style={format!("transform: translate({}px, {}px) rotate({}deg) scale({scale});", l3x, l3y, l3rot )} />
+        <line key="line4" x1={(-HALF_CROSSHAIR_LENGTH).to_string()} x2={HALF_CROSSHAIR_LENGTH.to_string()} y1={0.0.to_string()} y2={0.0.to_string()}  class={line_classes} style={format!("transform: translate({}px, {}px) rotate({}deg) scale({scale});", l4x, l4y, l4rot )} />
         </g>
     )
 }

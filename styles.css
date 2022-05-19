@@ -241,10 +241,14 @@ Crosshairs
 
 .crosshair{
   stroke-width: 7.2;
-  -webkit-transition: all 1s;
-  transition: all 1s;
+  -webkit-transition: all 1s ease-out;
+  transition: all 1s ease-out;
   opacity: 1.0;
   stroke-linecap: round;  
+}
+
+.crosshair-extended{
+  scale: 2.27;
 }
 
 .invisible{

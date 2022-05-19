@@ -24,7 +24,7 @@ impl CircleType{
         match self{
             CircleType::Disabled => "grey",
             CircleType::LastPosition => "blue",
-            CircleType::IntermediatePosition{next:_} => "darkgreen",
+            CircleType::IntermediatePosition{next:_} => "green",
             CircleType::LegalMove  => "black",
         }
     }
