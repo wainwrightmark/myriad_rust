@@ -200,7 +200,7 @@ function makeMutClosure(arg0, arg1, dtor, f) {
     return real;
 }
 function __wbg_adapter_22(arg0, arg1, arg2) {
-    wasm._dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h5288540d96c0bb9e(arg0, arg1, addHeapObject(arg2));
+    wasm._dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h76eb3237725f9f5a(arg0, arg1, addHeapObject(arg2));
 }
 
 let stack_pointer = 32;
@@ -212,7 +212,7 @@ function addBorrowedObject(obj) {
 }
 function __wbg_adapter_25(arg0, arg1, arg2) {
     try {
-        wasm._dyn_core__ops__function__FnMut___A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__hbc6c2e7066c5792c(arg0, arg1, addBorrowedObject(arg2));
+        wasm._dyn_core__ops__function__FnMut___A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h166ae89ee03d3c75(arg0, arg1, addBorrowedObject(arg2));
     } finally {
         heap[stack_pointer++] = undefined;
     }
@@ -285,13 +285,16 @@ async function load(module, imports) {
 
 async function init(input) {
     if (typeof input === 'undefined') {
-        input = new URL('myriad-568d334672de7644_bg.wasm', import.meta.url);
+        input = new URL('myriad-a0ced1527edda3f_bg.wasm', import.meta.url);
     }
     const imports = {};
     imports.wbg = {};
     imports.wbg.__wbindgen_object_drop_ref = function(arg0) {
         takeObject(arg0);
     };
+    imports.wbg.__wbg_set_c1c03b67e32b49ce = function() { return handleError(function (arg0, arg1, arg2, arg3, arg4) {
+        getObject(arg0)[getStringFromWasm0(arg1, arg2)] = getStringFromWasm0(arg3, arg4);
+    }, arguments) };
     imports.wbg.__wbg_get_13e15fd01db5aecd = function() { return handleError(function (arg0, arg1, arg2, arg3) {
         const ret = getObject(arg1)[getStringFromWasm0(arg2, arg3)];
         var ptr0 = isLikeNone(ret) ? 0 : passStringToWasm0(ret, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
@@ -310,9 +313,6 @@ async function init(input) {
         const ret = Date.now();
         return ret;
     };
-    imports.wbg.__wbg_set_c1c03b67e32b49ce = function() { return handleError(function (arg0, arg1, arg2, arg3, arg4) {
-        getObject(arg0)[getStringFromWasm0(arg1, arg2)] = getStringFromWasm0(arg3, arg4);
-    }, arguments) };
     imports.wbg.__wbindgen_string_new = function(arg0, arg1) {
         const ret = getStringFromWasm0(arg0, arg1);
         return addHeapObject(ret);
