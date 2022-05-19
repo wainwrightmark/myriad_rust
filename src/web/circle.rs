@@ -16,54 +16,115 @@ pub const CROSSHAIR_LENGTH: f64 = 15.0;
 pub const HALF_CROSSHAIR_LENGTH: f64 = CROSSHAIR_LENGTH / 2.0;
 pub const CROSSHAIR_INSET: f64 = 12.5;
 
-
 #[function_component(Crosshair)]
 pub fn crosshairs(properties: &CrossHairProperties) -> Html {
     let style = format!("stroke: {};", properties.circle_type.get_color());
     let class = "crosshair-group";
 
-    
-
-    let line_class =  if properties.circle_type == CircleType::LastPosition{ 
-        classes!("crosshair") 
-    }else{
-        classes!("crosshair", "invisible") 
+    let line_class = match CircleType::LastPosition {
+        CircleType::Disabled => classes!("crosshair", "invisible"),
+        CircleType::LegalMove => classes!("crosshair", "invisible"),
+        CircleType::LastPosition => classes!("crosshair"),
+        CircleType::IntermediatePosition { next: _ } => classes!("crosshair"),
     };
 
-    let line1_style = if properties.circle_type == CircleType::LastPosition{
-        format!("transform: translate({}px, {}px) rotate(0deg);",CROSSHAIR_INSET, SQUARE_MIDPOINT)
-    }else{
-        format!("transform: translate({}px, {}px) rotate(90deg);", CROSSHAIR_INSET, SQUARE_MIDPOINT) 
-    };
 
-    let line2_style = if properties.circle_type == CircleType::LastPosition{
-        format!("transform: translate({}px, {}px) rotate(0deg);",  SQUARE_SIZE - CROSSHAIR_INSET , SQUARE_MIDPOINT)
-    }else{
-        format!("transform: translate({}px, {}px) rotate(90deg);",SQUARE_SIZE - CROSSHAIR_INSET, SQUARE_MIDPOINT) 
-    };
-    
-    
-    let line3_style = if properties.circle_type == CircleType::LastPosition{
-        format!("transform: translate({}px, {}px) rotate(-90deg);", SQUARE_MIDPOINT,  CROSSHAIR_INSET , )
-    }else{
-        format!("transform: translate({}px, {}px) rotate(0deg);", SQUARE_MIDPOINT, CROSSHAIR_INSET) 
-    };
+    let l1x = match properties.circle_type {
+    CircleType::Disabled => CROSSHAIR_INSET,
+    CircleType::LegalMove => CROSSHAIR_INSET,
+    CircleType::LastPosition => CROSSHAIR_INSET,
+    CircleType::IntermediatePosition { next:_ } => CROSSHAIR_INSET,
+};
 
-    let line4_style = if properties.circle_type == CircleType::LastPosition{
-        format!("transform: translate({}px, {}px) rotate(-90deg);",SQUARE_MIDPOINT,  SQUARE_SIZE - CROSSHAIR_INSET )
-    }else{
-        format!("transform: translate({}px, {}px) rotate(0deg);",SQUARE_MIDPOINT, SQUARE_SIZE - CROSSHAIR_INSET) 
-    };
+let l1y = match properties.circle_type {
+    CircleType::Disabled => SQUARE_MIDPOINT,
+    CircleType::LegalMove => SQUARE_MIDPOINT,
+    CircleType::LastPosition => SQUARE_MIDPOINT,
+    CircleType::IntermediatePosition { next:_ } => SQUARE_MIDPOINT,
+};
+
+let l1rot = match properties.circle_type {
+    CircleType::Disabled => 90,
+    CircleType::LegalMove => 90,
+    CircleType::LastPosition => 0,
+    CircleType::IntermediatePosition { next:_ } => 90,
+};
+
+let l2x = match properties.circle_type {
+    CircleType::Disabled =>SQUARE_SIZE - CROSSHAIR_INSET,
+    CircleType::LegalMove =>SQUARE_SIZE - CROSSHAIR_INSET,
+    CircleType::LastPosition =>SQUARE_SIZE - CROSSHAIR_INSET,
+    CircleType::IntermediatePosition { next:_ } =>SQUARE_SIZE - CROSSHAIR_INSET,
+};
+
+let l2y = match properties.circle_type {
+    CircleType::Disabled => SQUARE_MIDPOINT,
+    CircleType::LegalMove => SQUARE_MIDPOINT,
+    CircleType::LastPosition => SQUARE_MIDPOINT,
+    CircleType::IntermediatePosition { next:_ } => SQUARE_MIDPOINT,
+};
+
+let l2rot = match properties.circle_type {
+    CircleType::Disabled => 90,
+    CircleType::LegalMove => 90,
+    CircleType::LastPosition => 0,
+    CircleType::IntermediatePosition { next:_ } => 90,
+};
+
+
+let l3x = match properties.circle_type {
+    CircleType::Disabled => SQUARE_MIDPOINT,
+    CircleType::LegalMove => SQUARE_MIDPOINT,
+    CircleType::LastPosition => SQUARE_MIDPOINT,
+    CircleType::IntermediatePosition { next:_ } => SQUARE_MIDPOINT,
+};
+
+let l3y = match properties.circle_type {
+    CircleType::Disabled => CROSSHAIR_INSET,
+    CircleType::LegalMove => CROSSHAIR_INSET,
+    CircleType::LastPosition => CROSSHAIR_INSET,
+    CircleType::IntermediatePosition { next:_ } => CROSSHAIR_INSET,
+};
+
+let l3rot = match properties.circle_type {
+    CircleType::Disabled => 0,
+    CircleType::LegalMove => 0,
+    CircleType::LastPosition => -90,
+    CircleType::IntermediatePosition { next:_ } => 0,
+};
+
+
+let l4x = match properties.circle_type {
+    CircleType::Disabled => SQUARE_MIDPOINT,
+    CircleType::LegalMove => SQUARE_MIDPOINT,
+    CircleType::LastPosition => SQUARE_MIDPOINT,
+    CircleType::IntermediatePosition { next:_ } => SQUARE_MIDPOINT,
+};
+
+let l4y = match properties.circle_type {
+    CircleType::Disabled => SQUARE_SIZE -CROSSHAIR_INSET,
+    CircleType::LegalMove => SQUARE_SIZE -CROSSHAIR_INSET,
+    CircleType::LastPosition =>SQUARE_SIZE - CROSSHAIR_INSET,
+    CircleType::IntermediatePosition { next:_ } => SQUARE_SIZE -CROSSHAIR_INSET,
+};
+
+let l4rot = match properties.circle_type {
+    CircleType::Disabled => 0,
+    CircleType::LegalMove => 0,
+    CircleType::LastPosition => -90,
+    CircleType::IntermediatePosition { next:_ } => 0,
+};
+
 
 
     html!(
         <g key="crosshair" class={class} {style}>
 
-        <line key="line1" x1={(-HALF_CROSSHAIR_LENGTH).to_string()} x2={HALF_CROSSHAIR_LENGTH.to_string()} y1={0.0.to_string()} y2={0.0.to_string()}  class={line_class.clone()} style={line1_style} />
-        <line key="line2" x1={(-HALF_CROSSHAIR_LENGTH).to_string()} x2={HALF_CROSSHAIR_LENGTH.to_string()} y1={0.0.to_string()} y2={0.0.to_string()}  class={line_class.clone()} style={line2_style}/>
+        <line key="line1" x1={(-HALF_CROSSHAIR_LENGTH).to_string()} x2={HALF_CROSSHAIR_LENGTH.to_string()} y1={0.0.to_string()} y2={0.0.to_string()}  class={line_class.clone()} style={format!("transform: translate({}px, {}px) rotate({}deg);", l1x, l1y, l1rot )} />
+        <line key="line2" x1={(-HALF_CROSSHAIR_LENGTH).to_string()} x2={HALF_CROSSHAIR_LENGTH.to_string()} y1={0.0.to_string()} y2={0.0.to_string()}  class={line_class.clone()} style={format!("transform: translate({}px, {}px) rotate({}deg);", l2x, l2y, l2rot )}/>
 
-        <line key="line3" x1={(-HALF_CROSSHAIR_LENGTH).to_string()} x2={HALF_CROSSHAIR_LENGTH.to_string()} y1={0.0.to_string()} y2={0.0.to_string()}  class={line_class.clone()} style={line3_style} />
-        <line key="line4" x1={(-HALF_CROSSHAIR_LENGTH).to_string()} x2={HALF_CROSSHAIR_LENGTH.to_string()} y1={0.0.to_string()} y2={0.0.to_string()}  class={line_class} style={line4_style} />
+        <line key="line3" x1={(-HALF_CROSSHAIR_LENGTH).to_string()} x2={HALF_CROSSHAIR_LENGTH.to_string()} y1={0.0.to_string()} y2={0.0.to_string()}  class={line_class.clone()} style={format!("transform: translate({}px, {}px) rotate({}deg);", l3x, l3y, l3rot )} />
+        <line key="line4" x1={(-HALF_CROSSHAIR_LENGTH).to_string()} x2={HALF_CROSSHAIR_LENGTH.to_string()} y1={0.0.to_string()} y2={0.0.to_string()}  class={line_class} style={format!("transform: translate({}px, {}px) rotate({}deg);", l4x, l4y, l4rot )} />
         </g>
     )
 }
