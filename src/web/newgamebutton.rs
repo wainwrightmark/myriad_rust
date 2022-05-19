@@ -40,7 +40,7 @@ pub fn score_counter(properties: &ScoreCounterProperties) -> Html {
         <>
         <rect class={"score-counter-progress"} style={format!("transform: translate({}px, {}px);", x, y)} height={format!("{FOUND_WORD_HEIGHT}")} rx="5" width={format!("{}", FOUND_WORD_WIDTH * 1.5 * properties.total_found.to_f64().unwrap() / 100.0 )}>
         </rect>
-        <FoundWordBox id={"score_counter"} text={format!("{:0>2}%", properties.total_found)} {x} {y} width_units={1.5} {rect_class} {text_class} />
+        <FoundWordBox id={"score_counter"} text={format_number(properties.total_found as i32)} {x} {y} width_units={1.5} {rect_class} {text_class} />
         
         </>
     )

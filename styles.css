@@ -236,7 +236,6 @@ Crosshairs
 */
 
 .crosshair-group{
-  transform: translate(-60px, -60px);
 }
 
 .crosshair{
@@ -244,11 +243,12 @@ Crosshairs
   -webkit-transition: all 1s ease-out;
   transition: all 1s ease-out;
   opacity: 1.0;
-  stroke-linecap: round;  
+  /* stroke-linecap: round;   */
 }
 
 .crosshair-extended{
-  scale: 2.27;
+
+  opacity: 0.5;
 }
 
 .invisible{

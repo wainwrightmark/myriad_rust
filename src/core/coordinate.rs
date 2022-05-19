@@ -80,6 +80,7 @@ impl Coordinate {
         (y_diff).atan2(x_diff).to_degrees()
     }
 
+    ///True if two coordinates are orthogonal or diagonal
     pub fn is_adjacent(&self, other: &Coordinate) -> bool {
         if self == other {
             return false;
@@ -97,6 +98,26 @@ impl Coordinate {
         };
 
         row_diff <= 1 && col_diff <= 1
+    }
+    
+    ///True if two coordinates are orthogonal (adjacent but not diagonal)
+    pub fn is_orthogonal(&self, other: &Coordinate) -> bool {
+        if self == other {
+            return false;
+        };
+
+        let row_diff = if self.row > other.row {
+            self.row - other.row
+        } else {
+            other.row - self.row
+        };
+        let col_diff = if self.column > other.column {
+            self.column - other.column
+        } else {
+            other.column - self.column
+        };
+
+        row_diff <= 1 && col_diff <= 1 && (row_diff == 0 || col_diff == 0)
     }
 
     pub fn get_adjacent_positions<'a>(

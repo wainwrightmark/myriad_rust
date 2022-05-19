@@ -11,6 +11,7 @@ pub fn app() -> Html {
         <svg viewBox={view_box} class="myriadSVG">
         <rect x="0" y="0" {width} {height} fill="white"/>
         // <RopeSVG />
+        <CrosshairsSVG/>
         <CirclesSVG />
 
 
