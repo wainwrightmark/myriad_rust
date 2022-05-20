@@ -5,7 +5,6 @@ use num::ToPrimitive;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashSet, VecDeque};
 
-
 #[derive(PartialEq, Debug, Copy, Clone, Serialize, Deserialize)]
 pub struct SolveSettings {
     ///Inclusive minimum
@@ -20,12 +19,11 @@ impl SolveSettings {
     }
 
     ///Get all solutions to this board within the range
-    pub fn solve (self, board: Board) -> impl Iterator<Item = FoundWord> + {
-        
+    pub fn solve(self, board: Board) -> impl Iterator<Item = FoundWord> {
         SolutionIter::new(board, self)
-    }    
+    }
 
-    pub fn total_solutions(&self)-> usize{
+    pub fn total_solutions(&self) -> usize {
         (self.max - self.min + 1).to_usize().unwrap()
     }
 }
@@ -90,7 +88,6 @@ impl Iterator for SolutionIter {
     type Item = FoundWord;
 
     fn next(&mut self) -> Option<Self::Item> {
-
         while let Some(coordinates) = self.queue.pop_front() {
             let check_result = self.board.check(&coordinates);
 

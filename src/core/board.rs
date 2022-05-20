@@ -1,7 +1,7 @@
+use crate::core::parser::*;
 use crate::core::prelude::*;
 use itertools::*;
 use serde::{Deserialize, Serialize};
-use crate::core::parser::*;
 
 #[derive(PartialEq, Debug, Eq, Hash, Clone, Serialize, Deserialize)]
 pub struct Board {
@@ -9,7 +9,7 @@ pub struct Board {
     pub letters: Vec<Letter>,
 }
 
-impl Default for Board{
+impl Default for Board {
     fn default() -> Self {
         Board::try_create("-+718325+").unwrap()
     }
@@ -22,11 +22,11 @@ impl std::fmt::Display for Board {
 }
 
 impl Board {
-
     pub fn check(&self, nodes: &Vec<Coordinate>) -> Result<i32, ParseFail> {
-        let mut input = nodes.iter()
-        .map(|x| self.get_letter_at_coordinate(x) ).peekable();
-        
+        let mut input = nodes
+            .iter()
+            .map(|x| self.get_letter_at_coordinate(x))
+            .peekable();
 
         crate::core::parser::parse_and_evaluate(&mut input)
     }
@@ -45,7 +45,9 @@ impl Board {
                     columns: max_co.column + 1,
                     letters: vector
                         .into_iter()
-                        .pad_using(((max_co.row + 1) * (max_co.column + 1)) as usize, |_| Letter::Blank)
+                        .pad_using(((max_co.row + 1) * (max_co.column + 1)) as usize, |_| {
+                            Letter::Blank
+                        })
                         .collect(),
                 })
             }
@@ -131,10 +133,10 @@ impl Board {
 
         s
     }
-    
+
     pub fn to_single_string(&self) -> String {
         let mut s = String::with_capacity(self.letters.len() + self.rows() as usize);
-        for column in 0..self.columns {            
+        for column in 0..self.columns {
             for row in 0..self.rows() {
                 let coordinate = Coordinate { row, column };
                 let l = self.get_letter_at_coordinate(&coordinate).to_string();
@@ -146,41 +148,46 @@ impl Board {
         s
     }
 
-    pub fn get_board_data(&self) -> String{
-    
+    pub fn get_board_data(&self) -> String {
         let one_thousand_solve_settings = SolveSettings { min: 1, max: 1000 };
         let ten_thousand_solve_settings = SolveSettings { min: 1, max: 10000 };
-    
-    
-        let mut strings =  Vec::<String>::new();
-    
+
+        let mut strings = Vec::<String>::new();
+
         strings.push(self.to_single_string());
-        strings.push(one_thousand_solve_settings.solve(self.clone()).count().to_string());
-        strings.push(ten_thousand_solve_settings.solve(self.clone()).count().to_string());
-    
-        let mut nums =0;
+        strings.push(
+            one_thousand_solve_settings
+                .solve(self.clone())
+                .count()
+                .to_string(),
+        );
+        strings.push(
+            ten_thousand_solve_settings
+                .solve(self.clone())
+                .count()
+                .to_string(),
+        );
+
+        let mut nums = 0;
         let mut operators = 0;
         let mut blanks = 0;
         for letter in self.letters.iter() {
-            match letter{
-                Letter::Number { value: _ } => nums+=1,
-                Letter::Operator { operation: _ } => operators+=1,
-                Letter::Blank => blanks+=1,
+            match letter {
+                Letter::Number { value: _ } => nums += 1,
+                Letter::Operator { operation: _ } => operators += 1,
+                Letter::Blank => blanks += 1,
             }
         }
-    
+
         strings.push(nums.to_string());
         strings.push(operators.to_string());
         strings.push(blanks.to_string());
-    
+
         for l in Letter::legal_letters() {
-            let c= self.letters.iter().filter(|&x| x== &l) .count();
+            let c = self.letters.iter().filter(|&x| x == &l).count();
             strings.push(c.to_string());
         }
-    
-    
-    
+
         strings.join(" ")
-    
     }
 }

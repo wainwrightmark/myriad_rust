@@ -4,4 +4,3 @@ use wasm_bindgen::prelude::*;
 extern "C" {
     pub fn make_confetti(emoji: String, number: i32);
 }
-

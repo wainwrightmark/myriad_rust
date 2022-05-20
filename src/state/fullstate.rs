@@ -12,6 +12,4 @@ pub struct FullState {
     pub solve_settings: SolveSettings,
 }
 
-impl FullState {
-    
-}
+impl FullState {}

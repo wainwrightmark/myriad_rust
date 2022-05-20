@@ -54,7 +54,7 @@
 //     d
 // }
 
-// fn get_path_coordinates(    
+// fn get_path_coordinates(
 //     chosen_positions: Rc<ChosenPositionsState>,
 //     rot_flip: Rc<RotFlipState>,
 //     square_size: f64,

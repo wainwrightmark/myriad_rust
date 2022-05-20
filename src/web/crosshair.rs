@@ -40,9 +40,10 @@ const HALF_STOKE_WIDTH: f64 = 3.6;
 
 #[function_component(Crosshair)]
 fn crosshair(properties: &CrossHairProperties) -> Html {
-
     let coordinate = properties.coordinate;
-    let board = use_selector(|state: &FullState| state.board.clone()).deref().clone();
+    let board = use_selector(|state: &FullState| state.board.clone())
+        .deref()
+        .clone();
 
     let circle_type = use_selector_with_deps(
         |state: &ChosenPositionsState, (co, board)| state.get_circle_type(&co, board.clone()),
@@ -162,14 +163,13 @@ fn crosshair(properties: &CrossHairProperties) -> Html {
         _ => 0.0,
     };
 
-
-    let scale = if let CircleType::IntermediatePosition { next } = circle_type{
-        if next.is_orthogonal(&coordinate){
+    let scale = if let CircleType::IntermediatePosition { next } = circle_type {
+        if next.is_orthogonal(&coordinate) {
             STRAIGHT_SCALE_X
-        }else {
+        } else {
             DIAGONAL_SCALE_X
         }
-    }else {
+    } else {
         1.0
     };
 
@@ -197,13 +197,10 @@ fn get_line_position(
     let x_dir = c2a.column.to_f64().unwrap() - c1a.column.to_f64().unwrap();
     let y_dir = c2a.row.to_f64().unwrap() - c1a.row.to_f64().unwrap();
 
-    let x = (x_dir * HALF_CROSSHAIR_LENGTH * DIAGONAL_SCALE_X)
-    - (x_dir * HALF_STOKE_WIDTH)
-
+    let x = (x_dir * HALF_CROSSHAIR_LENGTH * DIAGONAL_SCALE_X) - (x_dir * HALF_STOKE_WIDTH)
         + (x_dir / 4.0 * index.to_f64().unwrap() * SQUARE_SIZE)
         + SQUARE_MIDPOINT;
-    let y = (y_dir * HALF_CROSSHAIR_LENGTH * DIAGONAL_SCALE_X)
-    - (y_dir * HALF_STOKE_WIDTH)
+    let y = (y_dir * HALF_CROSSHAIR_LENGTH * DIAGONAL_SCALE_X) - (y_dir * HALF_STOKE_WIDTH)
         + (y_dir / 4.0 * index.to_f64().unwrap() * SQUARE_SIZE)
         + SQUARE_MIDPOINT;
 

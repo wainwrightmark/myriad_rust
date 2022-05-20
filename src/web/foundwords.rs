@@ -46,7 +46,7 @@ pub fn more_tab_header(properties: &MoreTabHeaderProperties) -> Html {
     let class = classes!("tab-header", selected);
     let style = format!(
         "transform: translate({}px, {}px);",
-        TAB_HEADER_PADDING +( index.to_f64().unwrap() * (TAB_HEADER_WIDTH + TAB_HEADER_MARGIN)),
+        TAB_HEADER_PADDING + (index.to_f64().unwrap() * (TAB_HEADER_WIDTH + TAB_HEADER_MARGIN)),
         (SQUARE_SIZE * 3.0) + TAB_HEADER_TOP_MARGIN
     );
 
@@ -86,7 +86,7 @@ pub fn found_words_tab_header(
     let class = classes!("tab-header", selected, complete);
     let style = format!(
         "transform: translate({}px, {}px);",
-        TAB_HEADER_PADDING +( index.to_f64().unwrap() * (TAB_HEADER_WIDTH + TAB_HEADER_MARGIN)),
+        TAB_HEADER_PADDING + (index.to_f64().unwrap() * (TAB_HEADER_WIDTH + TAB_HEADER_MARGIN)),
         (SQUARE_SIZE * 3.0) + TAB_HEADER_TOP_MARGIN
     );
     html!(
@@ -104,7 +104,7 @@ pub fn found_words_tab_header(
 #[function_component(AllFoundWords)]
 pub fn all_found_words() -> Html {
     let state = use_selector(|state: &FullState| state.found_words.clone());
-    let selected_tab_state =  use_store_value::<SelectedTabState>();
+    let selected_tab_state = use_store_value::<SelectedTabState>();
     let selected_tab = selected_tab_state.index;
 
     let total_found = state.words.len();
@@ -195,8 +195,19 @@ pub fn found_word_box(properties: &FoundWordBoxProperties) -> Html {
     let y = properties.y;
     let style = format!("transform: translate({}px, {}px);", x, y);
 
-    let class = classes!("found-word-group", if properties.on_click.is_some() {Some("found-word-group-button")} else{None});
-    let role =if properties.on_click.is_some() {Some("button")} else{None};
+    let class = classes!(
+        "found-word-group",
+        if properties.on_click.is_some() {
+            Some("found-word-group-button")
+        } else {
+            None
+        }
+    );
+    let role = if properties.on_click.is_some() {
+        Some("button")
+    } else {
+        None
+    };
 
     html!(
      <g key={properties.id.clone()} {style}  {role} {class} onclick={properties.on_click.clone()}>

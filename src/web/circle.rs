@@ -7,7 +7,6 @@ use crate::web::prelude::*;
 use yew::prelude::*;
 use yewdux::prelude::*;
 
-
 #[function_component(CirclesSVG)]
 pub fn circles_svg() -> Html {
     let mc = use_selector(|state: &FullState| state.board.max_coordinate());
@@ -38,7 +37,9 @@ fn circle(properties: &CircleProperties) -> Html {
         coordinate,
     );
 
-    let board = use_selector(|state: &FullState| state.board.clone()).deref().clone();
+    let board = use_selector(|state: &FullState| state.board.clone())
+        .deref()
+        .clone();
 
     let circle_type = use_selector_with_deps(
         |state: &ChosenPositionsState, (co, board)| state.get_circle_type(&co, board.clone()),

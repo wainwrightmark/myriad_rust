@@ -1,7 +1,7 @@
 use std::collections::{BinaryHeap, HashSet};
 
 use itertools::Itertools;
-use rand::prelude::{ SliceRandom, StdRng};
+use rand::prelude::{SliceRandom, StdRng};
 
 use crate::core::prelude::*;
 
@@ -102,9 +102,9 @@ impl Iterator for CreatorIterator2 {
 
                 for new_letter in Letter::legal_letters().choose_multiple(&mut self.rng, self.create_settings.branching_factor)  {
                     mutate_board(&sb, self. solve_settings,&mut self.created_boards, new_letter, index);
-                }               
-            
-                
+                }
+
+
             } else {
                 //Create random boards and start again
                 for _ in 0..self.create_settings.branching_factor {
@@ -116,7 +116,7 @@ impl Iterator for CreatorIterator2 {
                                 .unwrap()
                         })
                         .collect_vec();
-        
+
                     let board1 = Board {
                         columns: self.max_coordinate.column + 1,
                         letters,

@@ -16,11 +16,9 @@ impl Reducer<RecentWordState> for WordFoundMsg {
     }
 }
 
-pub struct ClearExpiredWordsMsg{
-    
-}
+pub struct ClearExpiredWordsMsg {}
 
-impl Reducer<RecentWordState> for ClearExpiredWordsMsg{
+impl Reducer<RecentWordState> for ClearExpiredWordsMsg {
     fn apply(&self, state: std::rc::Rc<RecentWordState>) -> std::rc::Rc<RecentWordState> {
         state.clear_expired().into()
     }

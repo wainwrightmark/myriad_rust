@@ -81,7 +81,8 @@ impl Coordinate {
     }
 
     ///True if two coordinates are orthogonal or diagonal
-    pub fn is_adjacent(&self, other: &Coordinate) -> bool { //TODO dont use &
+    pub fn is_adjacent(&self, other: &Coordinate) -> bool {
+        //TODO dont use &
         if self == other {
             return false;
         };
@@ -99,9 +100,10 @@ impl Coordinate {
 
         row_diff <= 1 && col_diff <= 1
     }
-    
+
     ///True if two coordinates are orthogonal (adjacent but not diagonal)
-    pub fn is_orthogonal(&self, other: &Coordinate) -> bool {//TODO dont use &
+    pub fn is_orthogonal(&self, other: &Coordinate) -> bool {
+        //TODO dont use &
         if self == other {
             return false;
         };
@@ -215,8 +217,8 @@ impl Coordinate {
         }
 
         Coordinate {
-            row: root -1,
-            column: root -1,
+            row: root - 1,
+            column: root - 1,
         }
     }
 }

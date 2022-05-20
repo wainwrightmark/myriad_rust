@@ -1,8 +1,8 @@
-use crate::web::prelude::*;
 use crate::state::msg::*;
+use crate::web::prelude::*;
+use num::ToPrimitive;
 use yew::prelude::*;
 use yewdux::prelude::*;
-use num::ToPrimitive;
 
 #[derive(PartialEq, Properties)]
 pub struct NewGameButtonProperties {
@@ -12,7 +12,7 @@ pub struct NewGameButtonProperties {
 #[function_component(NewGameButton)]
 pub fn new_game_button(properties: &NewGameButtonProperties) -> Html {
     let on_click: Option<Callback<MouseEvent>> =
-        Some(Dispatch::new().apply_callback(|_| NewGameMsg{}));
+        Some(Dispatch::new().apply_callback(|_| NewGameMsg {}));
 
     let (x, y) = get_found_word_position(101, properties.selected_tab, false);
 
@@ -35,13 +35,12 @@ pub fn score_counter(properties: &ScoreCounterProperties) -> Html {
     let rect_class = classes!("score-counter-box");
     let text_class = classes!("button-text");
 
-
     html!(
         <>
         <rect class={"score-counter-progress"} style={format!("transform: translate({}px, {}px);", x, y)} height={format!("{FOUND_WORD_HEIGHT}")} rx="5" width={format!("{}", FOUND_WORD_WIDTH * 1.5 * properties.total_found.to_f64().unwrap() / 100.0 )}>
         </rect>
         <FoundWordBox id={"score_counter"} text={format_number(properties.total_found as i32)} {x} {y} width_units={1.5} {rect_class} {text_class} />
-        
+
         </>
     )
 }

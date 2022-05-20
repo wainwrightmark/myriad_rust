@@ -1,10 +1,9 @@
 use std::ops::Deref;
 
 use crate::state::prelude::*;
+use crate::web::prelude::*;
 use yew::prelude::*;
 use yewdux::prelude::*;
-use crate::web::prelude::*;
-
 
 #[function_component(RecentWords)]
 pub fn recent_words() -> Html {
