@@ -163,7 +163,7 @@ fn crosshair(properties: &CrossHairProperties) -> Html {
     };
 
     let scale = if let CircleType::IntermediatePosition { next } = circle_type {
-        if next.is_orthogonal(&coordinate) {
+        if next.is_orthogonal(coordinate) {
             STRAIGHT_SCALE_X
         } else {
             DIAGONAL_SCALE_X

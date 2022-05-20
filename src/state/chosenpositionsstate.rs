@@ -23,7 +23,6 @@ impl ChosenPositionsState {
                 coordinates,
             } => Self {
                 positions: coordinates.to_owned(),
-                ..self
             },
             MoveResult::WordAbandoned => Self {
                 positions: Default::default(),
@@ -93,7 +92,7 @@ impl Reducer<ChosenPositionsState> for OnClickMsg {
             .into(); //Retrace move
         }
 
-        if state.positions.is_empty() || state.positions.last().unwrap().is_adjacent(&coordinate) {
+        if state.positions.is_empty() || state.positions.last().unwrap().is_adjacent(coordinate) {
             let mut new_chosen_positions = state.positions.clone();
             new_chosen_positions.push(coordinate);
 

@@ -52,7 +52,7 @@ fn test_create_boards() {
     let ten_thousand_solve_settings = SolveSettings { min: 1, max: 10000 };
 
     let settings = BoardCreateSettings {
-        branching_factor: 1,
+        branching_factor: 2,
     };
     let rng = rand::SeedableRng::seed_from_u64(100);
 
