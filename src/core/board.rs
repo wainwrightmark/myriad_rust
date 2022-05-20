@@ -22,7 +22,7 @@ impl std::fmt::Display for Board {
 }
 
 impl Board {
-    pub fn check(&self, nodes: &Vec<Coordinate>) -> Result<i32, ParseFail> {
+    pub fn check(&self, nodes: &[Coordinate]) -> Result<i32, ParseFail> {
         let mut input = nodes
             .iter()
             .map(|x| self.get_letter_at_coordinate(x))
@@ -152,21 +152,17 @@ impl Board {
         let one_thousand_solve_settings = SolveSettings { min: 1, max: 1000 };
         let ten_thousand_solve_settings = SolveSettings { min: 1, max: 10000 };
 
-        let mut strings = Vec::<String>::new();
+        let one_thousand_result = one_thousand_solve_settings
+        .solve(self.clone())
+        .count()
+        .to_string();
+        let ten_thousand_result = ten_thousand_solve_settings
+        .solve(self.clone())
+        .count()
+        .to_string();
 
-        strings.push(self.to_single_string());
-        strings.push(
-            one_thousand_solve_settings
-                .solve(self.clone())
-                .count()
-                .to_string(),
-        );
-        strings.push(
-            ten_thousand_solve_settings
-                .solve(self.clone())
-                .count()
-                .to_string(),
-        );
+
+        let mut strings = vec![self.to_single_string(), one_thousand_result, ten_thousand_result];
 
         let mut nums = 0;
         let mut operators = 0;
