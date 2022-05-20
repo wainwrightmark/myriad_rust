@@ -42,9 +42,11 @@ const HALF_STOKE_WIDTH: f64 = 3.6;
 fn crosshair(properties: &CrossHairProperties) -> Html {
 
     let coordinate = properties.coordinate;
+    let board = use_selector(|state: &FullState| state.board.clone()).deref().clone();
+
     let circle_type = use_selector_with_deps(
-        |state: &FullState, co| state.get_circle_type(&co),
-        coordinate,
+        |state: &ChosenPositionsState, (co, board)| state.get_circle_type(&co, board.clone()),
+        (coordinate, board),
     )
     .deref()
     .clone();

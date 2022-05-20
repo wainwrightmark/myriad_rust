@@ -38,9 +38,11 @@ fn circle(properties: &CircleProperties) -> Html {
         coordinate,
     );
 
+    let board = use_selector(|state: &FullState| state.board.clone()).deref().clone();
+
     let circle_type = use_selector_with_deps(
-        |state: &FullState, co| state.get_circle_type(&co),
-        coordinate,
+        |state: &ChosenPositionsState, (co, board)| state.get_circle_type(&co, board.clone()),
+        (coordinate, board),
     )
     .deref()
     .clone();
@@ -61,7 +63,7 @@ fn circle(properties: &CircleProperties) -> Html {
     //let ontouchstart = Dispatch::new().apply_callback(move |_: TouchEvent| DragMsg::TouchStart { coordinate: coordinate });
     //let onmouseup = Dispatch::new().apply_callback(move |_: MouseEvent| DragMsg::MouseUp { coordinate: coordinate });
 
-    let onclick = Dispatch::new().apply_callback(move |_: MouseEvent| Msg::Move {
+    let onclick = Dispatch::new().apply_callback(move |_: MouseEvent| OnClickMsg {
         coordinate: coordinate,
     });
 

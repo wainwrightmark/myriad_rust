@@ -1,22 +1,30 @@
-
-use std::rc::Rc;
-
 use crate::core::prelude::*;
 use itertools::Itertools;
 use yewdux::prelude::*;
 
-
-pub struct WordFoundMsg{
-    pub move_result: MoveResult,
-    pub is_new_word: bool
+pub struct WordFoundMsg {
+    pub word: i32,
+    pub word_type: FoundWordType,
+    pub coordinate: Coordinate,
 }
 
-impl Reducer<RecentWordState> for WordFoundMsg{
+impl Reducer<RecentWordState> for WordFoundMsg {
     fn apply(&self, state: std::rc::Rc<RecentWordState>) -> std::rc::Rc<RecentWordState> {
-        RecentWordState::after_move_result(state, &self.move_result, self.is_new_word).into()
+        state
+            .with_word(self.word, self.word_type, self.coordinate)
+            .into()
     }
 }
 
+pub struct ClearExpiredWordsMsg{
+    
+}
+
+impl Reducer<RecentWordState> for ClearExpiredWordsMsg{
+    fn apply(&self, state: std::rc::Rc<RecentWordState>) -> std::rc::Rc<RecentWordState> {
+        state.clear_expired().into()
+    }
+}
 
 #[derive(PartialEq, Clone, Default, Store)]
 pub struct RecentWordState {
@@ -43,8 +51,7 @@ impl RecentWordState {
             expiry_time: now + instant::Duration::from_millis(linger),
         };
 
-        let mut new_words = self
-            .recent_words.clone();
+        let mut new_words = self.recent_words.clone();
 
         new_words.push(r_word);
 
@@ -60,8 +67,8 @@ impl RecentWordState {
 
         let now = instant::Instant::now();
         let new_words = self
-            .recent_words.iter()
-            
+            .recent_words
+            .iter()
             .filter(|&x| x.expiry_time > now)
             .cloned()
             .collect_vec();
@@ -70,44 +77,13 @@ impl RecentWordState {
             recent_words: new_words,
         }
     }
-
-    pub fn after_move_result(this: Rc::<Self>, move_result: &MoveResult, is_new_word: bool) -> Rc<Self> {
-        match move_result {
-            MoveResult::WordComplete { word } => this.with_word(
-                word.result,
-                if is_new_word {
-                    FoundWordType::Found
-                } else {
-                    FoundWordType::PreviouslyFound
-                },
-                *word.path.last().unwrap(),
-            ).into(),
-            MoveResult::WordOutsideRange { word } => this.with_word(
-                word.result,
-                FoundWordType::NotInRange,
-                *word.path.last().unwrap(),
-            ).into(),
-            MoveResult::WordAbandoned => this.clear_expired().into(),
-            MoveResult::MoveRetraced {
-                word: _,
-                coordinates: _,
-            } => this,
-            MoveResult::IllegalMove => this,
-            MoveResult::WordIncomplete {
-                word: _,
-                coordinates: _,
-            } => this,
-        }
-    }
 }
 
-#[derive(PartialEq, Clone, Debug)]
+#[derive(PartialEq, Clone, Debug, Copy)]
 pub enum FoundWordType {
     Found,
     PreviouslyFound,
-    Incomplete,
     NotInRange,
-    Invalid,
 }
 
 impl FoundWordType {
@@ -117,8 +93,6 @@ impl FoundWordType {
         match self {
             FoundWordType::Found => BASIS * 10,
             FoundWordType::PreviouslyFound => BASIS * 5,
-            FoundWordType::Invalid => BASIS * 2,
-            FoundWordType::Incomplete => BASIS * 4,
             FoundWordType::NotInRange => BASIS * 4,
         }
     }
@@ -133,8 +107,6 @@ impl RecentWord {
         match self.word_type {
             FoundWordType::Found => "Green".to_string(),
             FoundWordType::PreviouslyFound => "Blue".to_string(),
-            FoundWordType::Invalid => "Red".to_string(),
-            FoundWordType::Incomplete => "Orange".to_string(),
             FoundWordType::NotInRange => "Orange".to_string(),
         }
     }

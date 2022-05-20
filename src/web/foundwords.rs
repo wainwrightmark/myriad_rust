@@ -145,7 +145,7 @@ pub fn found_words_word(properties: &FoundWordProperties) -> Html {
     let number = properties.number;
 
     let on_click: Option<Callback<MouseEvent>> = if properties.is_found {
-        Some(Dispatch::new().apply_callback(move |_| Msg::Find { number }))
+        Some(Dispatch::new().apply_callback(move |_| FindNumberMsg { number }))
     } else {
         None
     };
