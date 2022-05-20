@@ -33,7 +33,7 @@ fn circle(properties: &CircleProperties) -> Html {
     let coordinate = properties.coordinate;
 
     let location = use_selector_with_deps(
-        |state: &RotFlipState, co| state.get_location(&co, SQUARE_SIZE),
+        |state: &RotFlipState, co| state.get_location(co, SQUARE_SIZE),
         coordinate,
     );
 
@@ -41,19 +41,17 @@ fn circle(properties: &CircleProperties) -> Html {
         .deref()
         .clone();
 
-    let circle_type = use_selector_with_deps(
-        |state: &ChosenPositionsState, (co, board)| state.get_circle_type(&co, board.clone()),
+    let circle_type = *use_selector_with_deps(
+        |state: &ChosenPositionsState, (co, board)| state.get_circle_type(co, board.clone()),
         (coordinate, board),
     )
-    .deref()
-    .clone();
+    .deref();
 
-    let letter = use_selector_with_deps(
-        |state: &FullState, co| state.board.get_letter_at_coordinate(&co),
+    let letter = *use_selector_with_deps(
+        |state: &FullState, co| state.board.get_letter_at_coordinate(co),
         coordinate,
     )
-    .deref()
-    .clone();
+    .deref();
 
     let color = circle_type.get_color().to_string();
     let cursor = circle_type.get_cursor().to_string();
@@ -65,7 +63,7 @@ fn circle(properties: &CircleProperties) -> Html {
     //let onmouseup = Dispatch::new().apply_callback(move |_: MouseEvent| DragMsg::MouseUp { coordinate: coordinate });
 
     let onclick = Dispatch::new().apply_callback(move |_: MouseEvent| OnClickMsg {
-        coordinate: coordinate,
+        coordinate,
     });
 
     let cx = location.0;

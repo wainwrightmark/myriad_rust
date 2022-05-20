@@ -106,6 +106,6 @@ impl Reducer<ChosenPositionsState> for OnClickMsg {
             }
             .into(); //New move
         }
-        return state;
+        state
     }
 }

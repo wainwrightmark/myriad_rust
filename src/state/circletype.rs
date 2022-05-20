@@ -38,7 +38,7 @@ impl ChosenPositionsState {
     ) -> CircleType {
         if let Some(position) = self.positions.iter().position(|c| c == coordinate) {
             if let Some(next) = self.positions.get(position + 1) {
-                return CircleType::IntermediatePosition { next: next.clone() };
+                return CircleType::IntermediatePosition { next: *next };
             } else {
                 return CircleType::LastPosition;
             }
@@ -59,12 +59,12 @@ impl ChosenPositionsState {
 
         let parse_result = parse_and_evaluate(&mut letters);
 
-        return match parse_result {
+        match parse_result {
             Ok(_) => CircleType::LegalMove,
             Err(parse_fail) => match parse_fail {
                 ParseFail::PartialSuccess => CircleType::LegalMove,
                 ParseFail::Failure => CircleType::Disabled,
             },
-        };
+        }
     }
 }

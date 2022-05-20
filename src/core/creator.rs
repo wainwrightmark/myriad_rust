@@ -196,8 +196,8 @@ impl Iterator for CreatorIterator {
                         board,
                         self.solve_settings,
                         &mut self.created_boards,
-                        letter.clone(),
-                        index.clone(),
+                        *letter,
+                        *index,
                     )
                 });
 

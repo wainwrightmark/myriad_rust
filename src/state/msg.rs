@@ -105,7 +105,7 @@ impl Reducer<FullState> for OnCoordinatesSetMsg {
 
             Dispatch::new().apply(WordFoundMsg {
                 word: num,
-                coordinate: coordinates.last().unwrap().clone(),
+                coordinate: *coordinates.last().unwrap(),
                 word_type,
             });
 
@@ -116,7 +116,7 @@ impl Reducer<FullState> for OnCoordinatesSetMsg {
             }
             .into()
         } else {
-            return state;
+            state
         }
     }
 }

@@ -45,14 +45,13 @@ fn crosshair(properties: &CrossHairProperties) -> Html {
         .deref()
         .clone();
 
-    let circle_type = use_selector_with_deps(
-        |state: &ChosenPositionsState, (co, board)| state.get_circle_type(&co, board.clone()),
+    let circle_type = *use_selector_with_deps(
+        |state: &ChosenPositionsState, (co, board)| state.get_circle_type(co, board.clone()),
         (coordinate, board),
     )
-    .deref()
-    .clone();
+    .deref();
 
-    let rot_flip = use_store_value::<RotFlipState>().deref().clone();
+    let rot_flip = *use_store_value::<RotFlipState>().deref();
 
     let location = rot_flip.get_location(&coordinate, SQUARE_SIZE);
 
