@@ -1,5 +1,7 @@
 use crate::web::prelude::*;
+use crate::state::prelude::*;
 use yew::prelude::*;
+use yewdux::prelude::*;
 
 #[function_component(App)]
 pub fn app() -> Html {
@@ -7,9 +9,12 @@ pub fn app() -> Html {
     let width = format!("{SVG_WIDTH}");
     let height = format!("{SVG_HEIGHT}");    
 
+
+    let onpointerup = Dispatch::new().apply_callback(move |_: PointerEvent| InputMsg::Up {});
+
     html! {
         <div class="container">
-        <svg viewBox={view_box} class="myriadSVG" >
+        <svg viewBox={view_box} class="myriadSVG" {onpointerup} >
         <rect x="0" y="0" {width} {height} fill="white"  />
         // <RopeSVG />
         <CrosshairsSVG/>

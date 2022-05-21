@@ -71,7 +71,7 @@ impl ChosenPositionsState {
                     return state;
                 }
 
-                log::debug!("Abandon word");
+                //log::debug!("Abandon word");
                 Dispatch::new().apply(ClearExpiredWordsMsg {});
                 
                 return ChosenPositionsState::default().into();
@@ -90,7 +90,7 @@ impl ChosenPositionsState {
 
             //TOOD maybe send a find message here
 
-            log::debug!("Retrace word");
+            //log::debug!("Retrace word");
 
             return ChosenPositionsState {
                 positions: new_chosen_positions,
@@ -103,7 +103,7 @@ impl ChosenPositionsState {
             new_chosen_positions.push(coordinate);
 
 
-            log::debug!("Found word");
+            //log::debug!("Found word");
 
             Dispatch::new().apply(OnCoordinatesSetMsg {
                 coordinates: new_chosen_positions.clone(),
