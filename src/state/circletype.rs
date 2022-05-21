@@ -45,7 +45,7 @@ impl ChosenPositionsState {
         }
 
         if let Some(last) = self.positions.last() {
-            if !last.is_adjacent(coordinate.clone()) {
+            if !last.is_adjacent(*coordinate) {
                 return CircleType::Disabled;
             }
         }

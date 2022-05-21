@@ -38,10 +38,6 @@ impl ChosenPositionsState {
     }
 }
 
-pub struct OnClickMsg {
-    pub coordinate: Coordinate,
-}
-
 pub struct FindNumberMsg {
     pub number: i32,
 }
@@ -61,15 +57,23 @@ impl Reducer<ChosenPositionsState> for FindNumberMsg {
     }
 }
 
-impl Reducer<ChosenPositionsState> for OnClickMsg {
-    fn apply(&self, state: std::rc::Rc<ChosenPositionsState>) -> std::rc::Rc<ChosenPositionsState> {
-        let coordinate = self.coordinate;
-
+impl ChosenPositionsState {
+    pub fn next(
+        state: std::rc::Rc<ChosenPositionsState>,
+        allow_abandon: bool,
+        coordinate: Coordinate,
+    ) -> std::rc::Rc<ChosenPositionsState> {
         if let Some(last) = state.positions.last() {
             if last == &coordinate {
                 //Abandon word - empty state
-                Dispatch::new().apply(ClearExpiredWordsMsg {});
 
+                if !allow_abandon{
+                    return state;
+                }
+
+                log::debug!("Abandon word");
+                Dispatch::new().apply(ClearExpiredWordsMsg {});
+                
                 return ChosenPositionsState::default().into();
             }
         }
@@ -86,6 +90,8 @@ impl Reducer<ChosenPositionsState> for OnClickMsg {
 
             //TOOD maybe send a find message here
 
+            log::debug!("Retrace word");
+
             return ChosenPositionsState {
                 positions: new_chosen_positions,
             }
@@ -96,9 +102,12 @@ impl Reducer<ChosenPositionsState> for OnClickMsg {
             let mut new_chosen_positions = state.positions.clone();
             new_chosen_positions.push(coordinate);
 
+
+            log::debug!("Found word");
+
             Dispatch::new().apply(OnCoordinatesSetMsg {
                 coordinates: new_chosen_positions.clone(),
-            });
+            });            
 
             return ChosenPositionsState {
                 positions: new_chosen_positions,
@@ -106,5 +115,56 @@ impl Reducer<ChosenPositionsState> for OnClickMsg {
             .into(); //New move
         }
         state
+    }
+}
+
+#[derive(PartialEq, Clone, Default, Serialize, Deserialize, Store)]
+pub  struct InputState{
+    is_down: bool
+}
+
+impl Reducer<InputState> for InputMsg{
+    fn apply(&self, state: std::rc::Rc<InputState>) -> std::rc::Rc<InputState> {
+        match self {
+            InputMsg::Down { coordinate } => {
+
+                log::debug!("Input down {}", coordinate);
+                Dispatch::new().apply(OnClickMsg{coordinate: coordinate.clone(), allow_abandon: true});
+
+                InputState{is_down: true}.into()
+            },
+            InputMsg::Up{} => {
+                log::debug!("Input up");
+
+                InputState{is_down: false}.into()
+            },
+            InputMsg::Enter { coordinate } => {                
+                if state.is_down{
+                    log::debug!("Input Enter {}", coordinate);
+                    Dispatch::new().apply(OnClickMsg{coordinate: coordinate.clone(), allow_abandon: false})
+                }
+
+                
+
+                state
+            },
+        }
+    }
+}
+
+pub enum InputMsg {
+    Down { coordinate: Coordinate },
+    Up { },
+    Enter { coordinate: Coordinate },
+}
+
+pub struct OnClickMsg {
+    pub coordinate: Coordinate,
+    pub allow_abandon : bool
+}
+
+impl Reducer<ChosenPositionsState> for OnClickMsg {
+    fn apply(&self, state: std::rc::Rc<ChosenPositionsState>) -> std::rc::Rc<ChosenPositionsState> {
+        ChosenPositionsState::next(state, self.allow_abandon, self.coordinate)
     }
 }

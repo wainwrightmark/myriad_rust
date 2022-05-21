@@ -29,6 +29,7 @@ impl Reducer<FullState> for NewGameMsg {
 
         Dispatch::<RecentWordState>::new().reduce_mut(|s| s.recent_words.clear());
         Dispatch::<RotFlipState>::new().reduce_mut(|s| s.new_game());
+        Dispatch::<ChosenPositionsState>::new().reduce_mut(|s| s.positions.clear());
 
         FullState {
             board: board.into(),

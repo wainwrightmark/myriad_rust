@@ -11,6 +11,8 @@ use yewdux::prelude::*;
 pub fn circles_svg() -> Html {
     let mc = use_selector(|state: &FullState| state.board.max_coordinate());
 
+    
+
     let circles = mc
         .get_positions_up_to()
         .map(|coordinate| html!(< Circle {coordinate} />))
@@ -57,14 +59,18 @@ fn circle(properties: &CircleProperties) -> Html {
     let cursor = circle_type.get_cursor().to_string();
 
     //let ontouchend = Dispatch::new().apply_callback(move |_: TouchEvent| DragMsg::TouchEnd { coordinate });
-    //let onmousedown = Dispatch::new().apply_callback(move |_: MouseEvent| DragMsg::MouseDown { coordinate });
+    let onmousedown = Dispatch::new().apply_callback(move |_: MouseEvent| InputMsg::Down { coordinate });
+    let onmouseup = Dispatch::new().apply_callback(move |_: MouseEvent| InputMsg::Up{} );
+    let onmouseenter = Dispatch::new().apply_callback(move |_: MouseEvent|InputMsg::Enter { coordinate });
 
     //let ontouchstart = Dispatch::new().apply_callback(move |_: TouchEvent| DragMsg::TouchStart { coordinate: coordinate });
-    //let onmouseup = Dispatch::new().apply_callback(move |_: MouseEvent| DragMsg::MouseUp { coordinate: coordinate });
+    
+    
 
-    let onclick = Dispatch::new().apply_callback(move |_: MouseEvent| OnClickMsg {
-        coordinate,
-    });
+    // let onclick = Dispatch::new().apply_callback(move |_: MouseEvent| OnClickMsg {
+    //     coordinate,
+    //     allow_abandon: true
+    // });
 
     let cx = location.0;
     let cy = location.1;
@@ -95,9 +101,10 @@ fn circle(properties: &CircleProperties) -> Html {
         {key}
        style={g_style}
        cursor={cursor}
-       {onclick}
-       //{onmousedown}
-       //{onmouseup}
+       //{onclick}
+       {onmousedown}
+       {onmouseup}
+       {onmouseenter}
        //{ontouchstart}
        //{ontouchend}
        draggable="true"
