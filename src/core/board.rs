@@ -7,27 +7,25 @@ use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
 #[serde_as]
-
 #[derive(PartialEq, Debug, Eq, Hash, Clone, Serialize, Deserialize)]
-pub struct Board<const COLUMNS: usize, const ROWS: usize> {    
-        
+pub struct Board<const COLUMNS: usize, const ROWS: usize> {
     #[serde_as(as = "[[_; COLUMNS]; ROWS]")]
     pub letters: [[Letter; COLUMNS]; ROWS],
 }
 
-impl Default for Board<3,3> {
+impl Default for Board<3, 3> {
     fn default() -> Self {
         Board::try_create("-+718325+").unwrap()
     }
 }
 
-impl<const C: usize,const R: usize> std::fmt::Display for Board<C,R> {
+impl<const C: usize, const R: usize> std::fmt::Display for Board<C, R> {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "{}", self.to_multiline_string())
     }
 }
 
-impl<const C: usize,const R: usize> Board<C,R> {
+impl<const C: usize, const R: usize> Board<C, R> {
     pub fn check(&self, nodes: &[Coordinate]) -> Result<i32, ParseFail> {
         let mut input = nodes
             .iter()
@@ -37,7 +35,7 @@ impl<const C: usize,const R: usize> Board<C,R> {
         crate::core::parser::parse_and_evaluate(&mut input)
     }
 
-    pub fn try_create(letters: &str) -> Option<Board<C,R>> {
+    pub fn try_create(letters: &str) -> Option<Board<C, R>> {
         let r: Option<Vec<Letter>> = letters.chars().map(Letter::try_create).collect();
 
         match r {
@@ -45,29 +43,28 @@ impl<const C: usize,const R: usize> Board<C,R> {
             Some(vector) => {
                 //let len = vector.len();
 
-                let letters :  [[Letter; C]; R] = vector.into_iter()
-                .pad_using(R * C, |_| {
-                            Letter::Blank
-                        })
-
-
-                .chunks(R).into_iter().map(|x|
-                    {
-                    let a: [Letter; C] = x.collect::<Vec<Letter>>().try_into().unwrap();
-                    a
-                    }
-                    ).collect::<Vec<[Letter; C]>>().try_into().unwrap();
+                let letters: [[Letter; C]; R] = vector
+                    .into_iter()
+                    .pad_using(R * C, |_| Letter::Blank)
+                    .chunks(R)
+                    .into_iter()
+                    .map(|x| {
+                        let a: [Letter; C] = x.collect::<Vec<Letter>>().try_into().unwrap();
+                        a
+                    })
+                    .collect::<Vec<[Letter; C]>>()
+                    .try_into()
+                    .unwrap();
 
                 //let max_co = Coordinate::get_max_coordinate_for_square_grid(len as u8);
 
                 Some(Board {
-                    letters
-                    // letters: vector
-                    //     .into_iter()
-                    //     .pad_using(((max_co.row + 1) * (max_co.column + 1)) as usize, |_| {
-                    //         Letter::Blank
-                    //     })
-                    //     .collect(),
+                    letters, // letters: vector
+                             //     .into_iter()
+                             //     .pad_using(((max_co.row + 1) * (max_co.column + 1)) as usize, |_| {
+                             //         Letter::Blank
+                             //     })
+                             //     .collect(),
                 })
             }
         }
@@ -85,7 +82,7 @@ impl<const C: usize,const R: usize> Board<C,R> {
         word
     }
 
-    pub fn with_set_letter(&self, letter: Letter, index: usize) -> Board<C,R> {
+    pub fn with_set_letter(&self, letter: Letter, index: usize) -> Board<C, R> {
         let r = index % R;
         let c = index / R;
 
@@ -99,16 +96,15 @@ impl<const C: usize,const R: usize> Board<C,R> {
 
     pub fn get_unique_string(&self) -> String {
         if R != C {
-            return format!("{}_{}", C, self.letters.iter().flatten() .join(""));
+            return format!("{}_{}", C, self.letters.iter().flatten().join(""));
         }
 
-        
         let mut options = (0..4)
             .into_iter()
             .cartesian_product(0..2)
             .map(|(rotate, reflect)| {
                 Coordinate::get_positions_up_to::<C, R>()
-                    .map(|c| c.rotate_and_flip::<C, R>( rotate, reflect == 0))
+                    .map(|c| c.rotate_and_flip::<C, R>(rotate, reflect == 0))
                     .map(|c| self.get_letter_at_coordinate(&c))
                     .join("")
             })
@@ -117,11 +113,8 @@ impl<const C: usize,const R: usize> Board<C,R> {
         options.next().unwrap()
     }
 
-
-
     pub fn get_letter_at_coordinate(&self, coordinate: &Coordinate) -> Letter {
-
-        self.letters[coordinate.column ][coordinate.row ]
+        self.letters[coordinate.column][coordinate.row]
     }
 
     pub fn get_letter_at_index(&self, index: usize) -> Letter {
@@ -164,16 +157,19 @@ impl<const C: usize,const R: usize> Board<C,R> {
         let ten_thousand_solve_settings = SolveSettings { min: 1, max: 10000 };
 
         let one_thousand_result = one_thousand_solve_settings
-        .solve(self.clone())
-        .count()
-        .to_string();
+            .solve(self.clone())
+            .count()
+            .to_string();
         let ten_thousand_result = ten_thousand_solve_settings
-        .solve(self.clone())
-        .count()
-        .to_string();
+            .solve(self.clone())
+            .count()
+            .to_string();
 
-
-        let mut strings = vec![self.to_single_string(), one_thousand_result, ten_thousand_result];
+        let mut strings = vec![
+            self.to_single_string(),
+            one_thousand_result,
+            ten_thousand_result,
+        ];
 
         let mut nums = 0;
         let mut operators = 0;

@@ -17,19 +17,10 @@ impl Reducer<RotFlipState> for RotFlipMsg {
     }
 }
 
-#[derive(PartialEq, Clone, Copy, Serialize, Deserialize, Store, Debug)]
+#[derive(PartialEq, Clone, Copy, Serialize, Deserialize, Store, Debug, Default)]
 pub struct RotFlipState {
     pub rotate: i8,
     pub flip: bool,
-}
-
-impl Default for RotFlipState {
-    fn default() -> Self {
-        Self {
-            rotate: Default::default(),
-            flip: Default::default(),
-        }
-    }
 }
 
 impl RotFlipState {

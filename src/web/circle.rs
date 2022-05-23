@@ -9,8 +9,7 @@ use yewdux::prelude::*;
 
 #[function_component(CirclesSVG)]
 pub fn circles_svg() -> Html {
-
-    let circles = Coordinate::get_positions_up_to::<GRID_COLUMNS, GRID_ROWS>()        
+    let circles = Coordinate::get_positions_up_to::<GRID_COLUMNS, GRID_ROWS>()
         .map(|coordinate| html!(< Circle {coordinate} />))
         .collect::<Html>();
 
@@ -57,7 +56,7 @@ fn circle(properties: &CircleProperties) -> Html {
     //let ontouchend = Dispatch::new().apply_callback(move |_: TouchEvent| DragMsg::TouchEnd { coordinate });
     let onpointerdown =
         Dispatch::new().apply_callback(move |_: PointerEvent| InputMsg::Down { coordinate });
-    
+
     let onpointerenter =
         Dispatch::new().apply_callback(move |_: PointerEvent| InputMsg::Enter { coordinate });
 
@@ -104,7 +103,7 @@ fn circle(properties: &CircleProperties) -> Html {
         {onpointerdown}
         //{onpointerup}
         {onpointerenter}
-        
+
 
        //{onclick}
        //{onmousedown}

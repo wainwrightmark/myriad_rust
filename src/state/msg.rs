@@ -21,7 +21,7 @@ impl Reducer<FullState> for NewGameMsg {
         debug!("Generating new board with seed {:?}", seed);
         let rng = rand::SeedableRng::seed_from_u64(seed);
 
-        let mut boards = settings.create_boards( solve_settings, rng);
+        let mut boards = settings.create_boards(solve_settings, rng);
         let board = boards.next().unwrap();
         let diff = instant::Instant::now() - start_instant;
 

@@ -7,7 +7,7 @@ use yewdux::prelude::*;
 #[derive(PartialEq, Store, Clone, Default, Serialize, Deserialize)]
 #[store(storage = "local")] // can also be "session"
 pub struct FullState {
-    pub board: Rc<Board<3,3>>,
+    pub board: Rc<Board<3, 3>>,
     pub found_words: Rc<FoundWordsState>,
     pub solve_settings: SolveSettings,
 }

@@ -11,8 +11,7 @@ pub fn recent_words() -> Html {
     let rot_flip = use_store_value::<RotFlipState>();
     let selected_index = *use_selector(|state: &SelectedTabState| state.index).deref();
 
-    let recent_words = 
-    recent_words_state.recent_words
+    let recent_words = recent_words_state.recent_words
         .iter()
         .rev()
         .map(|word| {
@@ -32,11 +31,11 @@ pub fn recent_words() -> Html {
              startx,
              starty,
              endx + 2.5,
-             endy + 5.0             
+             endy + 5.0
             );
 
             //word.word
-            let text = format_number(word.number); 
+            let text = format_number(word.number);
 
             html! {
                 <text

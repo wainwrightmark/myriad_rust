@@ -28,7 +28,7 @@ t10: "+-389-425",
 );
 
 fn test_board(letters: &str, expected_count: usize) {
-    let board = Board::<3,3> ::try_create(letters).expect("board should be created");
+    let board = Board::<3, 3>::try_create(letters).expect("board should be created");
 
     let settings = SolveSettings { min: 1, max: 100 };
 
@@ -59,7 +59,7 @@ fn test_create_boards() {
     let rng = rand::SeedableRng::seed_from_u64(100);
 
     let boards = settings
-        .create_boards::<3,3> (solve_settings, rng)
+        .create_boards::<3, 3>(solve_settings, rng)
         .take(number_to_return)
         .collect_vec();
 

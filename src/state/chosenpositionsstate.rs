@@ -67,13 +67,13 @@ impl ChosenPositionsState {
             if last == &coordinate {
                 //Abandon word - empty state
 
-                if !allow_abandon{
+                if !allow_abandon {
                     return state;
                 }
 
                 //log::debug!("Abandon word");
                 Dispatch::new().apply(ClearExpiredWordsMsg {});
-                
+
                 return ChosenPositionsState::default().into();
             }
         }
@@ -102,12 +102,11 @@ impl ChosenPositionsState {
             let mut new_chosen_positions = state.positions.clone();
             new_chosen_positions.push(coordinate);
 
-
             //log::debug!("Found word");
 
             Dispatch::new().apply(OnCoordinatesSetMsg {
                 coordinates: new_chosen_positions.clone(),
-            });            
+            });
 
             return ChosenPositionsState {
                 positions: new_chosen_positions,
@@ -119,48 +118,51 @@ impl ChosenPositionsState {
 }
 
 #[derive(PartialEq, Clone, Default, Serialize, Deserialize, Store)]
-pub  struct InputState{
-    is_down: bool
+pub struct InputState {
+    is_down: bool,
 }
 
-impl Reducer<InputState> for InputMsg{
+impl Reducer<InputState> for InputMsg {
     fn apply(&self, state: std::rc::Rc<InputState>) -> std::rc::Rc<InputState> {
         match self {
             InputMsg::Down { coordinate } => {
-
                 //log::debug!("Input down {}", coordinate);
-                Dispatch::new().apply(OnClickMsg{coordinate: *coordinate, allow_abandon: true});
+                Dispatch::new().apply(OnClickMsg {
+                    coordinate: *coordinate,
+                    allow_abandon: true,
+                });
 
-                InputState{is_down: true}.into()
-            },
-            InputMsg::Up{} => {
+                InputState { is_down: true }.into()
+            }
+            InputMsg::Up {} => {
                 //log::debug!("Input up");
 
-                InputState{is_down: false}.into()
-            },
-            InputMsg::Enter { coordinate } => {                
-                if state.is_down{
+                InputState { is_down: false }.into()
+            }
+            InputMsg::Enter { coordinate } => {
+                if state.is_down {
                     //log::debug!("Input Enter {}", coordinate);
-                    Dispatch::new().apply(OnClickMsg{coordinate: *coordinate, allow_abandon: false})
+                    Dispatch::new().apply(OnClickMsg {
+                        coordinate: *coordinate,
+                        allow_abandon: false,
+                    })
                 }
 
-                
-
                 state
-            },
+            }
         }
     }
 }
 
 pub enum InputMsg {
     Down { coordinate: Coordinate },
-    Up { },
+    Up {},
     Enter { coordinate: Coordinate },
 }
 
 pub struct OnClickMsg {
     pub coordinate: Coordinate,
-    pub allow_abandon : bool
+    pub allow_abandon: bool,
 }
 
 impl Reducer<ChosenPositionsState> for OnClickMsg {

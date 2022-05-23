@@ -19,7 +19,10 @@ impl SolveSettings {
     }
 
     ///Get all solutions to this board within the range
-    pub fn solve<const C: usize,const R: usize> (self, board: Board<C,R>) -> impl Iterator<Item = FoundWord> {
+    pub fn solve<const C: usize, const R: usize>(
+        self,
+        board: Board<C, R>,
+    ) -> impl Iterator<Item = FoundWord> {
         SolutionIter::new(board, self)
     }
 
@@ -53,8 +56,8 @@ struct SolutionIter<const COLUMNS: usize, const ROWS: usize> {
     board: Board<COLUMNS, ROWS>,
 }
 
-impl<const C: usize,const R: usize> SolutionIter<C, R> {
-    pub fn new(board: Board<C,R>, settings: SolveSettings) -> Self {
+impl<const C: usize, const R: usize> SolutionIter<C, R> {
+    pub fn new(board: Board<C, R>, settings: SolveSettings) -> Self {
         Self {
             results: Default::default(),
             queue: VecDeque::from(vec![vec![]]),
@@ -74,7 +77,7 @@ impl<const C: usize,const R: usize> SolutionIter<C, R> {
                 self.queue.push_back(new_nodes);
             }
         } else {
-            for coordinate in Coordinate::get_positions_up_to::<C,R>() {
+            for coordinate in Coordinate::get_positions_up_to::<C, R>() {
                 let single_coordinate = vec![coordinate];
                 self.queue.push_back(single_coordinate);
             }
@@ -82,7 +85,7 @@ impl<const C: usize,const R: usize> SolutionIter<C, R> {
     }
 }
 
-impl<const C: usize,const R: usize> Iterator for SolutionIter<C, R> {
+impl<const C: usize, const R: usize> Iterator for SolutionIter<C, R> {
     type Item = FoundWord;
 
     fn next(&mut self) -> Option<Self::Item> {

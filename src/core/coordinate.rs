@@ -182,26 +182,19 @@ impl Coordinate {
         dimensions >= required_dimensions
     }
 
-    pub fn get_positions_up_to<const C: usize, const R: usize>() -> impl Iterator<Item = Coordinate> {
+    pub fn get_positions_up_to<const C: usize, const R: usize>() -> impl Iterator<Item = Coordinate>
+    {
         (0..R)
             .cartesian_product(0..C)
             .map(|(row, column)| Coordinate { row, column })
     }
 
-    pub fn distance_from_centre<const C: usize, const R: usize> (&self) -> usize {
+    pub fn distance_from_centre<const C: usize, const R: usize>(&self) -> usize {
         let d_row = self.row * 2;
         let d_col = self.column * 2;
 
-        let r_dist = if d_row > R {
-            d_row - R
-        } else {
-            R - d_row
-        };
-        let c_dist = if d_col > C {
-            d_col - C
-        } else {
-            C - d_col
-        };
+        let r_dist = if d_row > R { d_row - R } else { R - d_row };
+        let c_dist = if d_col > C { d_col - C } else { C - d_col };
 
         c_dist + r_dist
     }

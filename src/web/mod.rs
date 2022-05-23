@@ -28,8 +28,6 @@ pub mod prelude {
         }
     }
 
-   
-
     pub const SQUARE_SIZE: f64 = 120.0;
     pub const SQUARE_MIDPOINT: f64 = SQUARE_SIZE / 2.0;
     pub const SVG_WIDTH: f64 = SQUARE_SIZE * 3.0;

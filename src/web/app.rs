@@ -1,5 +1,5 @@
-use crate::web::prelude::*;
 use crate::state::prelude::*;
+use crate::web::prelude::*;
 use yew::prelude::*;
 use yewdux::prelude::*;
 
@@ -7,8 +7,7 @@ use yewdux::prelude::*;
 pub fn app() -> Html {
     let view_box = format!("0 0 {SVG_WIDTH} {SVG_HEIGHT}");
     let width = format!("{SVG_WIDTH}");
-    let height = format!("{SVG_HEIGHT}");    
-
+    let height = format!("{SVG_HEIGHT}");
 
     let onpointerup = Dispatch::new().apply_callback(move |_: PointerEvent| InputMsg::Up {});
 
