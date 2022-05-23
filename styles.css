@@ -18,7 +18,6 @@
   stroke-width: 7.2;
   fill: black;
   fill-opacity: 0.01;
-  -webkit-transition: 3s cubic-bezier(0, 1.45, 0.72, 1.33);
   transition: 3s cubic-bezier(0, 1.45, 0.72, 1.33);  
 }
 
@@ -42,15 +41,9 @@
 
 .recentWord {
   font-family: monospace;
-  -webkit-transform: translate(var(--endx), var(--endy)) scale(0.5) ;
-    transform: translate(var(--endx), var(--endy)) scale(0.5) ;
-  -webkit-animation-name: disappearAnimation;
+  transform: translate(var(--endx), var(--endy)) scale(0.5) ;
   animation-name: disappearAnimation;  
-
-  -webkit-animation-fill-mode: forwards;
   animation-fill-mode: forwards;
-  
-  -webkit-animation-timing-function: ease-out;
   animation-timing-function: ease-out;
 
   font-size: 3em;
@@ -58,26 +51,6 @@
   text-anchor: start;
 }
 
-
-@-webkit-keyframes disappearAnimation {
-  0% {
-    opacity: 1;
-    -webkit-transform: translate(var(--startx), var(--starty)) ;
-    transform: translate(var(--startx), var(--starty)) ;
-  }
-
-  50% {
-    opacity: 0.2;
-    -webkit-transform: translate(var(--endx), var(--endy)) scale(0.5) ;
-    transform: translate(var(--endx), var(--endy)) scale(0.5) ;
-  }
-
-  100% {
-    opacity: 0;
-    -webkit-transform: translate(var(--endx), var(--endy)) scale(0.5) ;
-    transform: translate(var(--endx), var(--endy)) scale(0.5) ;
-  }
-}
 
 @keyframes disappearAnimation {
   0% {
@@ -101,14 +74,6 @@
   margin: auto;
 }
 
-
-.rope {
-  stroke: LightBlue;
-  -webkit-transition: d 1s ease-out;
-  transition: d 1s ease-out;  
-  fill: none;
-  pointer-events: none;
-}
 
 
 /*
@@ -157,12 +122,10 @@ Found Word
 */
 
 .found-word-group{
-  -webkit-transition: all 1s;
   transition: all 1s;
   
 }
 .found-word-group-button :active{
-  -webkit-transition: all 1s;
   transition: all 1s;
   stroke-width: 5;
   stroke: black;
@@ -197,7 +160,6 @@ Found Word
   fill: gray;
   stroke: transparent;
   transform: translate(15px, 5px);
-  -webkit-transition: all 5s ease-in;
   transition: all 5s ease-in;
 }
 .found-word-text-success{
@@ -210,7 +172,7 @@ Found Word
   stroke-linejoin: round;
   fill: white;
   stroke: black;
-  -webkit-transition: fill 5s ease-in;
+
   transition: fill 5s ease-in;
 }
 
@@ -225,7 +187,6 @@ Found Word
 .score-counter-progress{
   fill: green;
   stroke: transparent;
-  -webkit-transition: all 1s;
   transition: all 1s;
 }
 
@@ -243,7 +204,6 @@ Crosshairs
 
 .crosshair{
   stroke-width: 7.2;
-  -webkit-transition: all 1s ease-out;
   transition: all 1s ease-out;
   opacity: 1.0;
   /* stroke-linecap: round;   */
