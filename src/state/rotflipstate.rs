@@ -1,5 +1,4 @@
-use crate::core::prelude::Coordinate;
-use num::ToPrimitive;
+use crate::{core::prelude::Coordinate, state::prelude::*};
 use serde::*;
 use yewdux::prelude::*;
 
@@ -13,7 +12,6 @@ impl Reducer<RotFlipState> for RotFlipMsg {
         RotFlipState {
             rotate: state.rotate + self.rotate,
             flip: state.flip ^ self.flip,
-            max_coordinate: state.max_coordinate,
         }
         .into()
     }
@@ -23,13 +21,11 @@ impl Reducer<RotFlipState> for RotFlipMsg {
 pub struct RotFlipState {
     pub rotate: i8,
     pub flip: bool,
-    pub max_coordinate: Coordinate,
 }
 
 impl Default for RotFlipState {
     fn default() -> Self {
         Self {
-            max_coordinate: Coordinate { row: 2, column: 2 },
             rotate: Default::default(),
             flip: Default::default(),
         }
@@ -38,7 +34,7 @@ impl Default for RotFlipState {
 
 impl RotFlipState {
     pub fn get_location(&self, coordinate: &Coordinate, square_size: f64) -> (f64, f64) {
-        let rotated = coordinate.rotate_and_flip(self.max_coordinate, self.rotate, self.flip);
+        let rotated = coordinate.rotate_and_flip::<GRID_COLUMNS, GRID_ROWS>(self.rotate, self.flip);
 
         let cx = (rotated.column as f64 + 0.5) * square_size;
         let cy = (rotated.row as f64 + 0.5) * square_size;
@@ -47,15 +43,7 @@ impl RotFlipState {
     }
 
     pub fn total_letters(&self) -> usize {
-        self.columns() * self.rows()
-    }
-
-    pub fn columns(&self) -> usize {
-        (self.max_coordinate.column + 1).to_usize().unwrap()
-    }
-
-    pub fn rows(&self) -> usize {
-        (self.max_coordinate.row + 1).to_usize().unwrap()
+        GRID_COLUMNS * GRID_ROWS
     }
 
     pub fn new_game(&mut self) {

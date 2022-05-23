@@ -9,10 +9,9 @@ use yewdux::prelude::*;
 
 #[function_component(CrosshairsSVG)]
 pub fn crosshairs_svg() -> Html {
-    let mc = use_selector(|state: &FullState| state.board.max_coordinate());
+    
 
-    let circles = mc
-        .get_positions_up_to()
+    let circles = Coordinate::get_positions_up_to::<GRID_COLUMNS, GRID_ROWS>()
         .map(|coordinate| html!(< Crosshair {coordinate} />))
         .collect::<Html>();
 
@@ -190,8 +189,8 @@ fn get_line_position(
     index: u8,
     rf: RotFlipState,
 ) -> (f64, f64, f64) {
-    let c1a = c1.rotate_and_flip(rf.max_coordinate, rf.rotate, rf.flip);
-    let c2a = c2.rotate_and_flip(rf.max_coordinate, rf.rotate, rf.flip);
+    let c1a = c1.rotate_and_flip::<GRID_COLUMNS, GRID_ROWS> ( rf.rotate, rf.flip);
+    let c2a = c2.rotate_and_flip::<GRID_COLUMNS, GRID_ROWS>( rf.rotate, rf.flip);
 
     let x_dir = c2a.column.to_f64().unwrap() - c1a.column.to_f64().unwrap();
     let y_dir = c2a.row.to_f64().unwrap() - c1a.row.to_f64().unwrap();

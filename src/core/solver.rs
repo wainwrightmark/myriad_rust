@@ -19,7 +19,7 @@ impl SolveSettings {
     }
 
     ///Get all solutions to this board within the range
-    pub fn solve(self, board: Board) -> impl Iterator<Item = FoundWord> {
+    pub fn solve<const C: usize,const R: usize> (self, board: Board<C,R>) -> impl Iterator<Item = FoundWord> {
         SolutionIter::new(board, self)
     }
 
@@ -46,19 +46,17 @@ impl std::fmt::Display for FoundWord {
     }
 }
 
-struct SolutionIter {
+struct SolutionIter<const COLUMNS: usize, const ROWS: usize> {
     results: HashSet<i32>,
     settings: SolveSettings,
     queue: VecDeque<Vec<Coordinate>>,
-    board: Board,
-    max_coordinate: Coordinate,
+    board: Board<COLUMNS, ROWS>,
 }
 
-impl SolutionIter {
-    pub fn new(board: Board, settings: SolveSettings) -> Self {
+impl<const C: usize,const R: usize> SolutionIter<C, R> {
+    pub fn new(board: Board<C,R>, settings: SolveSettings) -> Self {
         Self {
             results: Default::default(),
-            max_coordinate: board.max_coordinate(),
             queue: VecDeque::from(vec![vec![]]),
             board,
             settings,
@@ -68,7 +66,7 @@ impl SolutionIter {
     fn add_to_queue(&mut self, coordinates: Vec<Coordinate>) {
         if let Some(last) = coordinates.last() {
             for adjacent in last
-                .get_adjacent_positions(&self.max_coordinate)
+                .get_adjacent_positions::<C, R>()
                 .filter(|x| !coordinates.contains(x))
             {
                 let mut new_nodes = coordinates.clone();
@@ -76,7 +74,7 @@ impl SolutionIter {
                 self.queue.push_back(new_nodes);
             }
         } else {
-            for coordinate in self.max_coordinate.get_positions_up_to() {
+            for coordinate in Coordinate::get_positions_up_to::<C,R>() {
                 let single_coordinate = vec![coordinate];
                 self.queue.push_back(single_coordinate);
             }
@@ -84,7 +82,7 @@ impl SolutionIter {
     }
 }
 
-impl Iterator for SolutionIter {
+impl<const C: usize,const R: usize> Iterator for SolutionIter<C, R> {
     type Item = FoundWord;
 
     fn next(&mut self) -> Option<Self::Item> {

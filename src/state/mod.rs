@@ -19,4 +19,7 @@ pub mod prelude {
     pub use crate::state::selectedtabstate::*;
 
     pub const GOALSIZE: i32 = 20;
+
+    pub const GRID_COLUMNS: usize = 3;
+    pub const GRID_ROWS: usize = 3;
 }

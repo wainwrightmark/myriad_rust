@@ -1,12 +1,11 @@
 use itertools::Itertools;
-use num::integer::Roots;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
 #[derive(PartialEq, Debug, PartialOrd, Eq, Ord, Clone, Copy, Serialize, Deserialize, Hash)]
 pub struct Coordinate {
-    pub row: u8,
-    pub column: u8,
+    pub row: usize,
+    pub column: usize,
 }
 
 impl fmt::Display for Coordinate {
@@ -16,13 +15,12 @@ impl fmt::Display for Coordinate {
 }
 
 impl Coordinate {
-    pub fn rotate_and_flip(
+    pub fn rotate_and_flip<const C: usize, const R: usize>(
         &self,
-        max_coordinate: Coordinate,
         rotation: i8,
         flip: bool,
     ) -> Coordinate {
-        let max = std::cmp::max(max_coordinate.row, max_coordinate.column);
+        let max = std::cmp::max(C, R) - 1;
 
         let rotated = match rotation.rem_euclid(4) {
             0 => *self,
@@ -42,20 +40,19 @@ impl Coordinate {
         };
 
         if flip {
-            return rotated.reflect_column(max_coordinate.column);
+            return rotated.reflect_column::<C, R>();
         }
 
         rotated
     }
 
-    pub fn get_transform(
+    pub fn get_transform<const C: usize, const R: usize>(
         &self,
         target: Coordinate,
-        max_coordinate: Coordinate,
     ) -> Option<(i8, bool)> {
         for flip in [false, true] {
             for rotation in [0, 1, 2, 3] {
-                let r = self.rotate_and_flip(max_coordinate, rotation, flip);
+                let r = self.rotate_and_flip::<C, R>(rotation, flip);
 
                 if r == target {
                     return Some((rotation, flip));
@@ -66,10 +63,10 @@ impl Coordinate {
         None
     }
 
-    pub fn reflect_column(&self, max_column: u8) -> Coordinate {
+    pub fn reflect_column<const C: usize, const R: usize>(&self) -> Coordinate {
         Coordinate {
             row: self.row,
-            column: max_column - self.column,
+            column: C - 1 - self.column,
         }
     }
 
@@ -122,35 +119,34 @@ impl Coordinate {
         row_diff <= 1 && col_diff <= 1 && (row_diff == 0 || col_diff == 0)
     }
 
-    pub fn get_adjacent_positions<'a>(
+    pub fn get_adjacent_positions<'a, const C: usize, const R: usize>(
         &'a self,
-        max_coordinate: &'a Coordinate,
     ) -> impl Iterator<Item = Coordinate> + 'a {
         (-1..=1)
             .cartesian_product(-1..=1)
             .filter_map(|(r_offset, c_offset)| {
-                let new_row = (self.row as i8) + r_offset;
+                let new_row = (self.row as isize) + r_offset;
 
-                if new_row < 0 || new_row > (max_coordinate.row as i8) {
+                if new_row < 0 || new_row as usize >= R {
                     return None;
                 }
 
                 let new_col = (self.column as i8) + c_offset;
 
-                if new_col < 0 || new_col > (max_coordinate.column as i8) {
+                if new_col < 0 || new_col as usize >= C {
                     return None;
                 }
 
                 let result = Coordinate {
-                    row: new_row as u8,
-                    column: new_col as u8,
+                    row: new_row as usize,
+                    column: new_col as usize,
                 };
 
                 Some(result)
             })
     }
 
-    pub fn has_at_least_x_neighbors(&self, x: u8, max_coordinate: Coordinate) -> bool {
+    pub fn has_at_least_x_neighbors<const C: usize, const R: usize>(&self, x: u8) -> bool {
         if x == 0 {
             return true;
         };
@@ -172,53 +168,53 @@ impl Coordinate {
         if self.row > 0 {
             dimensions += 1;
         }
-        if self.row < max_coordinate.row {
+        if self.row < R {
             dimensions += 1;
         }
 
         if self.column > 0 {
             dimensions += 1
         }
-        if self.column < max_coordinate.column {
+        if self.column < C {
             dimensions += 1
         }
 
         dimensions >= required_dimensions
     }
 
-    pub fn get_positions_up_to(&self) -> impl Iterator<Item = Coordinate> {
-        (0..=self.row)
-            .cartesian_product(0..=self.column)
+    pub fn get_positions_up_to<const C: usize, const R: usize>() -> impl Iterator<Item = Coordinate> {
+        (0..R)
+            .cartesian_product(0..C)
             .map(|(row, column)| Coordinate { row, column })
     }
 
-    pub fn distance_from_centre(&self, max_coordinate: Coordinate) -> u8 {
+    pub fn distance_from_centre<const C: usize, const R: usize> (&self) -> usize {
         let d_row = self.row * 2;
         let d_col = self.column * 2;
 
-        let r_dist = if d_row > max_coordinate.row {
-            d_row - max_coordinate.row
+        let r_dist = if d_row > R {
+            d_row - R
         } else {
-            max_coordinate.row - d_row
+            R - d_row
         };
-        let c_dist = if d_col > max_coordinate.column {
-            d_col - max_coordinate.column
+        let c_dist = if d_col > C {
+            d_col - C
         } else {
-            max_coordinate.column - d_col
+            C - d_col
         };
 
         c_dist + r_dist
     }
 
-    pub fn get_max_coordinate_for_square_grid(num_nodes: u8) -> Coordinate {
-        let mut root = num_nodes.sqrt();
-        if root * root < num_nodes {
-            root += 1
-        }
+    // pub fn get_max_coordinate_for_square_grid(num_nodes: u8) -> Coordinate {
+    //     let mut root = num_nodes.sqrt();
+    //     if root * root < num_nodes {
+    //         root += 1
+    //     }
 
-        Coordinate {
-            row: root - 1,
-            column: root - 1,
-        }
-    }
+    //     Coordinate {
+    //         row: root - 1,
+    //         column: root - 1,
+    //     }
+    // }
 }

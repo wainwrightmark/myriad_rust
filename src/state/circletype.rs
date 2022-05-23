@@ -34,7 +34,7 @@ impl ChosenPositionsState {
     pub fn get_circle_type(
         &self,
         coordinate: &Coordinate,
-        board: std::rc::Rc<Board>,
+        board: std::rc::Rc<Board<3,3>>,
     ) -> CircleType {
         if let Some(position) = self.positions.iter().position(|c| c == coordinate) {
             if let Some(next) = self.positions.get(position + 1) {

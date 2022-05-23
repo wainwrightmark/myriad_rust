@@ -6,12 +6,12 @@ use rand::prelude::{SliceRandom, StdRng};
 use crate::core::prelude::*;
 
 #[derive(Clone, Eq, PartialEq)]
-struct SolvedBoard {
-    pub board: Board,
+struct SolvedBoard<const C: usize,const R: usize> {
+    pub board: Board<C, R>,
     pub solutions: usize,
 }
 
-impl Ord for SolvedBoard {
+impl<const C: usize,const R: usize> Ord for SolvedBoard<C, R> {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         self.solutions
             .cmp(&other.solutions)
@@ -20,7 +20,7 @@ impl Ord for SolvedBoard {
 }
 
 // `PartialOrd` needs to be implemented as well.
-impl PartialOrd for SolvedBoard {
+impl<const C: usize,const R: usize> PartialOrd for SolvedBoard<C, R> {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
         Some(self.cmp(other))
     }
@@ -32,13 +32,12 @@ pub struct BoardCreateSettings {
 }
 
 impl BoardCreateSettings {
-    pub fn create_boards(
+    pub fn create_boards<const C: usize, const R: usize>(
         self,
-        board_size: usize,
         solve_settings: SolveSettings,
         rng: StdRng,
-    ) -> impl Iterator<Item = Board> {
-        CreatorIterator::new(self, board_size, solve_settings, rng)
+    ) -> impl Iterator<Item = Board<C, R>> {
+        CreatorIterator::new(self, solve_settings, rng)
     }
 }
 
@@ -132,7 +131,7 @@ impl Iterator for CreatorIterator2 {
 }
  */
 
-struct CreatorIterator {
+struct CreatorIterator<const C: usize,const R: usize> {
     create_settings: BoardCreateSettings,
     solve_settings: SolveSettings,
     desired_solutions: usize,
@@ -140,19 +139,21 @@ struct CreatorIterator {
     letter_positions: Vec<(usize, Letter)>,
 
     created_boards: HashSet<String>,
-    heap: BinaryHeap<SolvedBoard>,
+    heap: BinaryHeap<SolvedBoard<C, R>>,
 }
 
-impl CreatorIterator {
+impl<const C: usize,const R: usize> CreatorIterator<C, R> {
     pub fn new(
         create_settings: BoardCreateSettings,
-        board_size: usize,
         solve_settings: SolveSettings,
         rng: StdRng,
     ) -> Self {
+
+        let board_size = C * R;
+
         let board1 = Board::try_create(&str::repeat("_", board_size)).unwrap();
 
-        let mut heap = BinaryHeap::<SolvedBoard>::new();
+        let mut heap = BinaryHeap::<SolvedBoard<C, R>>::new();
         heap.push(SolvedBoard {
             board: board1,
             solutions: 0,
@@ -174,8 +175,8 @@ impl CreatorIterator {
     }
 }
 
-impl Iterator for CreatorIterator {
-    type Item = Board;
+impl<const C: usize,const R: usize> Iterator for CreatorIterator<C, R> {
+    type Item = Board<C, R>;
 
     fn next(&mut self) -> Option<Self::Item> {
         while let Some(sb) = self.heap.pop() {
@@ -210,13 +211,13 @@ impl Iterator for CreatorIterator {
     }
 }
 
-fn mutate_board(
-    board: &SolvedBoard,
+fn mutate_board<const C: usize,const R: usize> (
+    board: &SolvedBoard<C, R>,
     solve_settings: SolveSettings,
     created_boards: &mut HashSet<String>,
     letter: Letter,
     index: usize,
-) -> Option<SolvedBoard> {
+) -> Option<SolvedBoard<C, R>> {
     let current_letter = board.board.get_letter_at_index(index);
     if current_letter == letter {
         return None;

@@ -9,10 +9,8 @@ use yewdux::prelude::*;
 
 #[function_component(CirclesSVG)]
 pub fn circles_svg() -> Html {
-    let mc = use_selector(|state: &FullState| state.board.max_coordinate());
 
-    let circles = mc
-        .get_positions_up_to()
+    let circles = Coordinate::get_positions_up_to::<GRID_COLUMNS, GRID_ROWS>()        
         .map(|coordinate| html!(< Circle {coordinate} />))
         .collect::<Html>();
 
