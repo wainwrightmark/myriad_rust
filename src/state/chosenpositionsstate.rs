@@ -129,7 +129,7 @@ impl Reducer<InputState> for InputMsg{
             InputMsg::Down { coordinate } => {
 
                 //log::debug!("Input down {}", coordinate);
-                Dispatch::new().apply(OnClickMsg{coordinate: coordinate.clone(), allow_abandon: true});
+                Dispatch::new().apply(OnClickMsg{coordinate: *coordinate, allow_abandon: true});
 
                 InputState{is_down: true}.into()
             },
@@ -141,7 +141,7 @@ impl Reducer<InputState> for InputMsg{
             InputMsg::Enter { coordinate } => {                
                 if state.is_down{
                     //log::debug!("Input Enter {}", coordinate);
-                    Dispatch::new().apply(OnClickMsg{coordinate: coordinate.clone(), allow_abandon: false})
+                    Dispatch::new().apply(OnClickMsg{coordinate: *coordinate, allow_abandon: false})
                 }
 
                 

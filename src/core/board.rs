@@ -54,7 +54,7 @@ impl<const C: usize,const R: usize> Board<C,R> {
                 .chunks(R).into_iter().map(|x|
                     {
                     let a: [Letter; C] = x.collect::<Vec<Letter>>().try_into().unwrap();
-                    return a;
+                    a
                     }
                     ).collect::<Vec<[Letter; C]>>().try_into().unwrap();
 
@@ -89,7 +89,7 @@ impl<const C: usize,const R: usize> Board<C,R> {
         let r = index % R;
         let c = index / R;
 
-        let mut new_letters = self.letters.clone();
+        let mut new_letters = self.letters;
         new_letters[r][c] = letter;
 
         Board {
@@ -99,7 +99,7 @@ impl<const C: usize,const R: usize> Board<C,R> {
 
     pub fn get_unique_string(&self) -> String {
         if R != C {
-            return format!("{}_{}", C, self.letters.iter().flat_map(|x|x) .join(""));
+            return format!("{}_{}", C, self.letters.iter().flatten() .join(""));
         }
 
         
@@ -178,7 +178,7 @@ impl<const C: usize,const R: usize> Board<C,R> {
         let mut nums = 0;
         let mut operators = 0;
         let mut blanks = 0;
-        for letter in self.letters.iter().flat_map(|x|x) {
+        for letter in self.letters.iter().flatten() {
             match letter {
                 Letter::Number { value: _ } => nums += 1,
                 Letter::Operator { operation: _ } => operators += 1,
@@ -191,7 +191,7 @@ impl<const C: usize,const R: usize> Board<C,R> {
         strings.push(blanks.to_string());
 
         for l in Letter::legal_letters() {
-            let c = self.letters.iter().flat_map(|x|x).filter(|&x| x == &l).count();
+            let c = self.letters.iter().flatten().filter(|&x| x == &l).count();
             strings.push(c.to_string());
         }
 
