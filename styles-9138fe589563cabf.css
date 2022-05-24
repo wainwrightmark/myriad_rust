@@ -41,7 +41,7 @@
 
 .recentWord {
   font-family: monospace;
-  transform: translate(var(--endx), var(--endy)) scale(0.5) ;
+  
   animation-name: disappearAnimation;  
   animation-fill-mode: forwards;
   animation-timing-function: ease-out;

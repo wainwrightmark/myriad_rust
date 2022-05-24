@@ -285,7 +285,7 @@ async function load(module, imports) {
 
 async function init(input) {
     if (typeof input === 'undefined') {
-        input = new URL('myriad-5a0f3aca62fd9763_bg.wasm', import.meta.url);
+        input = new URL('myriad-e3fba0331b846d2e_bg.wasm', import.meta.url);
     }
     const imports = {};
     imports.wbg = {};
