@@ -15,7 +15,6 @@ pub fn app() -> Html {
         <div class="container">
         <svg viewBox={view_box} class="myriadSVG" {onpointerup} >
         <rect x="0" y="0" {width} {height} fill="white"  />
-        // <RopeSVG />
         <CrosshairsSVG/>
         <CirclesSVG />
 

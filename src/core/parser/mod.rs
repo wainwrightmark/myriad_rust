@@ -64,10 +64,24 @@ fn parse_term<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R {
                     input.next();
                     let denominator = parse_unary(input)?;
                     if denominator == 0 {
-                        return Err(ParseFail::PartialSuccess);
+
+                        if input.peek().is_some()
+                        {
+                            return Err(ParseFail::Failure);
+                        }
+                        else {
+                            return Err(ParseFail::PartialSuccess);    
+                        }
+                        
                     }
                     if current % denominator != 0 {
-                        return Err(ParseFail::PartialSuccess);
+                        if input.peek().is_some()
+                        {
+                            return Err(ParseFail::Failure);
+                        }
+                        else {
+                            return Err(ParseFail::PartialSuccess);    
+                        }
                     }
 
                     current /= denominator;
@@ -199,5 +213,8 @@ mod tests {
         t31:("_", Err(Failure)),
         t32:("1_", Err(Failure)),
         t33:("_1", Err(Failure)),
+        t34:("12/", Err(PartialSuccess)),
+        t35:("12/5", Err(PartialSuccess)), //This is legal as maybe the next digit makes division possible
+        t36:("12/5+", Err(Failure)), //This is not legal as it is impossible for the division to work
     }
 }

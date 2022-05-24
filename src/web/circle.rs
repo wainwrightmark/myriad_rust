@@ -53,19 +53,11 @@ fn circle(properties: &CircleProperties) -> Html {
     let color = circle_type.get_color().to_string();
     let cursor = circle_type.get_cursor().to_string();
 
-    //let ontouchend = Dispatch::new().apply_callback(move |_: TouchEvent| DragMsg::TouchEnd { coordinate });
     let onpointerdown =
         Dispatch::new().apply_callback(move |_: PointerEvent| InputMsg::Down { coordinate });
 
     let onpointerenter =
         Dispatch::new().apply_callback(move |_: PointerEvent| InputMsg::Enter { coordinate });
-
-    //let ontouchstart = Dispatch::new().apply_callback(move |_: TouchEvent| DragMsg::TouchStart { coordinate: coordinate });
-
-    // let onclick = Dispatch::new().apply_callback(move |_: MouseEvent| OnClickMsg {
-    //     coordinate,
-    //     allow_abandon: true
-    // });
 
     let cx = location.0;
     let cy = location.1;
@@ -89,8 +81,6 @@ fn circle(properties: &CircleProperties) -> Html {
 
     let circle_classes = classes!("circle", circle_type_class);
 
-    //let onclick = Dispatch::new().apply_callback(move |_| Msg::Move { coordinate });
-
     html! {
 
 
@@ -101,18 +91,7 @@ fn circle(properties: &CircleProperties) -> Html {
        cursor={cursor}
 
         {onpointerdown}
-        //{onpointerup}
         {onpointerenter}
-
-
-       //{onclick}
-       //{onmousedown}
-       //{onmouseup}
-       //{onmouseenter}
-
-    //    {ontouchstart}
-    //    {ontouchend}
-    //    {ontouchmove}
        >
 
 

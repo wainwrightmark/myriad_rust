@@ -56,15 +56,8 @@ impl<const C: usize, const R: usize> Board<C, R> {
                     .try_into()
                     .unwrap();
 
-                //let max_co = Coordinate::get_max_coordinate_for_square_grid(len as u8);
-
                 Some(Board {
-                    letters, // letters: vector
-                             //     .into_iter()
-                             //     .pad_using(((max_co.row + 1) * (max_co.column + 1)) as usize, |_| {
-                             //         Letter::Blank
-                             //     })
-                             //     .collect(),
+                    letters,
                 })
             }
         }
