@@ -38,7 +38,7 @@ const HALF_STOKE_WIDTH: f64 = 3.6;
 #[function_component(Crosshair)]
 fn crosshair(properties: &CrossHairProperties) -> Html {
     let coordinate = properties.coordinate;
-    let board = use_selector(|state: &FullState| state.board.clone())
+    let board = use_selector(|state: &FullGameState| state.game.board.clone())
         .deref()
         .clone();
 

@@ -1,38 +1,29 @@
 use crate::core::{parser, prelude::*};
 use crate::state::prelude::*;
 use crate::web::prelude::*;
-use log::debug;
 
 use num::ToPrimitive;
 use std::rc::Rc;
 use yewdux::prelude::*;
 
-pub struct NewGameMsg {}
+pub struct NewGameMsg {pub today: bool }
 
-impl Reducer<FullState> for NewGameMsg {
-    fn apply(&self, _: Rc<FullState>) -> Rc<FullState> {
-        let solve_settings = SolveSettings { min: 1, max: 100 };
-
-        let settings = BoardCreateSettings {
-            branching_factor: 3,
-        };
-        let seed: u64 = rand::random();
-        let start_instant = instant::Instant::now();
-        debug!("Generating new board with seed {:?}", seed);
-        let rng = rand::SeedableRng::seed_from_u64(seed);
-
-        let mut boards = settings.create_boards(solve_settings, rng);
-        let board = boards.next().unwrap();
-        let diff = instant::Instant::now() - start_instant;
-
-        debug!("Board '{:?}' generated in {:?}", board, diff);
+impl Reducer<FullGameState> for NewGameMsg {
+    fn apply(&self, _: Rc<FullGameState>) -> Rc<FullGameState> {
 
         Dispatch::<RecentWordState>::new().reduce_mut(|s| s.recent_words.clear());
         Dispatch::<RotFlipState>::new().reduce_mut(|s| s.new_game());
         Dispatch::<ChosenPositionsState>::new().reduce_mut(|s| s.positions.clear());
 
-        FullState {
-            board: board.into(),
+        let game = 
+        if self.today{
+            Game::create_for_today()
+        }else{
+            Game::create_random()
+        };   
+
+        FullGameState {
+            game: game.into(),
             ..Default::default()
         }
         .into()
@@ -60,8 +51,8 @@ fn get_emoji(i: i32) -> String {
     .to_string()
 }
 
-impl Reducer<FullState> for OnCoordinatesSetMsg {
-    fn apply(&self, state: Rc<FullState>) -> Rc<FullState> {
+impl Reducer<FullGameState> for OnCoordinatesSetMsg {
+    fn apply(&self, state: Rc<FullGameState>) -> Rc<FullGameState> {
         let coordinates = self.coordinates.clone();
         if coordinates.is_empty() {
             return state;
@@ -69,7 +60,7 @@ impl Reducer<FullState> for OnCoordinatesSetMsg {
 
         let mut letters = coordinates
             .iter()
-            .map(|c| state.board.get_letter_at_coordinate(c))
+            .map(|c| state.game.board.get_letter_at_coordinate(c))
             .peekable();
         let parse_result = parser::parse_and_evaluate(&mut letters);
 
@@ -78,7 +69,7 @@ impl Reducer<FullState> for OnCoordinatesSetMsg {
                 result: num,
                 path: coordinates.clone(),
             };
-            let word_type = if state.solve_settings.allow(num) {
+            let word_type = if state.game.solve_settings.allow(num) {
                 if state.found_words.has_word(&found_word) {
                     FoundWordType::PreviouslyFound
                 } else {
@@ -110,9 +101,8 @@ impl Reducer<FullState> for OnCoordinatesSetMsg {
                 word_type,
             });
 
-            FullState {
-                board: state.board.clone(),
-                solve_settings: state.solve_settings,
+            FullGameState {
+                game: state.game.clone(),
                 found_words: new_found_words,
             }
             .into()

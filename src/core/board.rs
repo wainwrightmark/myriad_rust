@@ -13,11 +13,6 @@ pub struct Board<const COLUMNS: usize, const ROWS: usize> {
     pub letters: [[Letter; COLUMNS]; ROWS],
 }
 
-impl Default for Board<3, 3> {
-    fn default() -> Self {
-        Board::try_create("-+718325+").unwrap()
-    }
-}
 
 impl<const C: usize, const R: usize> std::fmt::Display for Board<C, R> {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {

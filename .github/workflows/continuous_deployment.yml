@@ -10,6 +10,7 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
+          profile: minimal
           target: wasm32-unknown-unknown
 
       - uses: jetli/trunk-action@v0.1.0

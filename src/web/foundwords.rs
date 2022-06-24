@@ -11,7 +11,7 @@ use yewdux::prelude::*;
 
 #[function_component(FoundWordsTabHeaders)]
 pub fn found_words_tab_headers() -> Html {
-    let state = use_selector(|state: &FullState| state.found_words.clone());
+    let state = use_selector(|state: &FullGameState| state.found_words.clone());
     let selected_tab_state = use_store_value::<SelectedTabState>();
 
     let buttons = (0..5)
@@ -103,7 +103,7 @@ pub fn found_words_tab_header(
 
 #[function_component(AllFoundWords)]
 pub fn all_found_words() -> Html {
-    let state = use_selector(|state: &FullState| state.found_words.clone());
+    let state = use_selector(|state: &FullGameState| state.found_words.clone());
     let selected_tab_state = use_store_value::<SelectedTabState>();
     let selected_tab = selected_tab_state.index;
 
@@ -120,7 +120,8 @@ pub fn all_found_words() -> Html {
         <g>
             {words}
 
-            <NewGameButton {selected_tab}/>
+            <TodayGameButton {selected_tab}/>
+            <RandomGameButton {selected_tab}/>
             <ScoreCounter {total_found} {selected_tab}/>
             // <FlipButton  {selected_tab}/>
             // <RotateButton  {selected_tab}/>

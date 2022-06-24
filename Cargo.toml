@@ -11,21 +11,24 @@ itertools = "0.10.3"
 num = "0.4"
 num-traits = "0.2"
 serde = { version = "1.0", features = ["derive", "rc"] }
-serde_with = "1.12.0"
-rand = {version = "0.8.5"}
-getrandom = {version="0.2.5", features=["js"]}
+serde_with = "1.13"
+rand = {version = "0.8"}
+getrandom = {version="0.2", features=["js"]}
 
-log = "0.4.6"
-wasm-logger = "0.2.0"
+chrono = {version="0.4", features = ["serde", "wasmbind"]}
+
+log = "0.4"
+wasm-logger = "0.2"
 yew = { git = "https://github.com/yewstack/yew.git", features = ["csr",] }
 yewdux = { git = "https://github.com/intendednull/yewdux.git" }
 
 wasm-bindgen-futures = "0.4"
-wasm-bindgen= { version = "0.2.80", features = ["serde"] }
+wasm-bindgen= { version = "0.2", features = ["serde"] }
 instant = { version = "0.1", features = [ "wasm-bindgen", "inaccurate" ] }
+js-sys = "0.3"
 
 [dependencies.web-sys]
-version = "0.3.55"
+version = "0.3"
 features = [
     "HtmlInputElement",
 ]
@@ -43,5 +46,5 @@ opt-level = 3
 
 
 [dev-dependencies]
-bencher= "0.1.5"
+bencher= "0.1"
 

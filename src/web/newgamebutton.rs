@@ -5,21 +5,34 @@ use yew::prelude::*;
 use yewdux::prelude::*;
 
 #[derive(PartialEq, Properties)]
-pub struct NewGameButtonProperties {
+pub struct GameButtonProperties {
     pub selected_tab: usize,
 }
 
-#[function_component(NewGameButton)]
-pub fn new_game_button(properties: &NewGameButtonProperties) -> Html {
+#[function_component(TodayGameButton)]
+pub fn todays_game_button(properties: &GameButtonProperties) -> Html {
     let on_click: Option<Callback<MouseEvent>> =
-        Some(Dispatch::new().apply_callback(|_| NewGameMsg {}));
+        Some(Dispatch::new().apply_callback(|_| NewGameMsg {today: true}));
 
     let (x, y) = get_found_word_position(101, properties.selected_tab, false);
 
     let rect_class = classes!("found-word-box", "found-word-box-button");
     let text_class = classes!("button-text");
 
-    html!(<FoundWordBox id={"new_game_button"} text={"New Game"} {x} {y} width_units={3.5} {rect_class} {text_class} {on_click} />)
+    html!(<FoundWordBox id={"today_game_button"} text={"Today's Game"} {x} {y} width_units={6.0} {rect_class} {text_class} {on_click} />)
+}
+
+#[function_component(RandomGameButton)]
+pub fn random_game_button(properties: &GameButtonProperties) -> Html {
+    let on_click: Option<Callback<MouseEvent>> =
+        Some(Dispatch::new().apply_callback(|_| NewGameMsg {today: false}));
+
+    let (x, y) = get_found_word_position(111, properties.selected_tab, false);
+
+    let rect_class = classes!("found-word-box", "found-word-box-button");
+    let text_class = classes!("button-text");
+
+    html!(<FoundWordBox id={"random_game_button"} text={"Random Game"} {x} {y} width_units={6.0} {rect_class} {text_class} {on_click} />)
 }
 
 #[derive(PartialEq, Properties)]
@@ -30,7 +43,7 @@ pub struct ScoreCounterProperties {
 
 #[function_component(ScoreCounter)]
 pub fn score_counter(properties: &ScoreCounterProperties) -> Html {
-    let (x, y) = get_found_word_position(105, properties.selected_tab, false);
+    let (x, y) = get_found_word_position(107, properties.selected_tab, false);
 
     let rect_class = classes!("score-counter-box");
     let text_class = classes!("button-text");

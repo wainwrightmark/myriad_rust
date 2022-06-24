@@ -34,7 +34,7 @@ fn circle(properties: &CircleProperties) -> Html {
         coordinate,
     );
 
-    let board = use_selector(|state: &FullState| state.board.clone())
+    let board = use_selector(|state: &FullGameState| state.game.board.clone())
         .deref()
         .clone();
 
@@ -45,7 +45,7 @@ fn circle(properties: &CircleProperties) -> Html {
     .deref();
 
     let letter = *use_selector_with_deps(
-        |state: &FullState, co| state.board.get_letter_at_coordinate(co),
+        |state: &FullGameState, co| state.game.board.get_letter_at_coordinate(co),
         coordinate,
     )
     .deref();

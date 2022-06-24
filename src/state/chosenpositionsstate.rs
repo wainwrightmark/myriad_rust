@@ -44,7 +44,7 @@ pub struct FindNumberMsg {
 
 impl Reducer<ChosenPositionsState> for FindNumberMsg {
     fn apply(&self, state: std::rc::Rc<ChosenPositionsState>) -> std::rc::Rc<ChosenPositionsState> {
-        let fs = Dispatch::<FullState>::new().get();
+        let fs = Dispatch::<FullGameState>::new().get();
 
         if let Some(path) = fs.found_words.words.get(&self.number) {
             ChosenPositionsState {
