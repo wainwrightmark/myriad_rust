@@ -285,7 +285,7 @@ async function load(module, imports) {
 
 async function init(input) {
     if (typeof input === 'undefined') {
-        input = new URL('myriad-e3fba0331b846d2e_bg.wasm', import.meta.url);
+        input = new URL('myriad-aaa40cf5759b5f97_bg.wasm', import.meta.url);
     }
     const imports = {};
     imports.wbg = {};
@@ -312,6 +312,22 @@ async function init(input) {
         } finally {
             wasm.__wbindgen_free(arg0, arg1);
         }
+    };
+    imports.wbg.__wbg_new0_57a6a2c2aaed3fc5 = function() {
+        const ret = new Date();
+        return addHeapObject(ret);
+    };
+    imports.wbg.__wbg_getFullYear_e288f4ed22bf2bdc = function(arg0) {
+        const ret = getObject(arg0).getFullYear();
+        return ret;
+    };
+    imports.wbg.__wbg_getMonth_ce225b9db13646dc = function(arg0) {
+        const ret = getObject(arg0).getMonth();
+        return ret;
+    };
+    imports.wbg.__wbg_getDay_4c986f138f596d80 = function(arg0) {
+        const ret = getObject(arg0).getDay();
+        return ret;
     };
     imports.wbg.__wbindgen_string_new = function(arg0, arg1) {
         const ret = getStringFromWasm0(arg0, arg1);
@@ -654,12 +670,12 @@ async function init(input) {
         const ret = getObject(arg0).sessionStorage;
         return isLikeNone(ret) ? 0 : addHeapObject(ret);
     }, arguments) };
-    imports.wbg.__wbindgen_closure_wrapper1273 = function(arg0, arg1, arg2) {
-        const ret = makeMutClosure(arg0, arg1, 46, __wbg_adapter_22);
+    imports.wbg.__wbindgen_closure_wrapper1396 = function(arg0, arg1, arg2) {
+        const ret = makeMutClosure(arg0, arg1, 67, __wbg_adapter_22);
         return addHeapObject(ret);
     };
-    imports.wbg.__wbindgen_closure_wrapper2007 = function(arg0, arg1, arg2) {
-        const ret = makeMutClosure(arg0, arg1, 46, __wbg_adapter_25);
+    imports.wbg.__wbindgen_closure_wrapper2130 = function(arg0, arg1, arg2) {
+        const ret = makeMutClosure(arg0, arg1, 67, __wbg_adapter_25);
         return addHeapObject(ret);
     };
 
