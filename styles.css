@@ -106,7 +106,7 @@ Tab Header
   line-height: 1.5;
   font-family: monospace;
   font-weight: bold;
-  dominant-baseline: middle;
+  dominant-baseline: central;
   text-anchor: middle;
   box-sizing: inherit;
   font-size: 2.5em;

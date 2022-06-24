@@ -1,4 +1,5 @@
 use crate::state::msg::*;
+use crate::state::prelude::RotFlipMsg;
 use crate::web::prelude::*;
 use num::ToPrimitive;
 use yew::prelude::*;
@@ -43,7 +44,7 @@ pub struct ScoreCounterProperties {
 
 #[function_component(ScoreCounter)]
 pub fn score_counter(properties: &ScoreCounterProperties) -> Html {
-    let (x, y) = get_found_word_position(107, properties.selected_tab, false);
+    let (x, y) = get_found_word_position(106, properties.selected_tab, false);
 
     let rect_class = classes!("score-counter-box");
     let text_class = classes!("button-text");
@@ -58,28 +59,28 @@ pub fn score_counter(properties: &ScoreCounterProperties) -> Html {
     )
 }
 
-// #[function_component(RotateButton)]
-// pub fn rotate_button(properties: &NewGameButtonProperties) -> Html{
-//     let on_click: Option<Callback<MouseEvent>> =
-//         Some(Dispatch::new().apply_callback(|_| Msg::FlipAndRotateRelative { rotate: 1, flip: false }));
+#[function_component(RotateButton)]
+pub fn rotate_button(properties: &GameButtonProperties) -> Html{
+    let on_click: Option<Callback<MouseEvent>> =
+        Some(Dispatch::new().apply_callback(|_| RotFlipMsg{ rotate: 1, flip: false }));
 
-//     let (x, y) = get_found_word_position(111, properties.selected_tab, false);
+    let (x, y) = get_found_word_position(108, properties.selected_tab, false);
 
-//     let rect_class = classes!("found-word-box", "found-word-box-button");
-//     let text_class = classes!("button-text");
+    let rect_class = classes!("found-word-box", "found-word-box-button");
+    let text_class = classes!("button-text");
 
-//     html!(<FoundWordBox id={"rotate_button"} text={"Rotate"} {x} {y} width_units={3.5} {rect_class} {text_class} {on_click} />)
-// }
+    html!(<FoundWordBox id={"rotate_button"} text={"⟳"} {x} {y} width_units={1.0} {rect_class} {text_class} {on_click} />)
+}
 
-// #[function_component(FlipButton)]
-// pub fn flip_button(properties: &NewGameButtonProperties) -> Html{
-//     let on_click: Option<Callback<MouseEvent>> =
-//         Some(Dispatch::new().apply_callback(|_| Msg::FlipAndRotateRelative { rotate: 0, flip: true }));
+#[function_component(FlipButton)]
+pub fn flip_button(properties: &GameButtonProperties) -> Html{
+    let on_click: Option<Callback<MouseEvent>> =
+        Some(Dispatch::new().apply_callback(|_| RotFlipMsg{ rotate: 0, flip: true }));
 
-//     let (x, y) = get_found_word_position(115, properties.selected_tab, false);
+    let (x, y) = get_found_word_position(109, properties.selected_tab, false);
 
-//     let rect_class = classes!("found-word-box", "found-word-box-button");
-//     let text_class = classes!("button-text");
+    let rect_class = classes!("found-word-box", "found-word-box-button");
+    let text_class = classes!("button-text");
 
-//     html!(<FoundWordBox id={"flip_button"} text={"Flip"} {x} {y} width_units={3.5} {rect_class} {text_class} {on_click} />)
-// }
+    html!(<FoundWordBox id={"flip_button"} text={"⮀"} {x} {y} width_units={1.0} {rect_class} {text_class} {on_click} />)
+}

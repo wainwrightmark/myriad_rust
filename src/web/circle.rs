@@ -106,7 +106,7 @@ fn circle(properties: &CircleProperties) -> Html {
       <text
         id={text_id}
         class="circle-text"
-        dominant-baseline="middle"
+        dominant-baseline="central"
         text-anchor="middle"
         stroke="@Colors.Shades.White"
         fill="@Colors.Shades.Black">

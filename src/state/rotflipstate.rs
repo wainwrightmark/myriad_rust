@@ -3,8 +3,8 @@ use serde::*;
 use yewdux::prelude::*;
 
 pub struct RotFlipMsg {
-    rotate: i8,
-    flip: bool,
+    pub rotate: i8,
+    pub flip: bool,
 }
 
 impl Reducer<RotFlipState> for RotFlipMsg {

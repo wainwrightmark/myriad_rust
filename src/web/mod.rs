@@ -3,7 +3,7 @@ mod circle;
 mod confetti;
 mod crosshair;
 mod foundwords;
-mod newgamebutton;
+mod controlbuttons;
 mod recentwords;
 mod rope;
 
@@ -14,9 +14,10 @@ pub mod prelude {
     pub use crate::web::confetti::*;
     pub use crate::web::crosshair::*;
     pub use crate::web::foundwords::*;
-    pub use crate::web::newgamebutton::*;
+    pub use crate::web::controlbuttons::*;
     pub use crate::web::recentwords::*;
     pub use crate::web::rope::*;
+    
 
     pub fn format_number(num: i32) -> String {
         if num == 100 {

@@ -55,7 +55,7 @@ pub fn more_tab_header(properties: &MoreTabHeaderProperties) -> Html {
         <rect {class} height={format!("{TAB_HEADER_HEIGHT}")} rx="5" width={format!("{TAB_HEADER_WIDTH}")}>
         </rect>
         <text class="tab-header-text" fill="Black" stroke="White">
-           {"+"}
+           {"☰"}
         </text>
 
         </g>
@@ -125,8 +125,8 @@ pub fn all_found_words() -> Html {
             <TodayGameButton {selected_tab}/>
             <RandomGameButton {selected_tab}/>
             <ScoreCounter {total_found} {selected_tab}/>
-            // <FlipButton  {selected_tab}/>
-            // <RotateButton  {selected_tab}/>
+            <FlipButton  {selected_tab}/>
+            <RotateButton  {selected_tab}/>
 
         </g>
     )
