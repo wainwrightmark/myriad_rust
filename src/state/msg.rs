@@ -80,8 +80,9 @@ impl Reducer<FullGameState> for OnCoordinatesSetMsg {
             };
 
             let new_found_words: Rc<FoundWordsState> = if word_type == FoundWordType::Found {
+                let number = found_word.result;
                 Dispatch::new().apply(NumberFoundMsg {
-                    number: found_word.result,
+                    number
                 });
                 let ns = state.found_words.with_word(found_word);
 
@@ -90,6 +91,14 @@ impl Reducer<FullGameState> for OnCoordinatesSetMsg {
                 if len % 10 == 0 {
                     make_confetti(get_emoji(len / 10), 10 + len);
                 }
+
+                if len == 100{
+                    Dispatch::<DialogState>::new().reduce_mut(|s|s.dialog_type = Some(DialogType::OneHundred));
+                }
+                else if state.game.challenge_words.contains(&number) && state.game.challenge_words.iter().all(|w| ns.words.contains_key(w)){
+                    Dispatch::<DialogState>::new().reduce_mut(|s|s.dialog_type = Some(DialogType::Challenge));
+                }
+
                 ns.into()
             } else {
                 state.found_words.clone()

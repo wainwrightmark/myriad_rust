@@ -6,6 +6,7 @@ mod foundwords;
 mod controlbuttons;
 mod recentwords;
 mod rope;
+mod dialog;
 
 pub mod prelude {
 
@@ -17,6 +18,7 @@ pub mod prelude {
     pub use crate::web::controlbuttons::*;
     pub use crate::web::recentwords::*;
     pub use crate::web::rope::*;
+    pub use crate::web::dialog::*;
     
 
     pub fn format_number(num: i32) -> String {
