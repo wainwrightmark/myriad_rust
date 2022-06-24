@@ -24,6 +24,7 @@ impl Reducer<SelectedTabState> for TabSelectedMsg {
 }
 
 #[derive(PartialEq, Clone, Copy, Serialize, Deserialize, Default, Store)]
+#[store(storage = "local")] // can also be "session"
 pub struct SelectedTabState {
     pub index: usize,
     pub locked: bool,
