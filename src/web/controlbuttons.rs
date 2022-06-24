@@ -84,3 +84,30 @@ pub fn flip_button(properties: &GameButtonProperties) -> Html{
 
     html!(<FoundWordBox id={"flip_button"} text={"⮀"} {x} {y} width_units={1.0} {rect_class} {text_class} {on_click} />)
 }
+
+#[function_component(WainwrongButton)]
+pub fn wainwrong_button(properties: &GameButtonProperties) -> Html{
+
+    let (x, y) = get_found_word_position(119, properties.selected_tab, false);
+
+    let rect_class = classes!("found-word-box", "found-word-box-button");
+    let text_class = classes!("button-text");
+    let class = classes!("found-word-group", "found-word-group-button");
+
+    let style = format!("transform: translate({}px, {}px);", x, y);
+
+    html!(
+     <g key={"wainwrong_link"} {style} {class} >
+     
+     <a href="https://wainwrong.com/">
+     <rect class={rect_class} height={format!("{FOUND_WORD_HEIGHT}")} rx="5" width={format!("{}", FOUND_WORD_WIDTH * 1.0)}>
+     
+     </rect>
+     <text class={text_class}>
+     {"𝕨"}
+     </text>
+     
+     
+     </a>
+     </g>)
+}
