@@ -122,12 +122,13 @@ pub fn all_found_words() -> Html {
         <g>
             {words}
 
-            <TodayGameButton {selected_tab}/>
-            <RandomGameButton {selected_tab}/>
-            <ScoreCounter {total_found} {selected_tab}/>
-            <FlipButton  {selected_tab}/>
-            <RotateButton  {selected_tab}/>
-            <WainwrongButton {selected_tab}/>
+            <TodayGameButton {selected_tab} width={6.0} position_number={101}/>
+            <RandomGameButton {selected_tab} width={6.0} position_number={111}/>
+            <ScoreCounter {total_found} {selected_tab} width={1.5} position_number={106}/>
+            <FlipButton  {selected_tab} width={1.0} position_number={109}/>
+            <RotateButton  {selected_tab} width={1.0} position_number={108}/>
+            <WainwrongButton {selected_tab} width={6.0} position_number={119}/>
+            <FacebookButton {selected_tab} width={3.0} position_number={116}/>
 
         </g>
     )
