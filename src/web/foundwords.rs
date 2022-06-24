@@ -3,7 +3,7 @@ use std::rc::Rc;
 use crate::state::foundwordsstate::FoundWordsState;
 use crate::state::selectedtabstate::SelectedTabState;
 
-use crate::state::prelude::*;
+use crate::state::{prelude::*};
 use crate::web::prelude::*;
 use num::ToPrimitive;
 use yew::prelude::*;
@@ -103,16 +103,18 @@ pub fn found_words_tab_header(
 
 #[function_component(AllFoundWords)]
 pub fn all_found_words() -> Html {
-    let state = use_selector(|state: &FullGameState| state.found_words.clone());
+    let challenge_words = use_selector(|state: &FullGameState| state.game.challenge_words.clone());
+    let found_words_state = use_selector(|state: &FullGameState| state.found_words.clone());
     let selected_tab_state = use_store_value::<SelectedTabState>();
     let selected_tab = selected_tab_state.index;
 
-    let total_found = state.words.len();
+    let total_found = found_words_state.words.len();
 
     let words = (1..101)
         .map(|number| {
-            let is_found = state.words.contains_key(&number);
-            html!(<FoundWordsWord {number} {is_found} {selected_tab} />)
+            let is_challenge = challenge_words.contains(&number);
+            let is_found = found_words_state.words.contains_key(&number);
+            html!(<FoundWordsWord {number} {is_challenge} {is_found} {selected_tab} />)
         })
         .collect::<Html>();
 
@@ -134,6 +136,7 @@ pub fn all_found_words() -> Html {
 pub struct FoundWordProperties {
     pub number: i32,
     pub is_found: bool,
+    pub is_challenge: bool,
     pub selected_tab: usize,
 }
 
@@ -157,7 +160,12 @@ pub fn found_words_word(properties: &FoundWordProperties) -> Html {
             Some("found-word-box-success")
         } else {
             None
-        }
+        },        
+        if properties.is_challenge {
+            Some("found-word-box-challenge")
+        } else {
+            None
+        },
     );
     let text_class = classes!(
         "found-word-text",

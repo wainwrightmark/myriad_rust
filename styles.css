@@ -194,6 +194,11 @@ Found Word
   fill: green;
 }
 
+.found-word-box-challenge{
+  stroke-width: 4;
+  stroke: orangered;
+}
+
 /*
 Crosshairs
 */
