@@ -285,7 +285,7 @@ async function load(module, imports) {
 
 async function init(input) {
     if (typeof input === 'undefined') {
-        input = new URL('myriad-3f01de0c04663c47_bg.wasm', import.meta.url);
+        input = new URL('myriad-137e6e93cea609c4_bg.wasm', import.meta.url);
     }
     const imports = {};
     imports.wbg = {};
@@ -325,8 +325,8 @@ async function init(input) {
         const ret = getObject(arg0).getMonth();
         return ret;
     };
-    imports.wbg.__wbg_getDay_4c986f138f596d80 = function(arg0) {
-        const ret = getObject(arg0).getDay();
+    imports.wbg.__wbg_getDate_0498178cc9d8b361 = function(arg0) {
+        const ret = getObject(arg0).getDate();
         return ret;
     };
     imports.wbg.__wbindgen_string_new = function(arg0, arg1) {
@@ -671,11 +671,11 @@ async function init(input) {
         return isLikeNone(ret) ? 0 : addHeapObject(ret);
     }, arguments) };
     imports.wbg.__wbindgen_closure_wrapper1438 = function(arg0, arg1, arg2) {
-        const ret = makeMutClosure(arg0, arg1, 67, __wbg_adapter_22);
+        const ret = makeMutClosure(arg0, arg1, 68, __wbg_adapter_22);
         return addHeapObject(ret);
     };
     imports.wbg.__wbindgen_closure_wrapper2172 = function(arg0, arg1, arg2) {
-        const ret = makeMutClosure(arg0, arg1, 67, __wbg_adapter_25);
+        const ret = makeMutClosure(arg0, arg1, 68, __wbg_adapter_25);
         return addHeapObject(ret);
     };
 
