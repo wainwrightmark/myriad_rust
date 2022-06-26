@@ -12,7 +12,7 @@ impl Reducer<FullGameState> for NewGameMsg {
     fn apply(&self, _: Rc<FullGameState>) -> Rc<FullGameState> {
 
         Dispatch::<RecentWordState>::new().reduce_mut(|s| s.recent_words.clear());
-        Dispatch::<RotFlipState>::new().reduce_mut(|s| s.new_game());
+        //Dispatch::<RotFlipState>::new().reduce_mut(|s| s.new_game());
         Dispatch::<ChosenPositionsState>::new().reduce_mut(|s| s.positions.clear());
 
         let game = 
