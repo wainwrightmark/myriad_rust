@@ -91,7 +91,7 @@ pub fn flip_button(properties: &GameButtonProperties) -> Html{
     let rect_class = classes!("found-word-box", "found-word-box-button");
     let text_class = classes!("button-text");
 
-    html!(<FoundWordBox id={"flip_button"} text={"⮀"} {x} {y} width_units={properties.width} {rect_class} {text_class} {on_click} />)
+    html!(<FoundWordBox id={"flip_button"} text={"⬌"} {x} {y} width_units={properties.width} {rect_class} {text_class} {on_click} />)
 }
 
 #[function_component(WainwrongButton)]
@@ -122,13 +122,13 @@ pub fn wainwrong_button(properties: &GameButtonProperties) -> Html{
 }
 
 
+
 #[function_component(FacebookButton)]
 pub fn facebook_button(properties: &GameButtonProperties) -> Html{
 
     let (x, y) = get_found_word_position(properties.position_number,  properties.selected_tab, false);
 
-    let rect_class = classes!("found-word-box", "found-word-box-button");
-    let text_class = classes!("button-text");
+    let rect_class = classes!("found-word-box", "found-word-box-button");    
     let class = classes!("found-word-group", "found-word-group-button");
 
     let style = format!("transform: translate({}px, {}px);", x, y);
@@ -140,10 +140,16 @@ pub fn facebook_button(properties: &GameButtonProperties) -> Html{
         <rect class={rect_class} height={format!("{FOUND_WORD_HEIGHT}")} rx="5" width={format!("{}", FOUND_WORD_WIDTH * properties.width)}>
         
         </rect>
-        <text class={text_class}>
-        {"Share"}
-        </text>
-        
+
+        <svg data-license="From https://github.com/twbs/icons - Licensed under MIT" 
+        fill="currentColor" 
+        height="24" 
+        style="margin: 0.1em; display: initial;" 
+        viewBox="0 0 16 16" 
+        width="24" 
+        xmlns="http://www.w3.org/2000/svg">
+        <title>{"BootstrapFacebook"}</title>
+        <path d={FACEBOOK_ICON_PATH}></path></svg>
         
         </a>
         </g>)

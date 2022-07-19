@@ -1,4 +1,5 @@
 use crate::state::prelude::*;
+use crate::web::prelude::*;
 use yew::prelude::*;
 use yewdux::prelude::*;
 
@@ -23,15 +24,22 @@ pub fn dialog() -> Html {
             }
         }
 
-        
-        //let url = "https%3A%2F%2Fwainwrightmark.github.io%2Fmyriad_rust%2F";
-        //let link = format!("https://www.facebook.com/sharer/sharer.php?u={}", url);
-
         let link = "https://www.facebook.com/sharer/sharer.php?u=wainwrightmark.github.io%2Fmyriad_rust";
         html!(<dialog style="top: 25%" open={true}>
         <p>{message}</p>
         <form>
-      <button formaction={link}>{"Share!"}</button>
+      <button formaction={link}>
+      
+      <svg data-license="From https://github.com/twbs/icons - Licensed under MIT" 
+        fill="currentColor" 
+        height="24" 
+        style="margin: 0.1em; display: initial;" 
+        viewBox="0 0 16 16" 
+        width="24" 
+        xmlns="http://www.w3.org/2000/svg">
+        <title>{"BootstrapFacebook"}</title>
+        <path d={FACEBOOK_ICON_PATH}></path></svg>
+      </button>
       <button {onclick}>{"Ok"}</button>
     
     </form>
