@@ -12,3 +12,4 @@
 - [ ] Accessibility
 - [ ] Idle animations
 - [ ] Share on facebook
+- [ ] Animations on IOS
