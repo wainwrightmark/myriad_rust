@@ -1,3 +1,4 @@
+use crate::core::parser::parse_and_evaluate;
 use crate::core::prelude::*;
 use crate::state::prelude::*;
 use itertools::Itertools;
@@ -59,10 +60,10 @@ impl Reducer<ChosenPositionsState> for FindNumberMsg {
 
 impl ChosenPositionsState {
     pub fn next(
-        state: std::rc::Rc<ChosenPositionsState>,
+        state: std::rc::Rc<Self>,
         allow_abandon: bool,
         coordinate: Coordinate,
-    ) -> std::rc::Rc<ChosenPositionsState> {
+    ) -> std::rc::Rc<Self> {
         if let Some(last) = state.positions.last() {
             if last == &coordinate {
                 //Abandon word - empty state
@@ -101,6 +102,24 @@ impl ChosenPositionsState {
         if state.positions.is_empty() || state.positions.last().unwrap().is_adjacent(coordinate) {
             let mut new_chosen_positions = state.positions.clone();
             new_chosen_positions.push(coordinate);
+
+            let board = Dispatch::<FullGameState>::new().get().game.board.clone();
+
+            let mut letters = new_chosen_positions
+            .iter()
+            .map(|c| board.get_letter_at_coordinate(c))
+            .peekable();
+
+            //let lettes = new_chosen_positions.iter().map(|x| state.po)
+
+            let parse_result = parse_and_evaluate(&mut letters);
+
+            if let Err(e) = parse_result{
+                if matches!(e, crate::core::parser::ParseFail::Failure){
+                    //illegal move
+                    return state;
+                }
+            }
 
             //log::debug!("Found word");
 
