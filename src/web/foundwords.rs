@@ -127,7 +127,8 @@ pub fn all_found_words() -> Html {
             <ScoreCounter {total_found} {selected_tab} width={1.5} position_number={106}/>
             <FlipButton  {selected_tab} width={1.0} position_number={109}/>
             <RotateButton  {selected_tab} width={1.0} position_number={108}/>
-            <WainwrongButton {selected_tab} width={6.0} position_number={119}/>
+            <HistoryButton {selected_tab} width={1.0} position_number={118}/>
+            <WainwrongButton {selected_tab} width={1.0} position_number={119}/>
             <FacebookButton {selected_tab} width={1.0} position_number={116}/>
 
         </g>

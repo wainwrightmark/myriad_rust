@@ -199,6 +199,17 @@ Found Word
   stroke: orangered;
 }
 
+.history-progress{
+  background: green;
+  height: 100%;
+}
+
+.history-progress-box{
+  height: 100%;
+  width: 100%;
+  border: black solid;
+}
+
 /*
 Crosshairs
 */

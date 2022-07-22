@@ -1,5 +1,5 @@
 use crate::state::msg::*;
-use crate::state::prelude::RotFlipMsg;
+use crate::state::prelude::{RotFlipMsg, DialogState};
 use crate::web::prelude::*;
 use num::ToPrimitive;
 use yew::prelude::*;
@@ -92,6 +92,20 @@ pub fn flip_button(properties: &GameButtonProperties) -> Html{
     let text_class = classes!("button-text");
 
     html!(<FoundWordBox id={"flip_button"} text={"⬌"} {x} {y} width_units={properties.width} {rect_class} {text_class} {on_click} />)
+}
+
+#[function_component(HistoryButton)]
+pub fn flip_button(properties: &GameButtonProperties) -> Html{
+    let on_click: Option<Callback<MouseEvent>> =
+        Some(Dispatch::<DialogState> ::new()
+        .reduce_mut_callback(|s| s.history_dialog_type = Some(Default::default())));
+
+    let (x, y) = get_found_word_position(properties.position_number, properties.selected_tab, false);
+
+    let rect_class = classes!("found-word-box", "found-word-box-button");
+    let text_class = classes!("button-text");
+
+    html!(<FoundWordBox id={"history_button"} text={"H"} {x} {y} width_units={properties.width} {rect_class} {text_class} {on_click} />)
 }
 
 #[function_component(WainwrongButton)]

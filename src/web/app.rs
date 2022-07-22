@@ -15,8 +15,8 @@ pub fn app() -> Html {
     html! {
 
         <>
-        <Dialog/>
-        
+        <CongratsDialog/>
+        <HistoryDialog/>
         <div class="container">
         <svg viewBox={view_box} class="myriadSVG" {onpointerup} >
         <rect x="0" y="0" {width} {height} fill="white"  />

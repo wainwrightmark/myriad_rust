@@ -1,28 +1,34 @@
 use crate::core::{parser, prelude::*};
 use crate::state::prelude::*;
 use crate::web::prelude::*;
-
 use num::ToPrimitive;
-use std::collections::BTreeMap;
 use std::rc::Rc;
 use yewdux::prelude::*;
 
 pub struct LoadGameMessage{
     pub game: Game,
-    pub found_words: BTreeMap<i32, FoundWord>
 }
 
 impl Reducer<FullGameState> for LoadGameMessage {
     fn apply(&self, previous: Rc<FullGameState>) -> Rc<FullGameState> {
+
+        let found_words =
+        Dispatch::<HistoryState>::new().get().games.iter()
+        .filter(|x|x.0 == self.game)
+        .map(|x|x.1.clone())
+        .next().unwrap_or_default();
+
         Dispatch::<RecentWordState>::new().reduce_mut(|s| s.recent_words.clear());    
         Dispatch::<ChosenPositionsState>::new().reduce_mut(|s| s.positions.clear());
+
+        Dispatch::<DialogState>::new().reduce_mut(|x|x.history_dialog_type = None);
 
         Dispatch::<HistoryState>::new().apply(
             SaveGameMessage{game: previous.game.as_ref().clone(), found_words: previous.found_words.words.clone()});
 
             FullGameState {
                 game: self.game.clone().into(),
-                found_words: Rc::new(FoundWordsState{words: self.found_words.clone(), most_recent: None})
+                found_words: Rc::new(FoundWordsState{words: found_words, most_recent: None})
             }
             .into()
     }
@@ -118,10 +124,10 @@ impl Reducer<FullGameState> for OnCoordinatesSetMsg {
                 }
 
                 if len == 100{
-                    Dispatch::<DialogState>::new().reduce_mut(|s|s.dialog_type = Some(DialogType::OneHundred));
+                    Dispatch::<DialogState>::new().reduce_mut(|s|s.congratulations_dialog_type = Some(CongratsDialogType::OneHundred));
                 }
                 else if state.game.challenge_words.contains(&number) && state.game.challenge_words.iter().all(|w| ns.words.contains_key(w)){
-                    Dispatch::<DialogState>::new().reduce_mut(|s|s.dialog_type = Some(DialogType::Challenge));
+                    Dispatch::<DialogState>::new().reduce_mut(|s|s.congratulations_dialog_type = Some(CongratsDialogType::Challenge));
                 }
 
                 ns.into()
