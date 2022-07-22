@@ -13,7 +13,7 @@ use chrono::{ NaiveDate,  Datelike};
 #[store(storage = "local")] // can also be "session"
 pub struct FullGameState {
     pub game: Rc<Game>,
-    pub found_words: Rc<FoundWordsState>,    
+    pub found_words: Rc<FoundWordsState>,
 }
 
 impl FullGameState {}

@@ -7,6 +7,7 @@ pub mod recentwordstate;
 pub mod rotflipstate;
 pub mod selectedtabstate;
 pub mod dialogstate;
+pub mod historystate;
 
 pub mod prelude {
 
@@ -19,6 +20,7 @@ pub mod prelude {
     pub use crate::state::rotflipstate::*;
     pub use crate::state::selectedtabstate::*;
     pub use crate::state::dialogstate::*;
+    pub use crate::state::historystate::*;
 
     pub const GOALSIZE: i32 = 20;
 

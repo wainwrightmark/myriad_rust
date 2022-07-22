@@ -24,6 +24,7 @@ pub fn dialog() -> Html {
             }
         }
 
+
         let link = "https://www.facebook.com/sharer/sharer.php?u=wainwrightmark.github.io%2Fmyriad_rust";
         html!(<dialog style="top: 25%" open={true}>
         <p>{message}</p>

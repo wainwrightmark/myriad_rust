@@ -3,17 +3,42 @@ use crate::state::prelude::*;
 use crate::web::prelude::*;
 
 use num::ToPrimitive;
+use std::collections::BTreeMap;
 use std::rc::Rc;
 use yewdux::prelude::*;
+
+pub struct LoadGameMessage{
+    pub game: Game,
+    pub found_words: BTreeMap<i32, FoundWord>
+}
+
+impl Reducer<FullGameState> for LoadGameMessage {
+    fn apply(&self, previous: Rc<FullGameState>) -> Rc<FullGameState> {
+        Dispatch::<RecentWordState>::new().reduce_mut(|s| s.recent_words.clear());    
+        Dispatch::<ChosenPositionsState>::new().reduce_mut(|s| s.positions.clear());
+
+        Dispatch::<HistoryState>::new().apply(
+            SaveGameMessage{game: previous.game.as_ref().clone(), found_words: previous.found_words.words.clone()});
+
+            FullGameState {
+                game: self.game.clone().into(),
+                found_words: Rc::new(FoundWordsState{words: self.found_words.clone(), most_recent: None})
+            }
+            .into()
+    }
+}
 
 pub struct NewGameMsg {pub today: bool }
 
 impl Reducer<FullGameState> for NewGameMsg {
-    fn apply(&self, _: Rc<FullGameState>) -> Rc<FullGameState> {
+    fn apply(&self, previous: Rc<FullGameState>) -> Rc<FullGameState> {
 
-        Dispatch::<RecentWordState>::new().reduce_mut(|s| s.recent_words.clear());
-        //Dispatch::<RotFlipState>::new().reduce_mut(|s| s.new_game());
+        Dispatch::<RecentWordState>::new().reduce_mut(|s| s.recent_words.clear());    
         Dispatch::<ChosenPositionsState>::new().reduce_mut(|s| s.positions.clear());
+
+        Dispatch::<HistoryState>::new().apply(
+            SaveGameMessage{game: previous.game.as_ref().clone(), found_words: previous.found_words.words.clone()});
+
 
         let game = 
         if self.today{
