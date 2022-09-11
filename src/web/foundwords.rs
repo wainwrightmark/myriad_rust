@@ -101,20 +101,27 @@ pub fn found_words_tab_header(
     )
 }
 
+#[derive(PartialEq, Eq, Properties)]
+pub struct AllFoundWordsProperties {
+    pub cheat: bool
+}
+
+
 #[function_component(AllFoundWords)]
-pub fn all_found_words() -> Html {
+pub fn all_found_words(properties: &AllFoundWordsProperties) -> Html {
     let challenge_words = use_selector(|state: &FullGameState| state.game.challenge_words.clone());
     let found_words_state = use_selector(|state: &FullGameState| state.found_words.clone());
     let selected_tab_state = use_store_value::<SelectedTabState>();
     let selected_tab = selected_tab_state.index;
 
     let total_found = found_words_state.words.len();
+    let cheat = properties.cheat;
 
     let words = (1..101)
         .map(|number| {
             let is_challenge = challenge_words.contains(&number);
             let is_found = found_words_state.words.contains_key(&number);
-            html!(<FoundWordsWord {number} {is_challenge} {is_found} {selected_tab} />)
+            html!(<FoundWordsWord {number} {is_challenge} {is_found} {selected_tab} {cheat} />)
         })
         .collect::<Html>();
 
@@ -141,6 +148,7 @@ pub struct FoundWordProperties {
     pub is_found: bool,
     pub is_challenge: bool,
     pub selected_tab: usize,
+    pub cheat: bool
 }
 
 #[function_component(FoundWordsWord)]
@@ -150,9 +158,12 @@ pub fn found_words_word(properties: &FoundWordProperties) -> Html {
 
     let id = format!("found_words_word{}", properties.number);
     let number = properties.number;
+    let cheat = properties.cheat;
 
-    let on_click: Option<Callback<MouseEvent>> = if properties.is_found {
-        Some(Dispatch::new().apply_callback(move |_| FindNumberMsg { number }))
+    
+
+    let on_click: Option<Callback<MouseEvent>> = if properties.is_found || cheat {
+        Some(Dispatch::new().apply_callback(move |_| FindNumberMsg { number, cheat }))
     } else {
         None
     };

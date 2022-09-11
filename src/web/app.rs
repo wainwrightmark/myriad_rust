@@ -1,14 +1,45 @@
 use crate::state::prelude::*;
 use crate::web::prelude::*;
+use serde::Serialize;
+use serde::Deserialize;
 use yew::prelude::*;
 use yewdux::prelude::*;
+use yew_router::prelude::*;
+
+#[derive(Clone, Routable, PartialEq)]
+enum Route {
+    #[at("/Cheat")]
+    Cheat,
+    #[at("/")]
+    Home,
+}
+
+#[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub struct RouteQuery{
+    #[serde(default)]
+    pub cheat: bool
+}
 
 #[function_component(App)]
 pub fn app() -> Html {
+    html! {
+        <BrowserRouter>
+            <Switch<Route> render={myriad_app} />
+        </BrowserRouter>
+    }
+}
+
+
+fn myriad_app(route : Route) -> Html {
     let view_box = format!("0 0 {SVG_WIDTH} {SVG_HEIGHT}");
     let width = format!("{SVG_WIDTH}");
     let height = format!("{SVG_HEIGHT}");
 
+    let cheat = match route {
+        Route::Cheat => true,
+        Route::Home => false,
+    };
+    
     let onpointerup = Dispatch::new().apply_callback(move |_: PointerEvent| InputMsg::Up {});
 
     html! {
@@ -24,7 +55,7 @@ pub fn app() -> Html {
 
 
         <FoundWordsTabHeaders/>
-        <AllFoundWords />
+        <AllFoundWords {cheat} />
 
         <RecentWords/>
         </svg>
