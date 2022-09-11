@@ -8,7 +8,6 @@ pub fn app() -> Html {
     let view_box = format!("0 0 {SVG_WIDTH} {SVG_HEIGHT}");
     let width = format!("{SVG_WIDTH}");
     let height = format!("{SVG_HEIGHT}");
-    
 
     let onpointerup = Dispatch::new().apply_callback(move |_: PointerEvent| InputMsg::Up {});
 

@@ -64,23 +64,17 @@ fn parse_term<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R {
                     input.next();
                     let denominator = parse_unary(input)?;
                     if denominator == 0 {
-
-                        if input.peek().is_some()
-                        {
+                        if input.peek().is_some() {
                             return Err(ParseFail::Failure);
+                        } else {
+                            return Err(ParseFail::PartialSuccess);
                         }
-                        else {
-                            return Err(ParseFail::PartialSuccess);    
-                        }
-                        
                     }
                     if current % denominator != 0 {
-                        if input.peek().is_some()
-                        {
+                        if input.peek().is_some() {
                             return Err(ParseFail::Failure);
-                        }
-                        else {
-                            return Err(ParseFail::PartialSuccess);    
+                        } else {
+                            return Err(ParseFail::PartialSuccess);
                         }
                     }
 

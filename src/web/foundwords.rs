@@ -3,7 +3,7 @@ use std::rc::Rc;
 use crate::state::foundwordsstate::FoundWordsState;
 use crate::state::selectedtabstate::SelectedTabState;
 
-use crate::state::{prelude::*};
+use crate::state::prelude::*;
 use crate::web::prelude::*;
 use num::ToPrimitive;
 use yew::prelude::*;
@@ -163,7 +163,7 @@ pub fn found_words_word(properties: &FoundWordProperties) -> Html {
             Some("found-word-box-success")
         } else {
             None
-        },        
+        },
         if properties.is_challenge {
             Some("found-word-box-challenge")
         } else {

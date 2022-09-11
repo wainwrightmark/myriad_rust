@@ -1,5 +1,5 @@
 use crate::state::msg::*;
-use crate::state::prelude::{RotFlipMsg, DialogState};
+use crate::state::prelude::{DialogState, RotFlipMsg};
 use crate::web::prelude::*;
 use num::ToPrimitive;
 use yew::prelude::*;
@@ -10,18 +10,16 @@ pub struct GameButtonProperties {
     pub selected_tab: usize,
 
     pub position_number: i32,
-    pub width: f64
+    pub width: f64,
 }
-
-
-
 
 #[function_component(TodayGameButton)]
 pub fn todays_game_button(properties: &GameButtonProperties) -> Html {
     let on_click: Option<Callback<MouseEvent>> =
-        Some(Dispatch::new().apply_callback(|_| NewGameMsg {today: true}));
+        Some(Dispatch::new().apply_callback(|_| NewGameMsg { today: true }));
 
-    let (x, y) = get_found_word_position(properties.position_number, properties.selected_tab, false);
+    let (x, y) =
+        get_found_word_position(properties.position_number, properties.selected_tab, false);
 
     let rect_class = classes!("found-word-box", "found-word-box-button");
     let text_class = classes!("button-text");
@@ -32,9 +30,10 @@ pub fn todays_game_button(properties: &GameButtonProperties) -> Html {
 #[function_component(RandomGameButton)]
 pub fn random_game_button(properties: &GameButtonProperties) -> Html {
     let on_click: Option<Callback<MouseEvent>> =
-        Some(Dispatch::new().apply_callback(|_| NewGameMsg {today: false}));
+        Some(Dispatch::new().apply_callback(|_| NewGameMsg { today: false }));
 
-    let (x, y) = get_found_word_position(properties.position_number, properties.selected_tab, false);
+    let (x, y) =
+        get_found_word_position(properties.position_number, properties.selected_tab, false);
 
     let rect_class = classes!("found-word-box", "found-word-box-button");
     let text_class = classes!("button-text");
@@ -48,12 +47,13 @@ pub struct ScoreCounterProperties {
     pub selected_tab: usize,
 
     pub position_number: i32,
-    pub width: f64
+    pub width: f64,
 }
 
 #[function_component(ScoreCounter)]
 pub fn score_counter(properties: &ScoreCounterProperties) -> Html {
-    let (x, y) = get_found_word_position(properties.position_number, properties.selected_tab, false);
+    let (x, y) =
+        get_found_word_position(properties.position_number, properties.selected_tab, false);
 
     let rect_class = classes!("score-counter-box");
     let text_class = classes!("button-text");
@@ -69,11 +69,15 @@ pub fn score_counter(properties: &ScoreCounterProperties) -> Html {
 }
 
 #[function_component(RotateButton)]
-pub fn rotate_button(properties: &GameButtonProperties) -> Html{
+pub fn rotate_button(properties: &GameButtonProperties) -> Html {
     let on_click: Option<Callback<MouseEvent>> =
-        Some(Dispatch::new().apply_callback(|_| RotFlipMsg{ rotate: 1, flip: false }));
+        Some(Dispatch::new().apply_callback(|_| RotFlipMsg {
+            rotate: 1,
+            flip: false,
+        }));
 
-    let (x, y) = get_found_word_position(properties.position_number, properties.selected_tab, false);
+    let (x, y) =
+        get_found_word_position(properties.position_number, properties.selected_tab, false);
 
     let rect_class = classes!("found-word-box", "found-word-box-button");
     let text_class = classes!("button-text");
@@ -82,11 +86,15 @@ pub fn rotate_button(properties: &GameButtonProperties) -> Html{
 }
 
 #[function_component(FlipButton)]
-pub fn flip_button(properties: &GameButtonProperties) -> Html{
+pub fn flip_button(properties: &GameButtonProperties) -> Html {
     let on_click: Option<Callback<MouseEvent>> =
-        Some(Dispatch::new().apply_callback(|_| RotFlipMsg{ rotate: 0, flip: true }));
+        Some(Dispatch::new().apply_callback(|_| RotFlipMsg {
+            rotate: 0,
+            flip: true,
+        }));
 
-    let (x, y) = get_found_word_position(properties.position_number, properties.selected_tab, false);
+    let (x, y) =
+        get_found_word_position(properties.position_number, properties.selected_tab, false);
 
     let rect_class = classes!("found-word-box", "found-word-box-button");
     let text_class = classes!("button-text");
@@ -95,12 +103,14 @@ pub fn flip_button(properties: &GameButtonProperties) -> Html{
 }
 
 #[function_component(HistoryButton)]
-pub fn flip_button(properties: &GameButtonProperties) -> Html{
-    let on_click: Option<Callback<MouseEvent>> =
-        Some(Dispatch::<DialogState> ::new()
-        .reduce_mut_callback(|s| s.history_dialog_type = Some(Default::default())));
+pub fn flip_button(properties: &GameButtonProperties) -> Html {
+    let on_click: Option<Callback<MouseEvent>> = Some(
+        Dispatch::<DialogState>::new()
+            .reduce_mut_callback(|s| s.history_dialog_type = Some(Default::default())),
+    );
 
-    let (x, y) = get_found_word_position(properties.position_number, properties.selected_tab, false);
+    let (x, y) =
+        get_found_word_position(properties.position_number, properties.selected_tab, false);
 
     let rect_class = classes!("found-word-box", "found-word-box-button");
     let text_class = classes!("button-text");
@@ -109,9 +119,9 @@ pub fn flip_button(properties: &GameButtonProperties) -> Html{
 }
 
 #[function_component(WainwrongButton)]
-pub fn wainwrong_button(properties: &GameButtonProperties) -> Html{
-
-    let (x, y) = get_found_word_position(properties.position_number, properties.selected_tab, false);
+pub fn wainwrong_button(properties: &GameButtonProperties) -> Html {
+    let (x, y) =
+        get_found_word_position(properties.position_number, properties.selected_tab, false);
 
     let rect_class = classes!("found-word-box", "found-word-box-button");
     let text_class = classes!("button-text");
@@ -135,14 +145,12 @@ pub fn wainwrong_button(properties: &GameButtonProperties) -> Html{
      </g>)
 }
 
-
-
 #[function_component(FacebookButton)]
-pub fn facebook_button(properties: &GameButtonProperties) -> Html{
+pub fn facebook_button(properties: &GameButtonProperties) -> Html {
+    let (x, y) =
+        get_found_word_position(properties.position_number, properties.selected_tab, false);
 
-    let (x, y) = get_found_word_position(properties.position_number,  properties.selected_tab, false);
-
-    let rect_class = classes!("found-word-box", "found-word-box-button");    
+    let rect_class = classes!("found-word-box", "found-word-box-button");
     let class = classes!("found-word-group", "found-word-group-button");
 
     let style = format!("transform: translate({}px, {}px);", x, y);

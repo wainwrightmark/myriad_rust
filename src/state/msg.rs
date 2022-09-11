@@ -5,53 +5,61 @@ use num::ToPrimitive;
 use std::rc::Rc;
 use yewdux::prelude::*;
 
-pub struct LoadGameMessage{
+pub struct LoadGameMessage {
     pub game: Game,
 }
 
 impl Reducer<FullGameState> for LoadGameMessage {
     fn apply(&self, previous: Rc<FullGameState>) -> Rc<FullGameState> {
+        let found_words = Dispatch::<HistoryState>::new()
+            .get()
+            .games
+            .iter()
+            .filter(|x| x.0 == self.game)
+            .map(|x| x.1.clone())
+            .next()
+            .unwrap_or_default();
 
-        let found_words =
-        Dispatch::<HistoryState>::new().get().games.iter()
-        .filter(|x|x.0 == self.game)
-        .map(|x|x.1.clone())
-        .next().unwrap_or_default();
-
-        Dispatch::<RecentWordState>::new().reduce_mut(|s| s.recent_words.clear());    
+        Dispatch::<RecentWordState>::new().reduce_mut(|s| s.recent_words.clear());
         Dispatch::<ChosenPositionsState>::new().reduce_mut(|s| s.positions.clear());
 
-        Dispatch::<DialogState>::new().reduce_mut(|x|x.history_dialog_type = None);
+        Dispatch::<DialogState>::new().reduce_mut(|x| x.history_dialog_type = None);
 
-        Dispatch::<HistoryState>::new().apply(
-            SaveGameMessage{game: previous.game.as_ref().clone(), found_words: previous.found_words.words.clone()});
+        Dispatch::<HistoryState>::new().apply(SaveGameMessage {
+            game: previous.game.as_ref().clone(),
+            found_words: previous.found_words.words.clone(),
+        });
 
-            FullGameState {
-                game: self.game.clone().into(),
-                found_words: Rc::new(FoundWordsState{words: found_words, most_recent: None})
-            }
-            .into()
+        FullGameState {
+            game: self.game.clone().into(),
+            found_words: Rc::new(FoundWordsState {
+                words: found_words,
+                most_recent: None,
+            }),
+        }
+        .into()
     }
 }
 
-pub struct NewGameMsg {pub today: bool }
+pub struct NewGameMsg {
+    pub today: bool,
+}
 
 impl Reducer<FullGameState> for NewGameMsg {
     fn apply(&self, previous: Rc<FullGameState>) -> Rc<FullGameState> {
-
-        Dispatch::<RecentWordState>::new().reduce_mut(|s| s.recent_words.clear());    
+        Dispatch::<RecentWordState>::new().reduce_mut(|s| s.recent_words.clear());
         Dispatch::<ChosenPositionsState>::new().reduce_mut(|s| s.positions.clear());
 
-        Dispatch::<HistoryState>::new().apply(
-            SaveGameMessage{game: previous.game.as_ref().clone(), found_words: previous.found_words.words.clone()});
+        Dispatch::<HistoryState>::new().apply(SaveGameMessage {
+            game: previous.game.as_ref().clone(),
+            found_words: previous.found_words.words.clone(),
+        });
 
-
-        let game = 
-        if self.today{
+        let game = if self.today {
             Game::create_for_today()
-        }else{
+        } else {
             Game::create_random()
-        };   
+        };
 
         FullGameState {
             game: game.into(),
@@ -112,9 +120,7 @@ impl Reducer<FullGameState> for OnCoordinatesSetMsg {
 
             let new_found_words: Rc<FoundWordsState> = if word_type == FoundWordType::Found {
                 let number = found_word.result;
-                Dispatch::new().apply(NumberFoundMsg {
-                    number
-                });
+                Dispatch::new().apply(NumberFoundMsg { number });
                 let ns = state.found_words.with_word(found_word);
 
                 let len = ns.words.len().to_i32().unwrap();
@@ -123,11 +129,20 @@ impl Reducer<FullGameState> for OnCoordinatesSetMsg {
                     make_confetti(get_emoji(len / 10), 10 + len);
                 }
 
-                if len == 100{
-                    Dispatch::<DialogState>::new().reduce_mut(|s|s.congratulations_dialog_type = Some(CongratsDialogType::OneHundred));
-                }
-                else if state.game.challenge_words.contains(&number) && state.game.challenge_words.iter().all(|w| ns.words.contains_key(w)){
-                    Dispatch::<DialogState>::new().reduce_mut(|s|s.congratulations_dialog_type = Some(CongratsDialogType::Challenge));
+                if len == 100 {
+                    Dispatch::<DialogState>::new().reduce_mut(|s| {
+                        s.congratulations_dialog_type = Some(CongratsDialogType::OneHundred)
+                    });
+                } else if state.game.challenge_words.contains(&number)
+                    && state
+                        .game
+                        .challenge_words
+                        .iter()
+                        .all(|w| ns.words.contains_key(w))
+                {
+                    Dispatch::<DialogState>::new().reduce_mut(|s| {
+                        s.congratulations_dialog_type = Some(CongratsDialogType::Challenge)
+                    });
                 }
 
                 ns.into()

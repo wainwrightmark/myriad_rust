@@ -6,8 +6,7 @@ use serde::*;
 use std::rc::Rc;
 use yewdux::prelude::*;
 
-use chrono::{ NaiveDate,  Datelike};
-
+use chrono::{Datelike, NaiveDate};
 
 #[derive(PartialEq, Store, Clone, Default, Serialize, Deserialize)]
 #[store(storage = "local")] // can also be "session"
@@ -18,48 +17,53 @@ pub struct FullGameState {
 
 impl FullGameState {}
 
-
 #[derive(PartialEq, Store, Clone, Serialize, Deserialize)]
-pub struct Game{
+pub struct Game {
     pub board: Board<GRID_COLUMNS, GRID_ROWS>,
     pub challenge_words: Vec<i32>,
     pub date: Option<NaiveDate>,
     pub solve_settings: SolveSettings,
 }
 
-pub const CHALLENGE_WORDS : usize = 3;
+pub const CHALLENGE_WORDS: usize = 3;
 
-impl Game{
-
-    pub fn create_for_today()-> Self{                
+impl Game {
+    pub fn create_for_today() -> Self {
         let js_today = js_sys::Date::new_0();
-        let today = NaiveDate::from_ymd(js_today.get_full_year().to_i32().unwrap(), js_today.get_month() + 1, js_today.get_date());
+        let today = NaiveDate::from_ymd(
+            js_today.get_full_year().to_i32().unwrap(),
+            js_today.get_month() + 1,
+            js_today.get_date(),
+        );
         log::debug!("Creating game for today {:?}", today);
-        
+
         Game::create_for_date(today)
     }
 
-    pub fn create_for_date(date: NaiveDate)-> Self{
+    pub fn create_for_date(date: NaiveDate) -> Self {
         let solve_settings = SolveSettings::default();
 
-        let seed = (date.year().abs() * 2000) + (date.month().to_i32().unwrap() * 100) + date.day().to_i32().unwrap();
+        let seed = (date.year().abs() * 2000)
+            + (date.month().to_i32().unwrap() * 100)
+            + date.day().to_i32().unwrap();
         let rng = rand::SeedableRng::seed_from_u64(seed.to_u64().unwrap());
 
-
-        let settings = BoardCreateSettings{branching_factor:3};
+        let settings = BoardCreateSettings {
+            branching_factor: 3,
+        };
         let board = settings.create_boards(solve_settings, rng).next().unwrap();
 
         let challenge_words = Self::create_challenge_words(solve_settings, &board);
 
-        Game{
+        Game {
             board,
             date: Some(date),
             solve_settings,
-            challenge_words
+            challenge_words,
         }
     }
 
-    pub fn create_random()-> Self{
+    pub fn create_random() -> Self {
         let solve_settings = SolveSettings::default();
 
         let settings = BoardCreateSettings {
@@ -78,19 +82,30 @@ impl Game{
 
         let challenge_words = Self::create_challenge_words(solve_settings, &board);
 
-        Game{board: board, date: None, solve_settings, challenge_words }
+        Game {
+            board: board,
+            date: None,
+            solve_settings,
+            challenge_words,
+        }
     }
 
-    fn create_challenge_words(solve_settings: SolveSettings, board: &Board<GRID_COLUMNS, GRID_ROWS>) -> Vec<i32> {
-        let challenge_words = solve_settings.solve(board.clone())
-        .sorted_by(|a,b| b.path.len().cmp(&a.path.len()) )
-        .take(CHALLENGE_WORDS).map(|f|f.result).collect_vec();
+    fn create_challenge_words(
+        solve_settings: SolveSettings,
+        board: &Board<GRID_COLUMNS, GRID_ROWS>,
+    ) -> Vec<i32> {
+        let challenge_words = solve_settings
+            .solve(board.clone())
+            .sorted_by(|a, b| b.path.len().cmp(&a.path.len()))
+            .take(CHALLENGE_WORDS)
+            .map(|f| f.result)
+            .collect_vec();
         challenge_words
     }
 }
 
-impl Default for Game{
-    fn default() -> Self {        
+impl Default for Game {
+    fn default() -> Self {
         Game::create_for_today()
     }
 }

@@ -13,7 +13,6 @@ pub struct Board<const COLUMNS: usize, const ROWS: usize> {
     pub letters: [[Letter; COLUMNS]; ROWS],
 }
 
-
 impl<const C: usize, const R: usize> std::fmt::Display for Board<C, R> {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "{}", self.to_multiline_string())
@@ -51,9 +50,7 @@ impl<const C: usize, const R: usize> Board<C, R> {
                     .try_into()
                     .unwrap();
 
-                Some(Board {
-                    letters,
-                })
+                Some(Board { letters })
             }
         }
     }

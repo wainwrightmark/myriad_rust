@@ -106,16 +106,16 @@ impl ChosenPositionsState {
             let board = Dispatch::<FullGameState>::new().get().game.board.clone();
 
             let mut letters = new_chosen_positions
-            .iter()
-            .map(|c| board.get_letter_at_coordinate(c))
-            .peekable();
+                .iter()
+                .map(|c| board.get_letter_at_coordinate(c))
+                .peekable();
 
             //let lettes = new_chosen_positions.iter().map(|x| state.po)
 
             let parse_result = parse_and_evaluate(&mut letters);
 
-            if let Err(e) = parse_result{
-                if matches!(e, crate::core::parser::ParseFail::Failure){
+            if let Err(e) = parse_result {
+                if matches!(e, crate::core::parser::ParseFail::Failure) {
                     //illegal move
                     return state;
                 }
