@@ -73,19 +73,17 @@ pub fn congrats_dialog() -> Html {
     let onclick = dispatch.reduce_mut_callback(|state| state.congratulations_dialog_type = None);
 
     if let Some(dialog_type) = state.congratulations_dialog_type {
-        let message: &str;
-        //let quote: &str;
-
+        let message: &str =
         match dialog_type {
             CongratsDialogType::Challenge => {
-                message = "Well done, you beat challenge mode!\r\nNow try for 💯!";
+                "Well done, you beat challenge mode!\r\nNow try for 💯!"
                 //quote = "I%20beat%20challenge%20mode%20in%20myriad%21";
             }
             CongratsDialogType::OneHundred => {
-                message = "Well done, you got 💯!";
+                "Well done, you got 💯!"
                 //quote = "I%20got%20%F0%9F%92%AF%20in%20myriad%21"
             }
-        }
+        };
 
         let link =
             "https://www.facebook.com/sharer/sharer.php?u=wainwrightmark.github.io%2Fmyriad_rust";
