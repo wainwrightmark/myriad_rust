@@ -27,14 +27,22 @@ pub struct Game {
 
 pub const CHALLENGE_WORDS: usize = 3;
 
+
+
 impl Game {
-    pub fn create_for_today() -> Self {
+
+    pub fn get_today_date()-> NaiveDate{
         let js_today = js_sys::Date::new_0();
         let today = NaiveDate::from_ymd(
             js_today.get_full_year().to_i32().unwrap(),
             js_today.get_month() + 1,
             js_today.get_date(),
         );
+        today
+    }
+
+    pub fn create_for_today() -> Self {
+        let today = Self::get_today_date();
         log::debug!("Creating game for today {:?}", today);
 
         Game::create_for_date(today)

@@ -47,6 +47,11 @@ pub struct NewGameMsg {
 
 impl Reducer<FullGameState> for NewGameMsg {
     fn apply(&self, previous: Rc<FullGameState>) -> Rc<FullGameState> {
+
+        if self.today && previous.game.date == Some(Game::get_today_date()){
+            return previous;
+        }
+
         Dispatch::<RecentWordState>::new().reduce_mut(|s| s.recent_words.clear());
         Dispatch::<ChosenPositionsState>::new().reduce_mut(|s| s.positions.clear());
 
