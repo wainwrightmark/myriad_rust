@@ -8,7 +8,7 @@ use yewdux::prelude::*;
 
 use chrono::{Datelike, NaiveDate};
 
-#[derive(PartialEq, Store, Clone, Default, Serialize, Deserialize)]
+#[derive(PartialEq, Eq, Store, Clone, Default, Serialize, Deserialize)]
 #[store(storage = "local")] // can also be "session"
 pub struct FullGameState {
     pub game: Rc<Game>,
@@ -17,7 +17,7 @@ pub struct FullGameState {
 
 impl FullGameState {}
 
-#[derive(PartialEq, Store, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Eq, Store, Clone, Serialize, Deserialize)]
 pub struct Game {
     pub board: Board<GRID_COLUMNS, GRID_ROWS>,
     pub challenge_words: Vec<i32>,
@@ -83,7 +83,7 @@ impl Game {
         let challenge_words = Self::create_challenge_words(solve_settings, &board);
 
         Game {
-            board: board,
+            board,
             date: None,
             solve_settings,
             challenge_words,
@@ -94,13 +94,13 @@ impl Game {
         solve_settings: SolveSettings,
         board: &Board<GRID_COLUMNS, GRID_ROWS>,
     ) -> Vec<i32> {
-        let challenge_words = solve_settings
+        
+        solve_settings
             .solve(board.clone())
             .sorted_by(|a, b| b.path.len().cmp(&a.path.len()))
             .take(CHALLENGE_WORDS)
             .map(|f| f.result)
-            .collect_vec();
-        challenge_words
+            .collect_vec()
     }
 }
 

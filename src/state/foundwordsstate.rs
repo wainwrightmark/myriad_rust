@@ -4,7 +4,7 @@ use num::{iter::Range, ToPrimitive};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
-#[derive(PartialEq, Clone, Serialize, Deserialize, Default)]
+#[derive(PartialEq, Eq, Clone, Serialize, Deserialize, Default)]
 pub struct FoundWordsState {
     pub words: BTreeMap<i32, FoundWord>,
     pub most_recent: Option<i32>,

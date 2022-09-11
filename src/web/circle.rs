@@ -21,7 +21,7 @@ pub fn circles_svg() -> Html {
       }
 }
 
-#[derive(PartialEq, Properties)]
+#[derive(PartialEq, Eq, Properties)]
 pub struct CircleProperties {
     pub coordinate: Coordinate,
 }

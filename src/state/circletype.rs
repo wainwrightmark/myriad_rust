@@ -2,7 +2,7 @@ use crate::core::parser::*;
 use crate::core::prelude::*;
 use crate::state::prelude::*;
 
-#[derive(PartialEq, Debug, Copy, Clone)]
+#[derive(PartialEq, Eq, Debug, Copy, Clone)]
 pub enum CircleType {
     Disabled,
     LegalMove,

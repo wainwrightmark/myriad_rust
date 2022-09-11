@@ -21,7 +21,7 @@ pub fn crosshairs_svg() -> Html {
       }
 }
 
-#[derive(PartialEq, Properties)]
+#[derive(PartialEq, Eq, Properties)]
 pub struct CrossHairProperties {
     coordinate: Coordinate,
 }
@@ -172,10 +172,10 @@ fn crosshair(properties: &CrossHairProperties) -> Html {
     html!(
         <g key="crosshair" class={"crosshair-group"} {style}>
 
-        <line key="line1" x1={(-HALF_CROSSHAIR_LENGTH).to_string()} x2={HALF_CROSSHAIR_LENGTH.to_string()} y1={0.0.to_string()} y2={0.0.to_string()}  class={&(*line_classes)} style={format!("transform: translate({}px, {}px) rotate({}deg) scaleX({scale});", l1x, l1y, l1rot )} />
-        <line key="line2" x1={(-HALF_CROSSHAIR_LENGTH).to_string()} x2={HALF_CROSSHAIR_LENGTH.to_string()} y1={0.0.to_string()} y2={0.0.to_string()}  class={&(*line_classes)} style={format!("transform: translate({}px, {}px) rotate({}deg) scaleX({scale});", l2x, l2y, l2rot )}/>
+        <line key="line1" x1={(-HALF_CROSSHAIR_LENGTH).to_string()} x2={HALF_CROSSHAIR_LENGTH.to_string()} y1={0.0.to_string()} y2={0.0.to_string()}  class={line_classes} style={format!("transform: translate({}px, {}px) rotate({}deg) scaleX({scale});", l1x, l1y, l1rot )} />
+        <line key="line2" x1={(-HALF_CROSSHAIR_LENGTH).to_string()} x2={HALF_CROSSHAIR_LENGTH.to_string()} y1={0.0.to_string()} y2={0.0.to_string()}  class={line_classes} style={format!("transform: translate({}px, {}px) rotate({}deg) scaleX({scale});", l2x, l2y, l2rot )}/>
 
-        <line key="line3" x1={(-HALF_CROSSHAIR_LENGTH).to_string()} x2={HALF_CROSSHAIR_LENGTH.to_string()} y1={0.0.to_string()} y2={0.0.to_string()}  class={&(*line_classes)} style={format!("transform: translate({}px, {}px) rotate({}deg) scaleX({scale});", l3x, l3y, l3rot )} />
+        <line key="line3" x1={(-HALF_CROSSHAIR_LENGTH).to_string()} x2={HALF_CROSSHAIR_LENGTH.to_string()} y1={0.0.to_string()} y2={0.0.to_string()}  class={line_classes} style={format!("transform: translate({}px, {}px) rotate({}deg) scaleX({scale});", l3x, l3y, l3rot )} />
         <line key="line4" x1={(-HALF_CROSSHAIR_LENGTH).to_string()} x2={HALF_CROSSHAIR_LENGTH.to_string()} y1={0.0.to_string()} y2={0.0.to_string()}  class={line_classes} style={format!("transform: translate({}px, {}px) rotate({}deg) scaleX({scale});", l4x, l4y, l4rot )} />
         </g>
     )

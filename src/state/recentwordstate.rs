@@ -24,12 +24,12 @@ impl Reducer<RecentWordState> for ClearExpiredWordsMsg {
     }
 }
 
-#[derive(PartialEq, Clone, Default, Store)]
+#[derive(PartialEq, Eq, Clone, Default, Store)]
 pub struct RecentWordState {
     pub recent_words: Vec<RecentWord>,
 }
 
-#[derive(PartialEq, Clone, Debug)]
+#[derive(PartialEq, Eq, Clone, Debug)]
 pub struct RecentWord {
     pub number: i32,
     pub word_type: FoundWordType,
@@ -77,7 +77,7 @@ impl RecentWordState {
     }
 }
 
-#[derive(PartialEq, Clone, Debug, Copy)]
+#[derive(PartialEq, Eq, Clone, Debug, Copy)]
 pub enum FoundWordType {
     Found,
     PreviouslyFound,

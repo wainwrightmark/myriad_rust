@@ -5,7 +5,7 @@ use itertools::Itertools;
 use serde::*;
 use yewdux::prelude::*;
 
-#[derive(PartialEq, Clone, Default, Serialize, Deserialize, Store)]
+#[derive(PartialEq, Eq, Clone, Default, Serialize, Deserialize, Store)]
 pub struct ChosenPositionsState {
     pub positions: Vec<Coordinate>,
 }
@@ -136,7 +136,7 @@ impl ChosenPositionsState {
     }
 }
 
-#[derive(PartialEq, Clone, Default, Serialize, Deserialize, Store)]
+#[derive(PartialEq, Eq, Clone, Default, Serialize, Deserialize, Store)]
 pub struct InputState {
     is_down: bool,
 }

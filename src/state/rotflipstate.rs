@@ -17,7 +17,7 @@ impl Reducer<RotFlipState> for RotFlipMsg {
     }
 }
 
-#[derive(PartialEq, Clone, Copy, Serialize, Deserialize, Store, Debug, Default)]
+#[derive(PartialEq, Eq, Clone, Copy, Serialize, Deserialize, Store, Debug, Default)]
 #[store(storage = "local")] // can also be "session"
 pub struct RotFlipState {
     pub rotate: i8,

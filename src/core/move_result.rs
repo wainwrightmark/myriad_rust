@@ -1,7 +1,7 @@
 use super::coordinate::Coordinate;
 use super::solver::FoundWord;
 
-#[derive(PartialEq, Clone, Debug)]
+#[derive(PartialEq, Eq, Clone, Debug)]
 pub enum MoveResult {
     WordComplete {
         word: FoundWord,

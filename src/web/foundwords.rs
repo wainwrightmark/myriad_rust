@@ -21,7 +21,7 @@ pub fn found_words_tab_headers() -> Html {
     html!(<g> { buttons } <MoveTabHeader index={5} {selected_tab_state}/> </g>)
 }
 
-#[derive(PartialEq, Properties)]
+#[derive(PartialEq, Eq, Properties)]
 pub struct MoreTabHeaderProperties {
     index: usize,
     selected_tab_state: Rc<SelectedTabState>,
@@ -135,7 +135,7 @@ pub fn all_found_words() -> Html {
     )
 }
 
-#[derive(PartialEq, Properties)]
+#[derive(PartialEq, Eq, Properties)]
 pub struct FoundWordProperties {
     pub number: i32,
     pub is_found: bool,

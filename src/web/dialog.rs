@@ -11,7 +11,7 @@ pub fn history_dialog() -> Html {
 
     let (history, _) = use_store::<HistoryState>();
 
-    if let Some(_) = state.history_dialog_type {
+    if state.history_dialog_type.is_some() {
         let rows: Vec<Html> = history
             .games
             .iter()
@@ -28,11 +28,11 @@ pub fn history_dialog() -> Html {
       <button {onclick}>{"Ok"}</button>
       </dialog>)
     } else {
-        return html!(<></>);
+        html!(<></>)
     }
 }
 
-#[derive(PartialEq, Properties)]
+#[derive(PartialEq, Eq, Properties)]
 pub struct HistoryRowProperties {
     pub game: Game,
     pub words: usize,
@@ -109,6 +109,6 @@ pub fn congrats_dialog() -> Html {
     </form>
       </dialog>)
     } else {
-        return html!(<></>);
+        html!(<></>)
     }
 }

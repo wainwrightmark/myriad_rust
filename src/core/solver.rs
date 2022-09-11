@@ -5,7 +5,7 @@ use num::ToPrimitive;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashSet, VecDeque};
 
-#[derive(PartialEq, Debug, Copy, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Eq, Debug, Copy, Clone, Serialize, Deserialize)]
 pub struct SolveSettings {
     ///Inclusive minimum
     pub min: i32,
