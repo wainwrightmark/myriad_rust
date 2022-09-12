@@ -6,13 +6,13 @@ use yew::prelude::*;
 use yewdux::prelude::*;
 use yew_router::prelude::*;
 
-#[derive(Clone, Routable, PartialEq)]
-enum Route {
-    #[at("/Cheat")]
-    Cheat,
-    #[at("/")]
-    Home,
-}
+// #[derive(Clone, Routable, PartialEq)]
+// enum Route {
+//     #[at("/Cheat")]
+//     Cheat,
+//     #[at("/")]
+//     Home,
+// }
 
 #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub struct RouteQuery{
@@ -20,25 +20,29 @@ pub struct RouteQuery{
     pub cheat: bool
 }
 
+// #[function_component(App)]
+// pub fn app() -> Html {
+//     html! {
+//         <BrowserRouter>
+//             <Switch<Route> render={myriad_app} />
+//         </BrowserRouter>
+//     }
+// }
+
 #[function_component(App)]
-pub fn app() -> Html {
-    html! {
-        <BrowserRouter>
-            <Switch<Route> render={myriad_app} />
-        </BrowserRouter>
-    }
-}
-
-
-fn myriad_app(route : Route) -> Html {
+pub fn myriad_app(
+    //route : Route
+) -> Html {
     let view_box = format!("0 0 {SVG_WIDTH} {SVG_HEIGHT}");
     let width = format!("{SVG_WIDTH}");
     let height = format!("{SVG_HEIGHT}");
 
-    let cheat = match route {
-        Route::Cheat => true,
-        Route::Home => false,
-    };
+    // let cheat = match route {
+    //     Route::Cheat => true,
+    //     Route::Home => false,
+    // };
+
+    let cheat = false;
     
     let onpointerup = Dispatch::new().apply_callback(move |_: PointerEvent| InputMsg::Up {});
 
