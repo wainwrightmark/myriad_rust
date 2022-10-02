@@ -1,7 +1,7 @@
 use crate::state::prelude::*;
 use crate::web::prelude::*;
-use serde::Serialize;
 use serde::Deserialize;
+use serde::Serialize;
 use yew::prelude::*;
 use yewdux::prelude::*;
 
@@ -14,9 +14,9 @@ use yewdux::prelude::*;
 // }
 
 #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
-pub struct RouteQuery{
+pub struct RouteQuery {
     #[serde(default)]
-    pub cheat: bool
+    pub cheat: bool,
 }
 
 // #[function_component(App)]
@@ -29,8 +29,7 @@ pub struct RouteQuery{
 // }
 
 #[function_component(App)]
-pub fn myriad_app(
-    //route : Route
+pub fn myriad_app(//route : Route
 ) -> Html {
     let view_box = format!("0 0 {SVG_WIDTH} {SVG_HEIGHT}");
     let width = format!("{SVG_WIDTH}");
@@ -42,7 +41,7 @@ pub fn myriad_app(
     // };
 
     let cheat = false;
-    
+
     let onpointerup = Dispatch::new().apply_callback(move |_: PointerEvent| InputMsg::Up {});
 
     html! {

@@ -103,9 +103,8 @@ pub fn found_words_tab_header(
 
 #[derive(PartialEq, Eq, Properties)]
 pub struct AllFoundWordsProperties {
-    pub cheat: bool
+    pub cheat: bool,
 }
-
 
 #[function_component(AllFoundWords)]
 pub fn all_found_words(properties: &AllFoundWordsProperties) -> Html {
@@ -148,7 +147,7 @@ pub struct FoundWordProperties {
     pub is_found: bool,
     pub is_challenge: bool,
     pub selected_tab: usize,
-    pub cheat: bool
+    pub cheat: bool,
 }
 
 #[function_component(FoundWordsWord)]
@@ -159,8 +158,6 @@ pub fn found_words_word(properties: &FoundWordProperties) -> Html {
     let id = format!("found_words_word{}", properties.number);
     let number = properties.number;
     let cheat = properties.cheat;
-
-    
 
     let on_click: Option<Callback<MouseEvent>> = if properties.is_found || cheat {
         Some(Dispatch::new().apply_callback(move |_| FindNumberMsg { number, cheat }))

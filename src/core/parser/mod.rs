@@ -45,7 +45,6 @@ fn parse<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R {
 //     }
 // }
 
-
 fn parse_math_expr<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R {
     //Plus and Minus
     let num1 = parse_unary(input)?;
@@ -63,7 +62,7 @@ fn parse_math_expr<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R {
                     input.next();
                     let other = parse_unary(input)?;
                     current *= other;
-                },
+                }
 
                 Operation::Minus => {
                     input.next();
@@ -90,7 +89,7 @@ fn parse_math_expr<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R {
                     }
 
                     current /= other;
-                },
+                }
             }
         } else {
             return Ok(current);

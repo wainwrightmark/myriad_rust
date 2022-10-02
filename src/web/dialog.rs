@@ -73,8 +73,7 @@ pub fn congrats_dialog() -> Html {
     let onclick = dispatch.reduce_mut_callback(|state| state.congratulations_dialog_type = None);
 
     if let Some(dialog_type) = state.congratulations_dialog_type {
-        let message: &str =
-        match dialog_type {
+        let message: &str = match dialog_type {
             CongratsDialogType::Challenge => {
                 "Well done, you beat challenge mode!\r\nNow try for 💯!"
                 //quote = "I%20beat%20challenge%20mode%20in%20myriad%21";

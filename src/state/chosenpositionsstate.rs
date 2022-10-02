@@ -41,7 +41,7 @@ impl ChosenPositionsState {
 
 pub struct FindNumberMsg {
     pub number: i32,
-    pub cheat: bool
+    pub cheat: bool,
 }
 
 impl Reducer<ChosenPositionsState> for FindNumberMsg {
@@ -55,18 +55,22 @@ impl Reducer<ChosenPositionsState> for FindNumberMsg {
             }
             .into()
         } else {
-            if self.cheat{
+            if self.cheat {
                 //log::debug!("Cheating");
-                if let Some(solution) = fs.game.solve_settings.solve(fs.game.board.clone()).filter(|x|x.result == self.number).next(){
+                if let Some(solution) = fs
+                    .game
+                    .solve_settings
+                    .solve(fs.game.board.clone())
+                    .filter(|x| x.result == self.number)
+                    .next()
+                {
                     log::debug!("Cheating Path found");
                     return ChosenPositionsState {
                         positions: solution.path.clone(),
                     }
-                    .into()
-                    
+                    .into();
                 }
             }
-            
 
             state
         }

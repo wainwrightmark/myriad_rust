@@ -27,11 +27,8 @@ pub struct Game {
 
 pub const CHALLENGE_WORDS: usize = 3;
 
-
-
 impl Game {
-
-    pub fn get_today_date()-> NaiveDate{
+    pub fn get_today_date() -> NaiveDate {
         let js_today = js_sys::Date::new_0();
         let today = NaiveDate::from_ymd(
             js_today.get_full_year().to_i32().unwrap(),
@@ -102,7 +99,6 @@ impl Game {
         solve_settings: SolveSettings,
         board: &Board<GRID_COLUMNS, GRID_ROWS>,
     ) -> Vec<i32> {
-        
         solve_settings
             .solve(board.clone())
             .sorted_by(|a, b| b.path.len().cmp(&a.path.len()))
