@@ -49,5 +49,5 @@ opt-level = 3
 
 
 [dev-dependencies]
-bencher= "0.1"
+criterion= "0.4"
 

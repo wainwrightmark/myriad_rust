@@ -1,14 +1,16 @@
-#[macro_use]
-extern crate bencher;
-
-use bencher::Bencher;
+use criterion::{criterion_group, criterion_main, Criterion};
 use myriad::core::prelude::*;
 
-benchmark_group!(benches, bench_find_solutions);
-benchmark_main!(benches);
+criterion_group!(benches, bench_find_solutions);
+criterion_main!(benches);
 
-fn bench_find_solutions(bench: &mut Bencher) {
-    bench.iter(|| create_boards_and_solve(1));
+fn bench_find_solutions(c: &mut Criterion) {
+    let mut group = c.benchmark_group("solver");
+    group.sample_size(10);
+    group.bench_function("Count puns", |bench| {
+        bench.iter(|| create_boards_and_solve(10))
+    });
+    group.finish()
 }
 
 fn create_boards_and_solve(number_of_boards: usize) {
