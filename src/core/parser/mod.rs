@@ -17,9 +17,38 @@ fn parse<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R {
     parse_math_expr(input)
 }
 
+// fn parse_math_expr<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R {
+//     //Plus and Minus
+//     let num1 = parse_term(input)?;
+
+//     let mut current = num1;
+//     loop {
+//         if let Some(Letter::Operator { operation }) = input.peek() {
+//             match operation {
+//                 Operation::Plus => {
+//                     input.next();
+//                     let other = parse_term(input)?;
+//                     current += other;
+//                 }
+//                 Operation::Times => panic!("Should not encounter times in top level math expr"),
+
+//                 Operation::Minus => {
+//                     input.next();
+//                     let other = parse_term(input)?;
+//                     current -= other;
+//                 }
+//                 Operation::Divide => panic!("Should not encounter divide in top level math expr"),
+//             }
+//         } else {
+//             return Ok(current);
+//         }
+//     }
+// }
+
+
 fn parse_math_expr<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R {
     //Plus and Minus
-    let num1 = parse_term(input)?;
+    let num1 = parse_unary(input)?;
 
     let mut current = num1;
     loop {
@@ -27,50 +56,32 @@ fn parse_math_expr<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R {
             match operation {
                 Operation::Plus => {
                     input.next();
-                    let other = parse_term(input)?;
+                    let other = parse_unary(input)?;
                     current += other;
                 }
-                Operation::Times => panic!("Shoould not encounter times in top level math expr"),
+                Operation::Times => {
+                    input.next();
+                    let other = parse_unary(input)?;
+                    current *= other;
+                },
 
                 Operation::Minus => {
                     input.next();
-                    let other = parse_term(input)?;
+                    let other = parse_unary(input)?;
                     current -= other;
                 }
-                Operation::Divide => panic!("Shoould not encounter divide in top level math expr"),
-            }
-        } else {
-            return Ok(current);
-        }
-    }
-}
-
-fn parse_term<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R {
-    //Times and Divide
-    let num1 = parse_unary(input)?;
-
-    let mut current = num1;
-    loop {
-        if let Some(Letter::Operator { operation }) = input.peek() {
-            match operation {
-                Operation::Plus => return Ok(current),
-                Operation::Times => {
-                    input.next();
-                    let multiplicant = parse_unary(input)?;
-                    current *= multiplicant;
-                }
-                Operation::Minus => return Ok(current),
                 Operation::Divide => {
                     input.next();
-                    let denominator = parse_unary(input)?;
-                    if denominator == 0 {
+                    let other = parse_unary(input)?;
+
+                    if other == 0 {
                         if input.peek().is_some() {
                             return Err(ParseFail::Failure);
                         } else {
                             return Err(ParseFail::PartialSuccess);
                         }
                     }
-                    if current % denominator != 0 {
+                    if current % other != 0 {
                         if input.peek().is_some() {
                             return Err(ParseFail::Failure);
                         } else {
@@ -78,14 +89,56 @@ fn parse_term<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R {
                         }
                     }
 
-                    current /= denominator;
-                }
+                    current /= other;
+                },
             }
         } else {
             return Ok(current);
         }
     }
 }
+
+// fn parse_term<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R {
+//     //Times and Divide
+//     let num1 = parse_unary(input)?;
+
+//     let mut current = num1;
+//     loop {
+//         if let Some(Letter::Operator { operation }) = input.peek() {
+//             match operation {
+//                 Operation::Plus => return Ok(current),
+//                 Operation::Times => {
+//                     input.next();
+//                     let multiplicant = parse_unary(input)?;
+//                     current *= multiplicant;
+//                 }
+//                 Operation::Minus => return Ok(current),
+//                 Operation::Divide => {
+//                     input.next();
+//                     let denominator = parse_unary(input)?;
+//                     if denominator == 0 {
+//                         if input.peek().is_some() {
+//                             return Err(ParseFail::Failure);
+//                         } else {
+//                             return Err(ParseFail::PartialSuccess);
+//                         }
+//                     }
+//                     if current % denominator != 0 {
+//                         if input.peek().is_some() {
+//                             return Err(ParseFail::Failure);
+//                         } else {
+//                             return Err(ParseFail::PartialSuccess);
+//                         }
+//                     }
+
+//                     current /= denominator;
+//                 }
+//             }
+//         } else {
+//             return Ok(current);
+//         }
+//     }
+// }
 
 fn parse_number<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R {
     let mut current = 0u32;
@@ -182,7 +235,7 @@ mod tests {
         t7: ("4/2", Ok(2)),
         t8: ("5/2", Err(PartialSuccess)),
         t9: ("5/0", Err(PartialSuccess)),
-        t10: ("18-2*3", Ok(12)),
+        t10: ("18-2*3", Ok(48)), //would be 12 with BODMAS
         t11: ("18*-1", Ok(-18)),
         t12: ("-2+3", Ok(1)),
         t13: ("18*", Err(PartialSuccess)),
@@ -210,5 +263,6 @@ mod tests {
         t34:("12/", Err(PartialSuccess)),
         t35:("12/5", Err(PartialSuccess)), //This is legal as maybe the next digit makes division possible
         t36:("12/5+", Err(Failure)), //This is not legal as it is impossible for the division to work
+        y37:("12+8/4", Ok(5)), //14 with BODMAS
     }
 }

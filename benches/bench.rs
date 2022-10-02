@@ -8,7 +8,7 @@ benchmark_group!(benches, bench_find_solutions);
 benchmark_main!(benches);
 
 fn bench_find_solutions(bench: &mut Bencher) {
-    bench.iter(|| create_boards_and_solve(10));
+    bench.iter(|| create_boards_and_solve(1));
 }
 
 fn create_boards_and_solve(number_of_boards: usize) {
