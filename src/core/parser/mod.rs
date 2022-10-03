@@ -17,34 +17,6 @@ fn parse<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R {
     parse_math_expr(input)
 }
 
-// fn parse_math_expr<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R {
-//     //Plus and Minus
-//     let num1 = parse_term(input)?;
-
-//     let mut current = num1;
-//     loop {
-//         if let Some(Letter::Operator { operation }) = input.peek() {
-//             match operation {
-//                 Operation::Plus => {
-//                     input.next();
-//                     let other = parse_term(input)?;
-//                     current += other;
-//                 }
-//                 Operation::Times => panic!("Should not encounter times in top level math expr"),
-
-//                 Operation::Minus => {
-//                     input.next();
-//                     let other = parse_term(input)?;
-//                     current -= other;
-//                 }
-//                 Operation::Divide => panic!("Should not encounter divide in top level math expr"),
-//             }
-//         } else {
-//             return Ok(current);
-//         }
-//     }
-// }
-
 fn parse_math_expr<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R {
     //Plus and Minus
     let num1 = parse_unary(input)?;
@@ -96,48 +68,6 @@ fn parse_math_expr<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R {
         }
     }
 }
-
-// fn parse_term<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R {
-//     //Times and Divide
-//     let num1 = parse_unary(input)?;
-
-//     let mut current = num1;
-//     loop {
-//         if let Some(Letter::Operator { operation }) = input.peek() {
-//             match operation {
-//                 Operation::Plus => return Ok(current),
-//                 Operation::Times => {
-//                     input.next();
-//                     let multiplicant = parse_unary(input)?;
-//                     current *= multiplicant;
-//                 }
-//                 Operation::Minus => return Ok(current),
-//                 Operation::Divide => {
-//                     input.next();
-//                     let denominator = parse_unary(input)?;
-//                     if denominator == 0 {
-//                         if input.peek().is_some() {
-//                             return Err(ParseFail::Failure);
-//                         } else {
-//                             return Err(ParseFail::PartialSuccess);
-//                         }
-//                     }
-//                     if current % denominator != 0 {
-//                         if input.peek().is_some() {
-//                             return Err(ParseFail::Failure);
-//                         } else {
-//                             return Err(ParseFail::PartialSuccess);
-//                         }
-//                     }
-
-//                     current /= denominator;
-//                 }
-//             }
-//         } else {
-//             return Ok(current);
-//         }
-//     }
-// }
 
 fn parse_number<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R {
     let mut current = 0u32;
