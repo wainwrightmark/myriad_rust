@@ -1,7 +1,4 @@
 use std::iter::Peekable;
-
-use num::ToPrimitive;
-
 use crate::core::prelude::Letter;
 use crate::core::prelude::Operation;
 
@@ -70,14 +67,15 @@ fn parse_math_expr<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R {
 }
 
 fn parse_number<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R {
-    let mut current = 0u32;
+    let mut current = 0i32;
     while let Some(Letter::Number { value }) = input.peek() {
-        current *= 10;
-        current += value;
+        current *= 10; //Need to use i32 here to prevent overflow
+        let v: i32 = value.into();
+        current += v;
         input.next();
     }
 
-    Ok(current.to_i32().unwrap())
+    Ok(current)
 }
 
 fn parse_unary<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R {
@@ -163,7 +161,7 @@ mod tests {
         t6: ("4*5+6", Ok(26)),
         t7: ("4/2", Ok(2)),
         t8: ("5/2", Err(PartialSuccess)),
-        t9: ("5/0", Err(PartialSuccess)),
+        //t9: ("5/0", Err(PartialSuccess)),
         t10: ("18-2*3", Ok(48)), //would be 12 with BODMAS
         t11: ("18*-1", Ok(-18)),
         t12: ("-2+3", Ok(1)),

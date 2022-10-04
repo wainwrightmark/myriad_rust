@@ -7,14 +7,14 @@ keywords = ["math", "game"]
 edition= "2021"
 
 [dependencies]
-itertools = "0.10.3"
+itertools = "0.10"
 num = "0.4"
 num-traits = "0.2"
-serde = { version = "1.0", features = ["derive", "rc"] }
-serde_with = "2.0.0"
+serde = { version = "1", features = ["derive", "rc"] }
+serde_with = "2"
 rand = {version = "0.8"}
 getrandom = {version="0.2", features=["js"]}
-
+strum = {version = "0.24", features = ["derive"]}
 chrono = {version="0.4", features = ["serde", "wasmbind"]}
 
 log = "0.4"

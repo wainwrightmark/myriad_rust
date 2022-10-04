@@ -19,7 +19,7 @@ fn create_boards_and_solve(number_of_boards: usize) {
     let board_create_settings = BoardCreateSettings {
         branching_factor: 3,
     };
-    let seed: u64 = rand::random();
+    let seed: u64 = 1;
 
     let rng = rand::SeedableRng::seed_from_u64(seed);
 

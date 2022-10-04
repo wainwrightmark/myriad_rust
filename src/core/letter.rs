@@ -1,15 +1,19 @@
 use serde::{Deserialize, Serialize};
+use strum::FromRepr;
+use strum::{EnumIter, IntoEnumIterator};
+
 
 #[derive(PartialEq, Debug, Eq, Copy, Clone, Serialize, Deserialize, Hash)]
+
 pub enum Letter {
-    Number { value: u32 },
+    Number { value: Digit },
     Operator { operation: Operation },
     Blank,
 }
 
 impl Letter {
     pub fn try_create(rune: char) -> Option<Letter> {
-        let d = rune.to_digit(10).map(|x| Letter::Number { value: x });
+        let d = rune.to_digit(10).and_then(|x| Digit::from_repr(x as usize)) .map(|value| Letter::Number { value});
         if d != None {
             return d;
         }
@@ -36,7 +40,7 @@ impl Letter {
     }
 
     pub fn legal_letters() -> impl Iterator<Item = Letter> {
-        let nums = (1..10).map(|x| Letter::Number { value: x });
+        let nums = Digit::iter().map(|value| Letter::Number { value});
         let ops = [
             Letter::Operator {
                 operation: Operation::Plus,
@@ -70,9 +74,35 @@ impl std::fmt::Display for Letter {
     }
 }
 
+#[derive(PartialEq, Debug, Eq, Copy, Clone, Serialize, Deserialize, Hash, FromRepr, EnumIter)]
+pub enum Digit{ //TODO Zero
+    One = 1,
+    Two = 2,
+    Three = 3,
+    Four = 4,
+    Five = 5,
+    Six = 6,
+    Seven = 7,
+    Eight = 8,
+    Nine = 9
+}
+
+impl Into<i32> for &Digit{
+    fn into(self) -> i32 {
+        (*self as u8) as i32
+    }
+}
+
+impl std::fmt::Display for Digit {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let r = *self as u8;
+        write!(f, "{}", r)
+    }
+}
+
 #[derive(PartialEq, Debug, Eq, Copy, Clone, Serialize, Deserialize, Hash)]
 pub enum Operation {
-    Plus,
+    Plus = 10,
     Times,
     Minus,
     Divide,
