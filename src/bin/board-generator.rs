@@ -1,10 +1,7 @@
+use clap::Parser;
 use itertools::Itertools;
 use myriad::core::prelude::*;
-use clap::Parser;
-use std::{
-    fs
-};
-
+use std::fs;
 
 /// Generates Myriad boards
 #[derive(Parser, Debug)]
@@ -30,10 +27,10 @@ pub fn main() {
 
     let mut boards = board_create_settings
         .create_boards::<3, 3>(solve_settings, rng)
-        .take(args.take).map(|x|x.to_single_string()) ;
+        .take(args.take)
+        .map(|x| x.to_single_string());
 
     let text = boards.join("\r\n");
-    
 
     fs::write("boards.txt", text).expect("Unable to write file");
 }

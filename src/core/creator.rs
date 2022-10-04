@@ -41,7 +41,6 @@ impl BoardCreateSettings {
     }
 }
 
-
 struct CreatorIterator<const C: usize, const R: usize> {
     create_settings: BoardCreateSettings,
     solve_settings: SolveSettings,
@@ -70,7 +69,7 @@ impl<const C: usize, const R: usize> CreatorIterator<C, R> {
         });
 
         let letter_positions = (0..board_size)
-            .cartesian_product(ClassicGameMode{}.legal_letters().into_iter().cloned())
+            .cartesian_product(ClassicGameMode {}.legal_letters().into_iter().cloned())
             .collect_vec();
 
         Self {

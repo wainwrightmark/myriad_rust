@@ -60,7 +60,8 @@ impl Reducer<ChosenPositionsState> for FindNumberMsg {
                 if let Some(solution) = fs
                     .game
                     .solve_settings
-                    .solve(fs.game.board.clone()).find(|x| x.result == self.number)
+                    .solve(fs.game.board.clone())
+                    .find(|x| x.result == self.number)
                 {
                     log::debug!("Cheating Path found");
                     return ChosenPositionsState {

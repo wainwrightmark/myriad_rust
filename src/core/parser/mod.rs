@@ -1,5 +1,5 @@
-use std::iter::Peekable;
 use crate::core::prelude::Rune;
+use std::iter::Peekable;
 
 use super::rune::RuneType;
 
@@ -21,7 +21,7 @@ fn parse_math_expr<J: Iterator<Item = Rune>>(input: &mut Peekable<J>) -> R {
 
     let mut current = num1;
     loop {
-        if let Some(RuneType::Operator) = input.peek().map(|x| -> RuneType {RuneType::from(*x)}) {
+        if let Some(RuneType::Operator) = input.peek().map(|x| -> RuneType { RuneType::from(*x) }) {
             match input.peek().unwrap() {
                 Rune::Plus => {
                     input.next();
@@ -59,8 +59,8 @@ fn parse_math_expr<J: Iterator<Item = Rune>>(input: &mut Peekable<J>) -> R {
                     }
 
                     current /= other;
-                },
-                _=> unreachable!()
+                }
+                _ => unreachable!(),
             }
         } else {
             return Ok(current);
@@ -70,9 +70,12 @@ fn parse_math_expr<J: Iterator<Item = Rune>>(input: &mut Peekable<J>) -> R {
 
 fn parse_number<J: Iterator<Item = Rune>>(input: &mut Peekable<J>) -> R {
     let mut current = 0i32;
-    while let Some(v) = input.peek().and_then(|x| -> Option<i32> {x.try_into().ok()}) {
+    while let Some(v) = input
+        .peek()
+        .and_then(|x| -> Option<i32> { x.try_into().ok() })
+    {
         current *= 10; //Need to use i32 here to prevent overflow
-        
+
         current += v;
         input.next();
     }
@@ -84,22 +87,20 @@ fn parse_unary<J: Iterator<Item = Rune>>(input: &mut Peekable<J>) -> R {
     let mut negative = false;
     loop {
         if let Some(l) = input.peek() {
-
             match RuneType::from(*l) {
-                RuneType::Operator =>{
-                    if l == &Rune::Minus{
+                RuneType::Operator => {
+                    if l == &Rune::Minus {
                         negative = !negative;
                         input.next();
-                    }
-                    else if l == &Rune::Plus{
+                    } else if l == &Rune::Plus {
                         input.next();
-                    }
-                    else{
+                    } else {
                         return Err(ParseFail::Failure);
                     }
-                    
                 }
-                RuneType::Digit => return parse_number(input).map(|i| if negative { -i } else { i }),
+                RuneType::Digit => {
+                    return parse_number(input).map(|i| if negative { -i } else { i })
+                }
                 RuneType::Blank => return Err(ParseFail::Failure),
             }
         } else {
@@ -111,8 +112,7 @@ fn parse_unary<J: Iterator<Item = Rune>>(input: &mut Peekable<J>) -> R {
 pub(crate) fn parse_and_evaluate<J: Iterator<Item = Rune>>(
     input: &mut Peekable<J>,
 ) -> Result<i32, ParseFail> {
-    if let Some(Rune::Plus) = input.peek()
-    {
+    if let Some(Rune::Plus) = input.peek() {
         return Err(ParseFail::Failure);
     }
 

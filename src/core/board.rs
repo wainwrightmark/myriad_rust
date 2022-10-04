@@ -6,7 +6,6 @@ use itertools::*;
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
-
 #[serde_as]
 #[derive(PartialEq, Debug, Eq, Hash, Clone, Serialize, Deserialize)]
 pub struct Board<const COLUMNS: usize, const ROWS: usize> {
@@ -161,11 +160,10 @@ impl<const C: usize, const R: usize> Board<C, R> {
         let mut operators = 0;
         let mut blanks = 0;
         for rune in self.letters.iter().flatten() {
-
             let rt: RuneType = RuneType::from(*rune);
 
             match rt {
-                RuneType::Digit  => nums += 1,
+                RuneType::Digit => nums += 1,
                 RuneType::Operator => operators += 1,
                 RuneType::Blank => blanks += 1,
             }
@@ -175,7 +173,7 @@ impl<const C: usize, const R: usize> Board<C, R> {
         strings.push(operators.to_string());
         strings.push(blanks.to_string());
 
-        let legal_letters = ClassicGameMode{}.legal_letters();
+        let legal_letters = ClassicGameMode {}.legal_letters();
 
         for l in legal_letters {
             let c = self.letters.iter().flatten().filter(|&x| x == l).count();
