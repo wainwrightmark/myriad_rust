@@ -6,11 +6,12 @@ use itertools::*;
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
+
 #[serde_as]
 #[derive(PartialEq, Debug, Eq, Hash, Clone, Serialize, Deserialize)]
 pub struct Board<const COLUMNS: usize, const ROWS: usize> {
     #[serde_as(as = "[[_; COLUMNS]; ROWS]")]
-    pub letters: [[Letter; COLUMNS]; ROWS],
+    pub letters: [[Rune; COLUMNS]; ROWS],
 }
 
 impl<const C: usize, const R: usize> std::fmt::Display for Board<C, R> {
@@ -30,23 +31,23 @@ impl<const C: usize, const R: usize> Board<C, R> {
     }
 
     pub fn try_create(letters: &str) -> Option<Board<C, R>> {
-        let r: Option<Vec<Letter>> = letters.chars().map(Letter::try_create).collect();
+        let r: Result<Vec<Rune>, _> = letters.chars().map(Rune::try_from).collect();
 
         match r {
-            None => None,
-            Some(vector) => {
+            Err(_) => None,
+            Ok(vector) => {
                 //let len = vector.len();
 
-                let letters: [[Letter; C]; R] = vector
+                let letters: [[Rune; C]; R] = vector
                     .into_iter()
-                    .pad_using(R * C, |_| Letter::Blank)
+                    .pad_using(R * C, |_| Rune::Blank)
                     .chunks(R)
                     .into_iter()
                     .map(|x| {
-                        let a: [Letter; C] = x.collect::<Vec<Letter>>().try_into().unwrap();
+                        let a: [Rune; C] = x.collect::<Vec<Rune>>().try_into().unwrap();
                         a
                     })
-                    .collect::<Vec<[Letter; C]>>()
+                    .collect::<Vec<[Rune; C]>>()
                     .try_into()
                     .unwrap();
 
@@ -61,13 +62,13 @@ impl<const C: usize, const R: usize> Board<C, R> {
             .map(|c| {
                 let letter = &self.get_letter_at_coordinate(c);
 
-                letter.word_text()
+                letter.to_string()
             })
             .join("");
         word
     }
 
-    pub fn with_set_letter(&self, letter: Letter, index: usize) -> Board<C, R> {
+    pub fn with_set_letter(&self, letter: Rune, index: usize) -> Board<C, R> {
         let r = index % R;
         let c = index / R;
 
@@ -98,11 +99,11 @@ impl<const C: usize, const R: usize> Board<C, R> {
         options.next().unwrap()
     }
 
-    pub fn get_letter_at_coordinate(&self, coordinate: &Coordinate) -> Letter {
+    pub fn get_letter_at_coordinate(&self, coordinate: &Coordinate) -> Rune {
         self.letters[coordinate.column][coordinate.row]
     }
 
-    pub fn get_letter_at_index(&self, index: usize) -> Letter {
+    pub fn get_letter_at_index(&self, index: usize) -> Rune {
         self.letters[index % R][index / R]
     }
 
@@ -159,11 +160,14 @@ impl<const C: usize, const R: usize> Board<C, R> {
         let mut nums = 0;
         let mut operators = 0;
         let mut blanks = 0;
-        for letter in self.letters.iter().flatten() {
-            match letter {
-                Letter::Number { value: _ } => nums += 1,
-                Letter::Operator { operation: _ } => operators += 1,
-                Letter::Blank => blanks += 1,
+        for rune in self.letters.iter().flatten() {
+
+            let rt: RuneType = RuneType::from(*rune);
+
+            match rt {
+                RuneType::Digit  => nums += 1,
+                RuneType::Operator => operators += 1,
+                RuneType::Blank => blanks += 1,
             }
         }
 
@@ -171,8 +175,10 @@ impl<const C: usize, const R: usize> Board<C, R> {
         strings.push(operators.to_string());
         strings.push(blanks.to_string());
 
-        for l in Letter::legal_letters() {
-            let c = self.letters.iter().flatten().filter(|&x| x == &l).count();
+        let legal_letters = ClassicGameMode{}.legal_letters();
+
+        for l in legal_letters {
+            let c = self.letters.iter().flatten().filter(|&x| x == l).count();
             strings.push(c.to_string());
         }
 

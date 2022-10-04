@@ -62,10 +62,10 @@ fn circle(properties: &CircleProperties) -> Html {
     let cx = location.0;
     let cy = location.1;
 
-    let text = if matches!(letter, Letter::Blank) {
+    let text = if matches!(letter, Rune::Blank) {
         "".to_string()
     } else {
-        letter.word_text()
+        letter.to_string()
     };
     let key = format!("{coordinate}_key");
     let circle_id = format!("{coordinate}_bigCircle");

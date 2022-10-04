@@ -1,6 +1,7 @@
 use std::iter::Peekable;
-use crate::core::prelude::Letter;
-use crate::core::prelude::Operation;
+use crate::core::prelude::Rune;
+
+use super::rune::RuneType;
 
 type R = Result<i32, ParseFail>;
 
@@ -10,35 +11,35 @@ pub enum ParseFail {
     Failure,
 }
 
-fn parse<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R {
+fn parse<J: Iterator<Item = Rune>>(input: &mut Peekable<J>) -> R {
     parse_math_expr(input)
 }
 
-fn parse_math_expr<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R {
+fn parse_math_expr<J: Iterator<Item = Rune>>(input: &mut Peekable<J>) -> R {
     //Plus and Minus
     let num1 = parse_unary(input)?;
 
     let mut current = num1;
     loop {
-        if let Some(Letter::Operator { operation }) = input.peek() {
-            match operation {
-                Operation::Plus => {
+        if let Some(RuneType::Operator) = input.peek().map(|x| -> RuneType {RuneType::from(*x)}) {
+            match input.peek().unwrap() {
+                Rune::Plus => {
                     input.next();
                     let other = parse_unary(input)?;
                     current += other;
                 }
-                Operation::Times => {
+                Rune::Times => {
                     input.next();
                     let other = parse_unary(input)?;
                     current *= other;
                 }
 
-                Operation::Minus => {
+                Rune::Minus => {
                     input.next();
                     let other = parse_unary(input)?;
                     current -= other;
                 }
-                Operation::Divide => {
+                Rune::Divide => {
                     input.next();
                     let other = parse_unary(input)?;
 
@@ -58,7 +59,8 @@ fn parse_math_expr<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R {
                     }
 
                     current /= other;
-                }
+                },
+                _=> unreachable!()
             }
         } else {
             return Ok(current);
@@ -66,11 +68,11 @@ fn parse_math_expr<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R {
     }
 }
 
-fn parse_number<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R {
+fn parse_number<J: Iterator<Item = Rune>>(input: &mut Peekable<J>) -> R {
     let mut current = 0i32;
-    while let Some(Letter::Number { value }) = input.peek() {
+    while let Some(v) = input.peek().and_then(|x| -> Option<i32> {x.try_into().ok()}) {
         current *= 10; //Need to use i32 here to prevent overflow
-        let v: i32 = value.into();
+        
         current += v;
         input.next();
     }
@@ -78,26 +80,27 @@ fn parse_number<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R {
     Ok(current)
 }
 
-fn parse_unary<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R {
+fn parse_unary<J: Iterator<Item = Rune>>(input: &mut Peekable<J>) -> R {
     let mut negative = false;
     loop {
         if let Some(l) = input.peek() {
-            match l {
-                Letter::Number { value: _ } => {
-                    return parse_number(input).map(|i| if negative { -i } else { i })
-                }
-                Letter::Operator { operation } => match operation {
-                    Operation::Plus => {
-                        input.next();
-                    }
-                    Operation::Times => return Err(ParseFail::Failure),
-                    Operation::Minus => {
+
+            match RuneType::from(*l) {
+                RuneType::Operator =>{
+                    if l == &Rune::Minus{
                         negative = !negative;
                         input.next();
                     }
-                    Operation::Divide => return Err(ParseFail::Failure),
-                },
-                Letter::Blank => return Err(ParseFail::Failure),
+                    else if l == &Rune::Plus{
+                        input.next();
+                    }
+                    else{
+                        return Err(ParseFail::Failure);
+                    }
+                    
+                }
+                RuneType::Digit => return parse_number(input).map(|i| if negative { -i } else { i }),
+                RuneType::Blank => return Err(ParseFail::Failure),
             }
         } else {
             return Err(ParseFail::PartialSuccess);
@@ -105,12 +108,10 @@ fn parse_unary<J: Iterator<Item = Letter>>(input: &mut Peekable<J>) -> R {
     }
 }
 
-pub(crate) fn parse_and_evaluate<J: Iterator<Item = Letter>>(
+pub(crate) fn parse_and_evaluate<J: Iterator<Item = Rune>>(
     input: &mut Peekable<J>,
 ) -> Result<i32, ParseFail> {
-    if let Some(Letter::Operator {
-        operation: Operation::Plus,
-    }) = input.peek()
+    if let Some(Rune::Plus) = input.peek()
     {
         return Err(ParseFail::Failure);
     }
@@ -118,7 +119,7 @@ pub(crate) fn parse_and_evaluate<J: Iterator<Item = Letter>>(
     match parse(input) {
         Ok(expr) => match input.peek() {
             Some(l) => {
-                if l == &Letter::Blank {
+                if l == &Rune::Blank {
                     Err(ParseFail::Failure)
                 } else {
                     Err(ParseFail::PartialSuccess)
@@ -142,9 +143,9 @@ mod tests {
         fn $name() {
             let (input, expected) = $value;
 
-            let letters: Option<Vec<Letter>> = input.chars().map(Letter::try_create).collect();
+            let runes: Result<Vec<Rune>, _> = input.chars().map(Rune::try_from).collect();
 
-            assert_eq!(expected, parse_and_evaluate(&mut letters.unwrap().into_iter().peekable()), "'{}'", input);
+            assert_eq!(expected, parse_and_evaluate(&mut runes.unwrap().into_iter().peekable()), "'{}'", input);
         }
     )*
     }

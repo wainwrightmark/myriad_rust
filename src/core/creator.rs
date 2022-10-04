@@ -47,7 +47,7 @@ struct CreatorIterator<const C: usize, const R: usize> {
     solve_settings: SolveSettings,
     desired_solutions: usize,
     rng: StdRng,
-    letter_positions: Vec<(usize, Letter)>,
+    letter_positions: Vec<(usize, Rune)>,
 
     created_boards: HashSet<String>,
     heap: BinaryHeap<SolvedBoard<C, R>>,
@@ -70,7 +70,7 @@ impl<const C: usize, const R: usize> CreatorIterator<C, R> {
         });
 
         let letter_positions = (0..board_size)
-            .cartesian_product(Letter::legal_letters().collect_vec())
+            .cartesian_product(ClassicGameMode{}.legal_letters().into_iter().cloned())
             .collect_vec();
 
         Self {
@@ -125,7 +125,7 @@ fn mutate_board<const C: usize, const R: usize>(
     board: &SolvedBoard<C, R>,
     solve_settings: SolveSettings,
     created_boards: &mut HashSet<String>,
-    letter: Letter,
+    letter: Rune,
     index: usize,
 ) -> Option<SolvedBoard<C, R>> {
     let current_letter = board.board.get_letter_at_index(index);
