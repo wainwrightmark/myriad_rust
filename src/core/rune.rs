@@ -35,8 +35,11 @@ pub enum RuneType {
     EnumIter,
     strum::Display,
     strum::AsRefStr,
+    Default,
+    PartialOrd, Ord
 )]
 pub enum Rune {
+    #[default]
     #[strum(serialize = "0")]
     Zero = 0,
     #[strum(serialize = "1")]
@@ -70,6 +73,8 @@ pub enum Rune {
     #[strum(serialize = "_")]
     Blank = 255,
 }
+
+static_assertions::assert_eq_size!(Rune, u8);
 
 impl TryFrom<usize> for Rune {
     type Error = ();

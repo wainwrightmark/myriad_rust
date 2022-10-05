@@ -7,11 +7,22 @@ use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
 #[serde_as]
-#[derive(PartialEq, Debug, Eq, Hash, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Debug, Eq, Hash, Clone, Serialize, Deserialize, PartialOrd, Ord)]
 pub struct Board<const COLUMNS: usize, const ROWS: usize> {
     #[serde_as(as = "[[_; COLUMNS]; ROWS]")]
-    pub letters: [[Rune; COLUMNS]; ROWS],
+    pub runes: [[Rune; COLUMNS]; ROWS],
 }
+
+impl Default for Board<3, 3> {
+    fn default() -> Self {
+        use Rune::*;
+        Self {
+            runes: [[Zero, Zero, Zero], [Zero, Zero, Zero], [Zero, Zero, Zero]],
+        }
+    }
+}
+
+static_assertions::assert_eq_size!(Board<3,3>, [u8;9]);
 
 impl<const C: usize, const R: usize> std::fmt::Display for Board<C, R> {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
@@ -50,7 +61,7 @@ impl<const C: usize, const R: usize> Board<C, R> {
                     .try_into()
                     .unwrap();
 
-                Some(Board { letters })
+                Some(Board { runes: letters })
             }
         }
     }
@@ -71,17 +82,15 @@ impl<const C: usize, const R: usize> Board<C, R> {
         let r = index % R;
         let c = index / R;
 
-        let mut new_letters = self.letters;
+        let mut new_letters = self.runes;
         new_letters[r][c] = letter;
 
-        Board {
-            letters: new_letters,
-        }
+        Board { runes: new_letters }
     }
 
     pub fn get_unique_string(&self) -> String {
         if R != C {
-            return format!("{}_{}", C, self.letters.iter().flatten().join(""));
+            return format!("{}_{}", C, self.runes.iter().flatten().join(""));
         }
 
         let mut options = (0..4)
@@ -98,16 +107,16 @@ impl<const C: usize, const R: usize> Board<C, R> {
         options.next().unwrap()
     }
 
-    pub fn get_letter_at_coordinate(&self, coordinate: &Coordinate) -> Rune {
-        self.letters[coordinate.column][coordinate.row]
+    pub const fn get_letter_at_coordinate(&self, coordinate: &Coordinate) -> Rune {
+        self.runes[coordinate.column][coordinate.row]
     }
 
-    pub fn get_letter_at_index(&self, index: usize) -> Rune {
-        self.letters[index % R][index / R]
+    pub const fn get_letter_at_index(&self, index: usize) -> Rune {
+        self.runes[index % R][index / R]
     }
 
     pub fn to_multiline_string(&self) -> String {
-        let mut s = String::with_capacity(self.letters.len() + R);
+        let mut s = String::with_capacity(self.runes.len() + R);
         for column in 0..C {
             if column != 0 {
                 s.push_str("\r\n")
@@ -124,7 +133,7 @@ impl<const C: usize, const R: usize> Board<C, R> {
     }
 
     pub fn to_single_string(&self) -> String {
-        let mut s = String::with_capacity(self.letters.len() + R as usize);
+        let mut s = String::with_capacity(self.runes.len() + R as usize);
         for column in 0..C {
             for row in 0..R {
                 let coordinate = Coordinate { row, column };
@@ -135,6 +144,57 @@ impl<const C: usize, const R: usize> Board<C, R> {
         }
 
         s
+    }
+
+    pub fn flip(&mut self) {
+        for row in 0..(R / 2) {
+            for column in 0..C {
+                let o_row = R - (1 + row);
+                let swap = self.runes[row][column];
+                self.runes[row][column] = self.runes[o_row][column];
+                self.runes[o_row][column] = swap;
+            }
+        }
+    }
+
+    pub fn rotate(&mut self) {
+        if R != C {
+            panic!("Cannot rotate uneven board");
+        }
+        for row in 0..=(R / 2) {
+            for column in row..=(C / 2) {
+                let o_row = R - (1 + row);
+                let o_column = C - (1 + column);
+                if row != o_row || column != o_column {
+                    let swap = self.runes[row][column];
+                    self.runes[row][column] = self.runes[o_row][column];
+                    self.runes[o_row][column] = self.runes[o_row][o_column];
+                    self.runes[o_row][o_column] = self.runes[row][o_column];
+                    self.runes[row][o_column] = swap;
+                }
+            }
+        }
+    }
+
+    pub fn is_canonical_form(&mut self) -> bool {
+        let mut o = self.clone();
+        for _ in 0..3 {
+            o.flip();
+            if self > &mut o {
+                return false;
+            }
+            o.rotate();
+            if self > &mut o {
+                return false;
+            }
+        }
+        o.flip();
+        if self > &mut o {
+            return false;
+        }
+        //rotating again will return back to self
+
+        return true;
     }
 
     pub fn get_board_data(&self) -> String {
@@ -159,7 +219,7 @@ impl<const C: usize, const R: usize> Board<C, R> {
         let mut nums = 0;
         let mut operators = 0;
         let mut blanks = 0;
-        for rune in self.letters.iter().flatten() {
+        for rune in self.runes.iter().flatten() {
             let rt: RuneType = RuneType::from(*rune);
 
             match rt {
@@ -176,7 +236,7 @@ impl<const C: usize, const R: usize> Board<C, R> {
         let legal_letters = ClassicGameMode {}.legal_letters();
 
         for l in legal_letters {
-            let c = self.letters.iter().flatten().filter(|&x| x == l).count();
+            let c = self.runes.iter().flatten().filter(|&x| x == l).count();
             strings.push(c.to_string());
         }
 

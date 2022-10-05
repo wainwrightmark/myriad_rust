@@ -89,8 +89,10 @@ fn test_create_boards() {
 #[test]
 pub fn test_type_sizes() {
     let letter = std::mem::size_of::<Rune>();
+    let coordinate = std::mem::size_of::<Coordinate>();
     let board = std::mem::size_of::<Board<3, 3>>();
 
     println!("Size of letter: {letter}");
+    println!("Size of coordinate: {coordinate}");
     println!("Size of board: {board}");
 }

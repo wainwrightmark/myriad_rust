@@ -29,7 +29,9 @@ wasm-bindgen-futures = "0.4"
 wasm-bindgen= { version = "0.2", features = ["serde"] }
 instant = { version = "0.1", features = [ "wasm-bindgen", "inaccurate" ] }
 js-sys = "0.3"
-clap = { version = "4", features = ["derive"], optional =true }
+clap = { version = "4", features = ["derive"], optional =false }
+
+static_assertions = "1.1.0"
 
 [dependencies.web-sys]
 version = "0.3"
@@ -52,8 +54,8 @@ opt-level = 3
 
 [dev-dependencies]
 criterion= "0.4"
-
+ntest = "0.8"
 
 [[bin]]
 name="board-generator"
-required-features = ["clap"]     # <--
+#required-features = ["clap"]

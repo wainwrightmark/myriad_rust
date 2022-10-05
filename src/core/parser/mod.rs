@@ -135,6 +135,8 @@ pub(crate) fn parse_and_evaluate<J: Iterator<Item = Rune>>(
 mod tests {
     use crate::core::parser::ParseFail::*;
     use crate::core::parser::*;
+    use ntest::test_case;
+    
 
     macro_rules! parse_tests {
     ($($name:ident: $value:expr,)*) => {
