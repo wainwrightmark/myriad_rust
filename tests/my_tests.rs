@@ -1,39 +1,29 @@
 #[cfg(test)]
 use itertools::Itertools;
 use myriad::core::prelude::*;
+use ntest::test_case;
 
-macro_rules! board_tests {
-    ($($name:ident: $value:expr,)*) => {
-        $(
-            #[test]
-            fn $name() {
-                test_board($value, 100);
-            }
-        )*
-        }
+#[test_case("98_-7+524")]
+//#[test_case("7-6574+2/")]
+#[test_case("-+718325+")]
+#[test_case("7+58-2675")]
+//#[test_case("34+*2651+")]
+#[test_case("813+*-372")]
+#[test_case("6+98161-3")]
+#[test_case("-9+1236+5")]
+#[test_case("+-389-425")]
+//#[test_case("/3+421+58")]
+//#[test_case("6973-*718")]
+#[test_case("6258+-73-")]
+#[test_case("455+695-3")]
+#[test_case("1+536-249")]
+#[test_case("4+726-*49")]
+//#[test_case("*6++47321")]
+#[test_case("129657-+3")]
+#[test_case("/97-1+463")]
+fn test_board_100(letters: &str) {
+    test_board(letters, 100)
 }
-
-board_tests!(
- t1: "98_-7+524",
- //t2: "7-6574+2/",
- t3: "-+718325+",
- t4: "7+58-2675",
- //t5: "34+*2651+",
- t6: "813+*-372",
- t7: "-+718325+",
- t8: "6+98161-3",
- t9: "-9+1236+5",
-t10: "+-389-425",
-//t11: "/3+421+58",
-//t12: "6973-*718",
-t13: "6258+-73-",
-t14: "455+695-3",
-t15: "1+536-249",
-t16: "4+726-*49",
-//t17: "*6++47321",
-t18:"129657-+3",
-t19:"/97-1+463",
-);
 
 fn test_board(letters: &str, expected_count: usize) {
     let board = Board::<3, 3>::try_create(letters).expect("board should be created");

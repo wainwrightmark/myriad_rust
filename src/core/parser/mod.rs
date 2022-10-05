@@ -136,63 +136,64 @@ mod tests {
     use crate::core::parser::ParseFail::*;
     use crate::core::parser::*;
     use ntest::test_case;
-    
 
-    macro_rules! parse_tests {
-    ($($name:ident: $value:expr,)*) => {
-    $(
-        #[test]
-        fn $name() {
-            let (input, expected) = $value;
-
-            let runes: Result<Vec<Rune>, _> = input.chars().map(Rune::try_from).collect();
-
-            assert_eq!(expected, parse_and_evaluate(&mut runes.unwrap().into_iter().peekable()), "'{}'", input);
-        }
-    )*
+    #[test_case("42", 42)]
+    #[test_case("12+34", 46)]
+    #[test_case("4*5", 20)]
+    #[test_case("4*5+6", 26)]
+    #[test_case("4/2", 2)]
+    #[test_case("-2+3", 1)]
+    #[test_case("--1", 1)]
+    #[test_case("8-+7", 1)]
+    fn test_parse_success(input: &str, expected: i32) {
+        let result = run(input);
+        assert_eq!(result, Ok(expected))
     }
-}
 
-    parse_tests! {
-        t0: ("", Err(PartialSuccess)),
-        t1: ("12", Ok(12)),
+    #[test_case("12-34+15-9", 16)]
+    #[test_case("18*-1", 18)]
+    #[test_case("1*-2", 2)]
+    #[test_case("12-34", 22)]
+    fn test_parse_success_negative(input: &str, expected: i32) {
+        let result = run(input);
+        assert_eq!(result, Ok(-expected))
+    }
 
-        t2: ("12+34", Ok(46)),
-        t3: ("12-34", Ok(-22)),
-        t4: ("12-34+15-9", Ok(-16)),
-        t5: ("4*5", Ok(20)),
-        t6: ("4*5+6", Ok(26)),
-        t7: ("4/2", Ok(2)),
-        t8: ("5/2", Err(PartialSuccess)),
-        //t9: ("5/0", Err(PartialSuccess)),
-        t10: ("18-2*3", Ok(48)), //would be 12 with BODMAS
-        t11: ("18*-1", Ok(-18)),
-        t12: ("-2+3", Ok(1)),
-        t13: ("18*", Err(PartialSuccess)),
-        t14: ("-12", Ok(-12)),
-        t15: ("-", Err(PartialSuccess)),
-        t16: ("--", Err(PartialSuccess)),
-        t17: ("--1", Ok(1)),
-        t18:("1+-", Err(PartialSuccess)),
-        t19:("1+*", Err(Failure)),
-        t20:("+*", Err(Failure)),
-        t21:("1-", Err(PartialSuccess)),
-        t22:("1--", Err(PartialSuccess)),
-        t23:("1*-", Err(PartialSuccess)),
-        t24:("1*-2", Ok(-2)),
-        t25:("8-+7", Ok(1)),
-        t26:("8-+", Err(PartialSuccess)),
-        t27:("+", Err(Failure)),
-        t28:("+1", Err(Failure)),
-        t29:("*", Err(Failure)),
-        t30:("*1", Err(Failure)),
+    #[test_case("")]
+    #[test_case("5/2")]
+    #[test_case("5/0")]
+    #[test_case("18*")]
+    #[test_case("-")]
+    #[test_case("--")]
+    #[test_case("1+-")]
+    #[test_case("1-")]
+    #[test_case("1--")]
+    #[test_case("1*-")]
+    #[test_case("8-+")]
+    #[test_case("12/")]
+    #[test_case("12/5")]
+    fn test_partial_success(input: &str) {
+        let result = run(input);
+        assert_eq!(result, Err(PartialSuccess))
+    }
 
-        t31:("_", Err(Failure)),
-        t32:("1_", Err(Failure)),
-        t33:("_1", Err(Failure)),
-        t34:("12/", Err(PartialSuccess)),
-        t35:("12/5", Err(PartialSuccess)), //This is legal as maybe the next digit makes division possible
-        t36:("12/5+", Err(Failure)), //This is not legal as it is impossible for the division to work
-        y37:("12+8/4", Ok(5)), //14 with BODMAS
+    #[test_case("1+*")]
+    #[test_case("+*")]
+    #[test_case("+")]
+    #[test_case("+1")]
+    #[test_case("*")]
+    #[test_case("*1")]
+    #[test_case("12/5+")]
+    #[test_case("_")]
+    #[test_case("1_")]
+    #[test_case("_1")]
+    fn test_failure(input: &str) {
+        let result = run(input);
+        assert_eq!(result, Err(Failure))
+    }
+
+    fn run(input: &str) -> Result<i32, ParseFail> {
+        let runes: Result<Vec<Rune>, _> = input.chars().map(Rune::try_from).collect();
+        parse_and_evaluate(&mut runes.unwrap().into_iter().peekable())
     }
 }
