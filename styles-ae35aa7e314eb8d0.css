@@ -1,0 +1,236 @@
+.myriadSVG {
+  font-family: inherit;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  width: 100%;
+  font-weight: bold;
+}
+
+.square {
+  transition: 1s ease-out;
+}
+
+
+.circle {
+  stroke-width: 7.2;
+  fill: black;
+  fill-opacity: 0.01;
+  transition: 3s cubic-bezier(0, 1.45, 0.72, 1.33);  
+}
+
+
+
+.circle-legal:hover {
+  transform: scale(1.1);
+}
+
+.circle-disabled:hover {
+  transform: scale(0.9);
+  fill: red;
+  fill-opacity: 0.1;
+}
+
+.circle-text {
+  font-size: 3em;
+  user-select: none;
+  pointer-events: none;
+}
+
+.recentWord {
+  font-family: monospace;
+  
+  animation-name: disappearAnimation;  
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-out;
+
+  font-size: 3em;
+  dominant-baseline: hanging;
+  text-anchor: start;
+}
+
+
+@keyframes disappearAnimation {
+  0% {
+    opacity: 1;
+    transform: translate(var(--startx), var(--starty)) ;
+  }
+
+  50% {
+    opacity: 0.2;
+    transform: translate(var(--endx), var(--endy)) scale(0.5) ;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(var(--endx), var(--endy)) scale(0.5) ;
+  }
+}
+
+.container {
+  max-width: 400px;
+  margin: auto;
+}
+
+
+
+/*
+Tab Header
+*/
+
+
+.tab-header{
+  stroke-width: 1;
+  stroke: black;
+  fill: white;
+}
+
+.selected-tab{
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+
+.locked-out-tab{
+  fill: gray;
+  opacity: 50%;
+}
+
+.complete-tab{
+  fill: green;
+}
+
+.tab-header-text{  
+  color: #111;
+  line-height: 1.5;
+  font-family: monospace;
+  font-weight: bold;
+  dominant-baseline: central;
+  text-anchor: middle;
+  box-sizing: inherit;
+  font-size: 2.5em;
+  user-select: none;
+  pointer-events: none;
+  fill: black;
+   stroke: transparent;
+   transform: translate(25px, 25px);
+}
+
+/*
+Found Word
+*/
+
+.found-word-group{
+  transition: all 1s;
+  
+}
+.found-word-group-button :active{
+  transition: all 1s;
+  stroke-width: 5;
+  stroke: black;
+}
+
+
+.button-text{
+  line-height: 1.5;
+  font-family: monospace;
+  font-weight: bold;
+  dominant-baseline: hanging;
+  text-anchor: start;
+  box-sizing: inherit;
+  font-size: 1.5em;
+  user-select: none;
+  pointer-events: none;
+  fill: black;
+  stroke: transparent;
+  transform: translate(2.5px, 5px);
+}
+
+.found-word-text{
+  line-height: 1.5;
+  font-family: monospace;
+  font-weight: bold;
+  dominant-baseline: hanging;
+  text-anchor: middle;
+  box-sizing: inherit;
+  font-size: 1.5em;
+  user-select: none;
+  pointer-events: none;
+  fill: gray;
+  stroke: transparent;
+  transform: translate(15px, 5px);
+  transition: all 5s ease-in;
+}
+.found-word-text-success{
+  fill: black;
+  stroke: transparent;
+}
+
+.found-word-box{
+  stroke-width: 0;
+  stroke-linejoin: round;
+  fill: white;
+  stroke: black;
+
+  transition: fill 5s ease-in;
+}
+
+
+.score-counter-box{
+  stroke-width: 1;
+  stroke-linejoin: round;
+  fill: transparent;
+  stroke: black;
+}
+
+.score-counter-progress{
+  fill: green;
+  stroke: transparent;
+  transition: all 1s;
+}
+
+.found-word-box-success{
+  fill: green;
+}
+
+.found-word-box-challenge{
+  stroke-width: 4;
+  stroke: orangered;
+}
+
+.history-progress{
+  background: green;
+  height: 100%;
+}
+
+.history-progress-box{
+  height: 100%;
+  width: 100%;
+  border: black solid;
+}
+
+/*
+Crosshairs
+*/
+
+.crosshair-group{
+  pointer-events: none;
+}
+
+.crosshair{
+  stroke-width: 7.2;
+  transition: all 1s ease-out;
+  opacity: 1.0;
+  /* stroke-linecap: round;   */
+}
+
+.crosshair-extended{
+
+  opacity: 0.5;
+}
+
+.invisible{
+  opacity: 0.0;
+
+}
