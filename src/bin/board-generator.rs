@@ -1,6 +1,10 @@
+#![allow(incomplete_features)]
+#![feature(generic_const_exprs)]
+
 use clap::Parser;
 use itertools::Itertools;
 use myriad::core::prelude::*;
+//use rayon::prelude::*;
 use std::fs;
 
 /// Generates Myriad boards
@@ -18,24 +22,12 @@ pub fn main() {
     let solve_settings = SolveSettings { min: 1, max: 100 };
     let args = Args::parse();
 
-    // let board_create_settings = BoardCreateSettings {
-    //     branching_factor: args.branching_factor,
-    // };
-    // let seed: u64 = rand::random();
-
-    //let rng = rand::SeedableRng::seed_from_u64(seed);
-
-    // let mut boards = board_create_settings
-    //     .create_boards::<3, 3>(solve_settings, rng)
-    //     .take(args.take)
-    //     .map(|x| x.to_single_string());
-
     use Rune::*;
     let iterator = BoardIterator {
-        current: Board {
-            runes: [[One, Two, Three], [Four, Five, Six], [Seven, Eight, Nine]],
-        }, //todo start earlier
+        current: Board { runes: [One; 9] }, //todo start earlier
     };
+
+    //let par_iter = iter::split(iterator, 100);
 
     let mut boards = iterator
         .filter(filter_good)
@@ -55,66 +47,64 @@ pub fn main() {
 
 pub fn filter_good(board: &Board<3, 3>) -> bool {
     use Rune::*;
-    if board.runes[0][0] > board.runes[0][2] {
+    if !board.is_canonical_form() {
         return false;
-    };
-    if board.runes[0][2] > board.runes[2][0] {
-        return false;
-    };
-    if board.runes[2][0] > board.runes[2][2] {
-        return false;
-    };
-
-    //TODO more rotation restrictions
+    }
 
     let mut non_zero_digits = 0;
     let mut sum_operators = 0;
-    //let mut product_operators = 0;
+    let mut _product_operators = 0;
+    let mut _positive_operators = 0;
+    let mut _negative_operators = 0;
 
-    for row in 0..3 {
-        for column in 0..3 {
-            let rune = board.runes[column][row];
-
-            match rune {
-                //Rune::Zero => {},
-                One => {
-                    non_zero_digits += 1;
-                }
-                Two => {
-                    non_zero_digits += 1;
-                }
-                Three => {
-                    non_zero_digits += 1;
-                }
-                Four => {
-                    non_zero_digits += 1;
-                }
-                Five => {
-                    non_zero_digits += 1;
-                }
-                Six => {
-                    non_zero_digits += 1;
-                }
-                Seven => {
-                    non_zero_digits += 1;
-                }
-                Eight => {
-                    non_zero_digits += 1;
-                }
-                Nine => {
-                    non_zero_digits += 1;
-                }
-                Plus => {
-                    sum_operators += 1;
-                }
-                //Times => {product_operators += 1;},
-                Minus => {
-                    sum_operators += 1;
-                }
-                //Divide => {product_operators += 1;},
-                Blank => {}
-                _ => {}
+    for rune in board.runes {
+        match rune {
+            //Rune::Zero => {},
+            One => {
+                non_zero_digits += 1;
             }
+            Two => {
+                non_zero_digits += 1;
+            }
+            Three => {
+                non_zero_digits += 1;
+            }
+            Four => {
+                non_zero_digits += 1;
+            }
+            Five => {
+                non_zero_digits += 1;
+            }
+            Six => {
+                non_zero_digits += 1;
+            }
+            Seven => {
+                non_zero_digits += 1;
+            }
+            Eight => {
+                non_zero_digits += 1;
+            }
+            Nine => {
+                non_zero_digits += 1;
+            }
+            Plus => {
+                sum_operators += 1;
+                _positive_operators += 1;
+            }
+            Times => {
+                _product_operators += 1;
+                _positive_operators += 1;
+            }
+            Minus => {
+                sum_operators += 1;
+                _negative_operators += 1;
+            }
+            Divide => {
+                _product_operators += 1;
+                _negative_operators += 1;
+            }
+            Blank => {}
+            _ => {}
         }
     }
 
@@ -124,6 +114,8 @@ pub fn filter_good(board: &Board<3, 3>) -> bool {
     if sum_operators < 1 {
         return false;
     }
+
+    //if negative_operators == 0 && !board.runes
 
     return true;
 }
@@ -137,14 +129,12 @@ impl Iterator for BoardIterator {
     type Item = Board<3, 3>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        for column in (0..3).rev() {
-            for row in (0..3).rev() {
-                if let Some(next_value) = Self::get_next(self.current.runes[column][row]) {
-                    self.current.runes[column][row] = next_value;
-                    return Some(self.current.clone());
-                } else {
-                    self.current.runes[column][row] = Self::first_rune()
-                }
+        for index in 0..9 {
+            if let Some(next_value) = Self::get_next(self.current.runes[index]) {
+                self.current.runes[index] = next_value;
+                return Some(self.current.clone());
+            } else {
+                self.current.runes[index] = Self::first_rune()
             }
         }
 

@@ -796,6 +796,7 @@ dependencies = [
  "num",
  "num-traits",
  "rand",
+ "rayon",
  "serde",
  "serde_with",
  "static_assertions",

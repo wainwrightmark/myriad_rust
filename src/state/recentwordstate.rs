@@ -2,10 +2,12 @@ use crate::core::prelude::*;
 use itertools::Itertools;
 use yewdux::prelude::*;
 
+use super::prelude::*;
+
 pub struct WordFoundMsg {
     pub word: i32,
     pub word_type: FoundWordType,
-    pub coordinate: Coordinate,
+    pub coordinate: Coordinate<GRID_COLUMNS, GRID_ROWS>,
 }
 
 impl Reducer<RecentWordState> for WordFoundMsg {
@@ -34,11 +36,11 @@ pub struct RecentWord {
     pub number: i32,
     pub word_type: FoundWordType,
     pub expiry_time: instant::Instant,
-    pub coordinate: Coordinate,
+    pub coordinate: Coordinate<GRID_COLUMNS, GRID_ROWS>,
 }
 
 impl RecentWordState {
-    fn with_word(&self, word: i32, word_type: FoundWordType, coordinate: Coordinate) -> Self {
+    fn with_word(&self, word: i32, word_type: FoundWordType, coordinate: Coordinate<GRID_COLUMNS, GRID_ROWS>) -> Self {
         let now = instant::Instant::now();
         let linger = word_type.linger_duration_ms();
 

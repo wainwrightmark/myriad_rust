@@ -6,12 +6,16 @@ use rand::prelude::{SliceRandom, StdRng};
 use crate::core::prelude::*;
 
 #[derive(Clone, Eq, PartialEq)]
-struct SolvedBoard<const C: usize, const R: usize> {
+struct SolvedBoard<const C: usize, const R: usize>
+where [(); C * R]:
+{
     pub board: Board<C, R>,
     pub solutions: usize,
 }
 
-impl<const C: usize, const R: usize> Ord for SolvedBoard<C, R> {
+impl<const C: usize, const R: usize> Ord for SolvedBoard<C, R>
+where [(); C * R]:
+{
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         self.solutions
             .cmp(&other.solutions)
@@ -20,7 +24,9 @@ impl<const C: usize, const R: usize> Ord for SolvedBoard<C, R> {
 }
 
 // `PartialOrd` needs to be implemented as well.
-impl<const C: usize, const R: usize> PartialOrd for SolvedBoard<C, R> {
+impl<const C: usize, const R: usize> PartialOrd for SolvedBoard<C, R>
+where [(); C * R]:
+{
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
         Some(self.cmp(other))
     }
@@ -36,12 +42,16 @@ impl BoardCreateSettings {
         self,
         solve_settings: SolveSettings,
         rng: StdRng,
-    ) -> impl Iterator<Item = Board<C, R>> {
+    ) -> impl Iterator<Item = Board<C, R>>
+    where [(); C * R]:
+    {
         CreatorIterator::new(self, solve_settings, rng)
     }
 }
 
-struct CreatorIterator<const C: usize, const R: usize> {
+struct CreatorIterator<const C: usize, const R: usize> 
+where [(); C * R]:
+{
     create_settings: BoardCreateSettings,
     solve_settings: SolveSettings,
     desired_solutions: usize,
@@ -52,7 +62,9 @@ struct CreatorIterator<const C: usize, const R: usize> {
     heap: BinaryHeap<SolvedBoard<C, R>>,
 }
 
-impl<const C: usize, const R: usize> CreatorIterator<C, R> {
+impl<const C: usize, const R: usize> CreatorIterator<C, R> 
+where [(); C * R]:
+{
     pub fn new(
         create_settings: BoardCreateSettings,
         solve_settings: SolveSettings,
@@ -84,7 +96,9 @@ impl<const C: usize, const R: usize> CreatorIterator<C, R> {
     }
 }
 
-impl<const C: usize, const R: usize> Iterator for CreatorIterator<C, R> {
+impl<const C: usize, const R: usize> Iterator for CreatorIterator<C, R>
+where [(); C * R]:
+{
     type Item = Board<C, R>;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -120,19 +134,21 @@ impl<const C: usize, const R: usize> Iterator for CreatorIterator<C, R> {
     }
 }
 
-fn mutate_board<const C: usize, const R: usize>(
+fn mutate_board<const C: usize, const R: usize>
+(
     board: &SolvedBoard<C, R>,
     solve_settings: SolveSettings,
     created_boards: &mut HashSet<String>,
     letter: Rune,
     index: usize,
-) -> Option<SolvedBoard<C, R>> {
-    let current_letter = board.board.get_letter_at_index(index);
+) -> Option<SolvedBoard<C, R>> where [(); C * R]: {
+    let current_letter = board.board[Coordinate(index as u8)];
     if current_letter == letter {
         return None;
     };
 
-    let new_board = board.board.with_set_letter(letter, index);
+    let mut new_board = board.board.clone();
+    new_board[Coordinate(index as u8)] = letter;
 
     if created_boards.insert(new_board.get_unique_string()) {
         let solutions = solve_settings.solve(new_board.clone());

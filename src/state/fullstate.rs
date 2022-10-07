@@ -3,6 +3,7 @@ use crate::state::prelude::*;
 use itertools::Itertools;
 use num::ToPrimitive;
 use serde::*;
+use serde_with::serde_as;
 use std::rc::Rc;
 use yewdux::prelude::*;
 
@@ -17,13 +18,18 @@ pub struct FullGameState {
 
 impl FullGameState {}
 
+#[serde_as]
 #[derive(PartialEq, Eq, Store, Clone, Serialize, Deserialize)]
-pub struct Game {
-    pub board: Board<GRID_COLUMNS, GRID_ROWS>,
+pub struct Game
+{
+    
+    #[serde_as(as = "_")]
+    pub board: Board<3, 3>,
     pub challenge_words: Vec<i32>,
     pub date: Option<NaiveDate>,
     pub solve_settings: SolveSettings,
-}
+} 
+
 
 pub const CHALLENGE_WORDS: usize = 3;
 

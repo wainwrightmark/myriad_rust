@@ -74,7 +74,7 @@ impl Reducer<FullGameState> for NewGameMsg {
 }
 
 pub struct OnCoordinatesSetMsg {
-    pub coordinates: Vec<Coordinate>,
+    pub coordinates: Vec<Coordinate<GRID_COLUMNS, GRID_ROWS>>,
 }
 
 fn get_emoji(i: i32) -> String {
@@ -103,7 +103,7 @@ impl Reducer<FullGameState> for OnCoordinatesSetMsg {
 
         let mut letters = coordinates
             .iter()
-            .map(|c| state.game.board.get_letter_at_coordinate(c))
+            .map(|c| state.game.board[*c])
             .peekable();
         let parse_result = parser::parse_and_evaluate(&mut letters);
 

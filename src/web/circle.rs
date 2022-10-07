@@ -9,7 +9,7 @@ use yewdux::prelude::*;
 
 #[function_component(CirclesSVG)]
 pub fn circles_svg() -> Html {
-    let circles = Coordinate::get_positions_up_to::<GRID_COLUMNS, GRID_ROWS>()
+    let circles = Coordinate::<GRID_COLUMNS, GRID_ROWS>::get_positions_up_to()
         .map(|coordinate| html!(< Circle {coordinate} />))
         .collect::<Html>();
 
@@ -23,7 +23,7 @@ pub fn circles_svg() -> Html {
 
 #[derive(PartialEq, Eq, Properties)]
 pub struct CircleProperties {
-    pub coordinate: Coordinate,
+    pub coordinate: Coordinate<GRID_COLUMNS, GRID_ROWS>,
 }
 #[function_component(Circle)]
 fn circle(properties: &CircleProperties) -> Html {
@@ -45,7 +45,7 @@ fn circle(properties: &CircleProperties) -> Html {
     .deref();
 
     let letter = *use_selector_with_deps(
-        |state: &FullGameState, co| state.game.board.get_letter_at_coordinate(co),
+        |state: &FullGameState, co| state.game.board[*co],
         coordinate,
     )
     .deref();

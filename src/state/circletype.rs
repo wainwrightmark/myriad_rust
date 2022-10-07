@@ -7,7 +7,7 @@ pub enum CircleType {
     Disabled,
     LegalMove,
     LastPosition,
-    IntermediatePosition { next: Coordinate },
+    IntermediatePosition { next: Coordinate<GRID_COLUMNS, GRID_ROWS> },
 }
 
 impl CircleType {
@@ -33,7 +33,7 @@ impl CircleType {
 impl ChosenPositionsState {
     pub fn get_circle_type(
         &self,
-        coordinate: &Coordinate,
+        coordinate: &Coordinate<GRID_COLUMNS, GRID_ROWS>,
         board: Board<GRID_COLUMNS, GRID_ROWS>,
     ) -> CircleType {
         if let Some(position) = self.positions.iter().position(|c| c == coordinate) {
@@ -54,7 +54,7 @@ impl ChosenPositionsState {
             .positions
             .iter()
             .chain(std::iter::once(coordinate))
-            .map(|c| board.get_letter_at_coordinate(c))
+            .map(|c| board[*c])
             .peekable();
 
         let parse_result = parse_and_evaluate(&mut letters);

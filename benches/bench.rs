@@ -1,3 +1,6 @@
+#![allow(incomplete_features)]
+#![feature(generic_const_exprs)]
+
 use criterion::{criterion_group, criterion_main, Criterion};
 use myriad::core::prelude::*;
 
@@ -7,7 +10,7 @@ criterion_main!(benches);
 fn bench_find_solutions(c: &mut Criterion) {
     let mut group = c.benchmark_group("solver");
     group.sample_size(10);
-    group.bench_function("Count puns", |bench| {
+    group.bench_function("Count Solutions", |bench| {
         bench.iter(|| create_boards_and_solve(10))
     });
     group.finish()

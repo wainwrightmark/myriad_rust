@@ -1,3 +1,5 @@
+use std::ops::Index;
+use std::ops::IndexMut;
 use std::vec;
 
 use crate::core::parser::*;
@@ -8,34 +10,63 @@ use serde_with::serde_as;
 
 #[serde_as]
 #[derive(PartialEq, Debug, Eq, Hash, Clone, Serialize, Deserialize, PartialOrd, Ord)]
-pub struct Board<const COLUMNS: usize, const ROWS: usize> {
-    #[serde_as(as = "[[_; COLUMNS]; ROWS]")]
-    pub runes: [[Rune; COLUMNS]; ROWS],
+pub struct Board<const COLUMNS: usize, const ROWS: usize>
+where
+    [(); COLUMNS * ROWS]:,
+{
+    #[serde_as(as = "[_; COLUMNS * ROWS]")]
+    pub runes: [Rune; COLUMNS * ROWS],
 }
 
-impl Default for Board<3, 3> {
+impl<const C: usize, const R: usize> Default for Board<C, R>
+where
+    [(); C * R]:,
+{
     fn default() -> Self {
         use Rune::*;
         Self {
-            runes: [[Zero, Zero, Zero], [Zero, Zero, Zero], [Zero, Zero, Zero]],
+            runes: [Zero; C * R],
         }
     }
 }
 
 static_assertions::assert_eq_size!(Board<3,3>, [u8;9]);
 
-impl<const C: usize, const R: usize> std::fmt::Display for Board<C, R> {
+impl<const C: usize, const R: usize> Index<Coordinate<C, R>> for Board<C, R>
+where
+    [(); C * R]:,
+{
+    type Output = Rune;
+
+    fn index(&self, index: Coordinate<C, R>) -> &Self::Output {
+        &self.runes[index.0 as usize]
+    }
+}
+
+impl<const C: usize, const R: usize> IndexMut<Coordinate<C, R>> for Board<C, R>
+where
+    [(); C * R]:,
+{
+    fn index_mut(&mut self, index: Coordinate<C, R>) -> &mut Self::Output {
+        &mut self.runes[index.0 as usize]
+    }
+}
+
+impl<const C: usize, const R: usize> std::fmt::Display for Board<C, R>
+where
+    [(); C * R]:,
+{
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "{}", self.to_multiline_string())
     }
 }
 
-impl<const C: usize, const R: usize> Board<C, R> {
-    pub fn check(&self, nodes: &[Coordinate]) -> Result<i32, ParseFail> {
-        let mut input = nodes
-            .iter()
-            .map(|x| self.get_letter_at_coordinate(x))
-            .peekable();
+impl<const C: usize, const R: usize> Board<C, R>
+where
+    [(); C * R]:,
+{
+    pub fn check(&self, nodes: &[Coordinate<C, R>]) -> Result<i32, ParseFail> {
+        let mut input = nodes.iter().map(|x| self[*x]).peekable();
 
         crate::core::parser::parse_and_evaluate(&mut input)
     }
@@ -46,18 +77,10 @@ impl<const C: usize, const R: usize> Board<C, R> {
         match r {
             Err(_) => None,
             Ok(vector) => {
-                //let len = vector.len();
-
-                let letters: [[Rune; C]; R] = vector
+                let letters: [Rune; C * R] = vector
                     .into_iter()
-                    .pad_using(R * C, |_| Rune::Blank)
-                    .chunks(R)
-                    .into_iter()
-                    .map(|x| {
-                        let a: [Rune; C] = x.collect::<Vec<Rune>>().try_into().unwrap();
-                        a
-                    })
-                    .collect::<Vec<[Rune; C]>>()
+                    .pad_using(C * R, |_| Rune::Blank)
+                    .collect_vec()
                     .try_into()
                     .unwrap();
 
@@ -66,40 +89,30 @@ impl<const C: usize, const R: usize> Board<C, R> {
         }
     }
 
-    pub fn get_word_text(&self, coordinates: &[Coordinate]) -> String {
+    pub fn get_word_text(&self, coordinates: &[Coordinate<C, R>]) -> String {
         let word = coordinates
             .iter()
             .map(|c| {
-                let letter = &self.get_letter_at_coordinate(c);
-
-                letter.to_string()
+                let rune = &self[*c];
+                rune.to_string()
             })
             .join("");
         word
     }
 
-    pub fn with_set_letter(&self, letter: Rune, index: usize) -> Board<C, R> {
-        let r = index % R;
-        let c = index / R;
-
-        let mut new_letters = self.runes;
-        new_letters[r][c] = letter;
-
-        Board { runes: new_letters }
-    }
-
     pub fn get_unique_string(&self) -> String {
+        //TODO improve
         if R != C {
-            return format!("{}_{}", C, self.runes.iter().flatten().join(""));
+            return format!("{}_{}", C, self.runes.iter().join(""));
         }
 
         let mut options = (0..4)
             .into_iter()
             .cartesian_product(0..2)
             .map(|(rotate, reflect)| {
-                Coordinate::get_positions_up_to::<C, R>()
-                    .map(|c| c.rotate_and_flip::<C, R>(rotate, reflect == 0))
-                    .map(|c| self.get_letter_at_coordinate(&c))
+                Coordinate::<C, R>::get_positions_up_to()
+                    .map(|c| c.rotate_and_flip(rotate, reflect == 0))
+                    .map(|c| self[c])
                     .join("")
             })
             .sorted();
@@ -107,23 +120,16 @@ impl<const C: usize, const R: usize> Board<C, R> {
         options.next().unwrap()
     }
 
-    pub const fn get_letter_at_coordinate(&self, coordinate: &Coordinate) -> Rune {
-        self.runes[coordinate.column][coordinate.row]
-    }
-
-    pub const fn get_letter_at_index(&self, index: usize) -> Rune {
-        self.runes[index % R][index / R]
-    }
-
     pub fn to_multiline_string(&self) -> String {
         let mut s = String::with_capacity(self.runes.len() + R);
-        for column in 0..C {
-            if column != 0 {
+
+        for row in 0..R {
+            if row != 0 {
                 s.push_str("\r\n")
             };
-            for row in 0..R {
-                let coordinate = Coordinate { row, column };
-                let l = self.get_letter_at_coordinate(&coordinate).to_string();
+            for column in 0..C {
+                let coordinate = Coordinate::<C, R>::create(column, row);
+                let l = self[coordinate].to_string();
 
                 s.push_str(&l);
             }
@@ -136,8 +142,8 @@ impl<const C: usize, const R: usize> Board<C, R> {
         let mut s = String::with_capacity(self.runes.len() + R as usize);
         for column in 0..C {
             for row in 0..R {
-                let coordinate = Coordinate { row, column };
-                let l = self.get_letter_at_coordinate(&coordinate).to_string();
+                let coordinate = Coordinate::<C, R>::create(column, row);
+                let l = self[coordinate].to_string();
 
                 s.push_str(&l);
             }
@@ -146,15 +152,34 @@ impl<const C: usize, const R: usize> Board<C, R> {
         s
     }
 
-    pub fn flip(&mut self) {
-        for row in 0..(R / 2) {
-            for column in 0..C {
-                let o_row = R - (1 + row);
-                let swap = self.runes[row][column];
-                self.runes[row][column] = self.runes[o_row][column];
-                self.runes[o_row][column] = swap;
+    ///Flip along the vertical axis
+    pub fn flip_vertical(&mut self) {
+        for column in 0..(C / 2) {
+            for row in 0..R {
+                let coordinate = Coordinate::create(column, row);
+                let o_coordinate = Coordinate::create(C - (1 + column), row);
+
+                let swap = self[coordinate];
+                self[coordinate] = self[o_coordinate];
+                self[o_coordinate] = swap;
             }
         }
+    }
+    
+    ///Flip along the horizontal axis
+    pub fn flip_horizontal(&mut self) {
+        for row in 0..(R / 2) {
+            for column in 0..C {
+            
+                let coordinate = Coordinate::create(column, row);
+                    let o_coordinate = Coordinate::create(column,R - (1 + row));
+    
+                    let swap = self[coordinate];
+                    self[coordinate] = self[o_coordinate];
+                    self[o_coordinate] = swap;
+            }        
+        }
+        
     }
 
     pub fn rotate(&mut self) {
@@ -166,20 +191,25 @@ impl<const C: usize, const R: usize> Board<C, R> {
                 let o_row = R - (1 + row);
                 let o_column = C - (1 + column);
                 if row != o_row || column != o_column {
-                    let swap = self.runes[row][column];
-                    self.runes[row][column] = self.runes[o_row][column];
-                    self.runes[o_row][column] = self.runes[o_row][o_column];
-                    self.runes[o_row][o_column] = self.runes[row][o_column];
-                    self.runes[row][o_column] = swap;
+                    let coordinate0 = Coordinate::create(column, row);
+                    let coordinate1 = Coordinate::create(row, o_column);
+                    let coordinate2 = Coordinate::create(o_column, o_row);
+                    let coordinate3 = Coordinate::create(o_row, column);
+
+                    let swap = self[coordinate0];
+                    self[coordinate0] = self[coordinate1];
+                    self[coordinate1] = self[coordinate2];
+                    self[coordinate2] = self[coordinate3];
+                    self[coordinate3] = swap;
                 }
             }
         }
     }
 
-    pub fn is_canonical_form(&mut self) -> bool {
+    pub fn is_canonical_form(&self) -> bool {
         let mut o = self.clone();
         for _ in 0..3 {
-            o.flip();
+            o.flip_vertical();
             if self > &mut o {
                 return false;
             }
@@ -188,7 +218,7 @@ impl<const C: usize, const R: usize> Board<C, R> {
                 return false;
             }
         }
-        o.flip();
+        o.flip_vertical();
         if self > &mut o {
             return false;
         }
@@ -219,8 +249,8 @@ impl<const C: usize, const R: usize> Board<C, R> {
         let mut nums = 0;
         let mut operators = 0;
         let mut blanks = 0;
-        for rune in self.runes.iter().flatten() {
-            let rt: RuneType = RuneType::from(*rune);
+        for rune in self.runes {
+            let rt: RuneType = RuneType::from(rune);
 
             match rt {
                 RuneType::Digit => nums += 1,
@@ -236,10 +266,68 @@ impl<const C: usize, const R: usize> Board<C, R> {
         let legal_letters = ClassicGameMode {}.legal_letters();
 
         for l in legal_letters {
-            let c = self.runes.iter().flatten().filter(|&x| x == l).count();
+            let c = self.runes.iter().filter(|&x| x == l).count();
             strings.push(c.to_string());
         }
 
         strings.join(" ")
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use ntest::test_case;
+
+    use super::Board;
+
+    #[test_case("123456789", false, 0, "123456789")]
+    #[test_case("123456789", true, 0, "789456123")]
+    #[test_case("123456789", false, 1, "741852963")]
+    #[test_case("123456789", false, 2, "987654321")]
+    #[test_case("123456789", false, 3, "369258147")]
+    #[test_case("123456789", false, 4, "123456789")]
+    #[test_case("123456789", true, 1, "147258369")]
+    #[test_case("123456789", true, 2, "321654987")]
+    #[test_case("123456789", true, 3, "963852741")]
+    fn test_board_flip_rotate(input: &str, flip: bool, rotate: i32, expected: &str) {
+        let mut board = Board::<3, 3>::try_create(input).unwrap();
+
+        if flip {
+            board.flip_horizontal();
+        }
+
+        for _ in 0..rotate {
+            board.rotate();
+        }
+
+        let s = board.to_multiline_string();
+        let expected_multiline = Board::<3, 3>::try_create(expected)
+            .unwrap()
+            .to_multiline_string();
+
+        assert_eq!(s, expected_multiline)
+    }
+
+    #[test_case("123456789")]
+    fn test_is_canonical(input: &str) {
+        let board = Board::<3, 3>::try_create(input).unwrap();
+
+        assert_eq!(board.is_canonical_form(), true);
+
+        let mut o = board.clone();
+        for _ in 0..3 {
+            o.flip_vertical();
+            if board > o {
+                assert_eq!(board.is_canonical_form(), false);
+            }
+            o.rotate();
+            if board > o {
+                assert_eq!(board.is_canonical_form(), false);
+            }
+        }
+        o.flip_vertical();
+        if board > o {
+            assert_eq!(board.is_canonical_form(), false);
+        }
     }
 }

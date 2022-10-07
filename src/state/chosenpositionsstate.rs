@@ -7,11 +7,11 @@ use yewdux::prelude::*;
 
 #[derive(PartialEq, Eq, Clone, Default, Serialize, Deserialize, Store)]
 pub struct ChosenPositionsState {
-    pub positions: Vec<Coordinate>,
+    pub positions: Vec<Coordinate<GRID_COLUMNS, GRID_ROWS> >,
 }
 
 impl ChosenPositionsState {
-    pub fn after_move_result(self, move_result: &MoveResult) -> Self {
+    pub fn after_move_result(self, move_result: &MoveResult<GRID_COLUMNS, GRID_ROWS>) -> Self {
         match move_result {
             MoveResult::WordComplete { word } => Self {
                 positions: word.path.to_owned(),
@@ -80,7 +80,7 @@ impl ChosenPositionsState {
     pub fn next(
         state: std::rc::Rc<Self>,
         allow_abandon: bool,
-        coordinate: Coordinate,
+        coordinate: Coordinate<GRID_COLUMNS, GRID_ROWS>,
     ) -> std::rc::Rc<Self> {
         if let Some(last) = state.positions.last() {
             if last == &coordinate {
@@ -100,14 +100,14 @@ impl ChosenPositionsState {
         let find_result = state.positions.iter().find_position(|&z| z == &coordinate);
 
         if let Some((index, _)) = find_result {
-            let new_chosen_positions: Vec<Coordinate> = state
+            let new_chosen_positions: Vec<Coordinate<GRID_COLUMNS, GRID_ROWS>> = state
                 .positions
                 .iter()
                 .take(index + 1)
                 .copied()
                 .collect_vec();
 
-            //TOOD maybe send a find message here
+            //TODO maybe send a find message here
 
             //log::debug!("Retrace word");
 
@@ -125,10 +125,8 @@ impl ChosenPositionsState {
 
             let mut letters = new_chosen_positions
                 .iter()
-                .map(|c| board.get_letter_at_coordinate(c))
+                .map(|c| board[*c])
                 .peekable();
-
-            //let lettes = new_chosen_positions.iter().map(|x| state.po)
 
             let parse_result = parse_and_evaluate(&mut letters);
 
@@ -192,13 +190,13 @@ impl Reducer<InputState> for InputMsg {
 }
 
 pub enum InputMsg {
-    Down { coordinate: Coordinate },
+    Down { coordinate: Coordinate<GRID_COLUMNS, GRID_ROWS> },
     Up {},
-    Enter { coordinate: Coordinate },
+    Enter { coordinate: Coordinate<GRID_COLUMNS, GRID_ROWS> },
 }
 
 pub struct OnClickMsg {
-    pub coordinate: Coordinate,
+    pub coordinate: Coordinate<GRID_COLUMNS, GRID_ROWS>,
     pub allow_abandon: bool,
 }
 

@@ -22,7 +22,10 @@ impl SolveSettings {
     pub fn solve<const C: usize, const R: usize>(
         self,
         board: Board<C, R>,
-    ) -> impl Iterator<Item = FoundWord> {
+    ) -> impl Iterator<Item = FoundWord<C, R>>
+    where
+        [(); C * R]:,
+    {
         SolutionIter::new(board, self)
     }
 
@@ -38,25 +41,31 @@ impl Default for SolveSettings {
 }
 
 #[derive(PartialEq, Eq, Debug, Clone, Serialize, Deserialize)]
-pub struct FoundWord {
+pub struct FoundWord<const COLUMNS: usize, const ROWS: usize> {
     pub result: i32,
-    pub path: Vec<Coordinate>,
+    pub path: Vec<Coordinate<COLUMNS, ROWS>>,
 }
 
-impl std::fmt::Display for FoundWord {
+impl<const C: usize, const R: usize> std::fmt::Display for FoundWord<C, R> {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "{} = {}", self.result, self.path.iter().join(""))
     }
 }
 
-struct SolutionIter<const COLUMNS: usize, const ROWS: usize> {
+struct SolutionIter<const COLUMNS: usize, const ROWS: usize>
+where
+    [(); COLUMNS * ROWS]:,
+{
     results: HashSet<i32>,
     settings: SolveSettings,
-    queue: VecDeque<Vec<Coordinate>>,
+    queue: VecDeque<Vec<Coordinate<COLUMNS, ROWS>>>,
     board: Board<COLUMNS, ROWS>,
 }
 
-impl<const C: usize, const R: usize> SolutionIter<C, R> {
+impl<const C: usize, const R: usize> SolutionIter<C, R>
+where
+    [(); C * R]:,
+{
     pub fn new(board: Board<C, R>, settings: SolveSettings) -> Self {
         Self {
             results: Default::default(),
@@ -66,10 +75,10 @@ impl<const C: usize, const R: usize> SolutionIter<C, R> {
         }
     }
 
-    fn add_to_queue(&mut self, coordinates: Vec<Coordinate>) {
+    fn add_to_queue(&mut self, coordinates: Vec<Coordinate<C, R>>) {
         if let Some(last) = coordinates.last() {
             for adjacent in last
-                .get_adjacent_positions::<C, R>()
+                .get_adjacent_positions()
                 .filter(|x| !coordinates.contains(x))
             {
                 let mut new_nodes = coordinates.clone();
@@ -77,7 +86,7 @@ impl<const C: usize, const R: usize> SolutionIter<C, R> {
                 self.queue.push_back(new_nodes);
             }
         } else {
-            for coordinate in Coordinate::get_positions_up_to::<C, R>() {
+            for coordinate in Coordinate::get_positions_up_to() {
                 let single_coordinate = vec![coordinate];
                 self.queue.push_back(single_coordinate);
             }
@@ -85,8 +94,11 @@ impl<const C: usize, const R: usize> SolutionIter<C, R> {
     }
 }
 
-impl<const C: usize, const R: usize> Iterator for SolutionIter<C, R> {
-    type Item = FoundWord;
+impl<const C: usize, const R: usize> Iterator for SolutionIter<C, R>
+where
+    [(); C * R]:,
+{
+    type Item = FoundWord<C, R>;
 
     fn next(&mut self) -> Option<Self::Item> {
         while let Some(coordinates) = self.queue.pop_front() {

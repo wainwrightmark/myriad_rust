@@ -9,7 +9,7 @@ use yewdux::prelude::*;
 
 #[function_component(CrosshairsSVG)]
 pub fn crosshairs_svg() -> Html {
-    let circles = Coordinate::get_positions_up_to::<GRID_COLUMNS, GRID_ROWS>()
+    let circles = Coordinate::<GRID_COLUMNS, GRID_ROWS>::get_positions_up_to()
         .map(|coordinate| html!(< Crosshair {coordinate} />))
         .collect::<Html>();
 
@@ -23,7 +23,7 @@ pub fn crosshairs_svg() -> Html {
 
 #[derive(PartialEq, Eq, Properties)]
 pub struct CrossHairProperties {
-    coordinate: Coordinate,
+    coordinate: Coordinate<GRID_COLUMNS, GRID_ROWS>,
 }
 
 const CROSSHAIR_LENGTH: f64 = 15.0;
@@ -182,16 +182,16 @@ fn crosshair(properties: &CrossHairProperties) -> Html {
 }
 
 fn get_line_position(
-    c1: Coordinate,
-    c2: Coordinate,
+    c1: Coordinate<GRID_COLUMNS, GRID_ROWS>,
+    c2: Coordinate<GRID_COLUMNS, GRID_ROWS>,
     index: u8,
     rf: RotFlipState,
 ) -> (f64, f64, f64) {
-    let c1a = c1.rotate_and_flip::<GRID_COLUMNS, GRID_ROWS>(rf.rotate, rf.flip);
-    let c2a = c2.rotate_and_flip::<GRID_COLUMNS, GRID_ROWS>(rf.rotate, rf.flip);
+    let c1a = c1.rotate_and_flip(rf.rotate, rf.flip);
+    let c2a = c2.rotate_and_flip(rf.rotate, rf.flip);
 
-    let x_dir = c2a.column.to_f64().unwrap() - c1a.column.to_f64().unwrap();
-    let y_dir = c2a.row.to_f64().unwrap() - c1a.row.to_f64().unwrap();
+    let x_dir = c2a.get_column().to_f64().unwrap() - c1a.get_column().to_f64().unwrap();
+    let y_dir = c2a.get_row().to_f64().unwrap() - c1a.get_row().to_f64().unwrap();
 
     let x = (x_dir * HALF_CROSSHAIR_LENGTH * DIAGONAL_SCALE_X) - (x_dir * HALF_STOKE_WIDTH)
         + (x_dir / 4.0 * index.to_f64().unwrap() * SQUARE_SIZE)
