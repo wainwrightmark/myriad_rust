@@ -36,7 +36,8 @@ pub enum RuneType {
     strum::Display,
     strum::AsRefStr,
     Default,
-    PartialOrd, Ord
+    PartialOrd,
+    Ord,
 )]
 pub enum Rune {
     #[default]
@@ -95,7 +96,7 @@ impl TryFrom<char> for Rune {
         let d = rune
             .to_digit(10)
             .and_then(|x| Self::try_from(x as usize).ok());
-        if d != None {
+        if d.is_some() {
             return d.ok_or(());
         }
 

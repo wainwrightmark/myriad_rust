@@ -7,7 +7,9 @@ pub enum CircleType {
     Disabled,
     LegalMove,
     LastPosition,
-    IntermediatePosition { next: Coordinate<GRID_COLUMNS, GRID_ROWS> },
+    IntermediatePosition {
+        next: Coordinate<GRID_COLUMNS, GRID_ROWS>,
+    },
 }
 
 impl CircleType {

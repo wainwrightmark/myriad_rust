@@ -165,21 +165,19 @@ where
             }
         }
     }
-    
+
     ///Flip along the horizontal axis
     pub fn flip_horizontal(&mut self) {
         for row in 0..(R / 2) {
             for column in 0..C {
-            
                 let coordinate = Coordinate::create(column, row);
-                    let o_coordinate = Coordinate::create(column,R - (1 + row));
-    
-                    let swap = self[coordinate];
-                    self[coordinate] = self[o_coordinate];
-                    self[o_coordinate] = swap;
-            }        
+                let o_coordinate = Coordinate::create(column, R - (1 + row));
+
+                let swap = self[coordinate];
+                self[coordinate] = self[o_coordinate];
+                self[o_coordinate] = swap;
+            }
         }
-        
     }
 
     pub fn rotate(&mut self) {
@@ -224,7 +222,7 @@ where
         }
         //rotating again will return back to self
 
-        return true;
+        true
     }
 
     pub fn get_board_data(&self) -> String {
@@ -312,22 +310,22 @@ mod tests {
     fn test_is_canonical(input: &str) {
         let board = Board::<3, 3>::try_create(input).unwrap();
 
-        assert_eq!(board.is_canonical_form(), true);
+        assert!(board.is_canonical_form());
 
         let mut o = board.clone();
         for _ in 0..3 {
             o.flip_vertical();
             if board > o {
-                assert_eq!(board.is_canonical_form(), false);
+                assert!(!board.is_canonical_form());
             }
             o.rotate();
             if board > o {
-                assert_eq!(board.is_canonical_form(), false);
+                assert!(!board.is_canonical_form());
             }
         }
         o.flip_vertical();
         if board > o {
-            assert_eq!(board.is_canonical_form(), false);
+            assert!(!board.is_canonical_form());
         }
     }
 }

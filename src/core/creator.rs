@@ -7,14 +7,16 @@ use crate::core::prelude::*;
 
 #[derive(Clone, Eq, PartialEq)]
 struct SolvedBoard<const C: usize, const R: usize>
-where [(); C * R]:
+where
+    [(); C * R]:,
 {
     pub board: Board<C, R>,
     pub solutions: usize,
 }
 
 impl<const C: usize, const R: usize> Ord for SolvedBoard<C, R>
-where [(); C * R]:
+where
+    [(); C * R]:,
 {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         self.solutions
@@ -25,7 +27,8 @@ where [(); C * R]:
 
 // `PartialOrd` needs to be implemented as well.
 impl<const C: usize, const R: usize> PartialOrd for SolvedBoard<C, R>
-where [(); C * R]:
+where
+    [(); C * R]:,
 {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
         Some(self.cmp(other))
@@ -43,14 +46,16 @@ impl BoardCreateSettings {
         solve_settings: SolveSettings,
         rng: StdRng,
     ) -> impl Iterator<Item = Board<C, R>>
-    where [(); C * R]:
+    where
+        [(); C * R]:,
     {
         CreatorIterator::new(self, solve_settings, rng)
     }
 }
 
-struct CreatorIterator<const C: usize, const R: usize> 
-where [(); C * R]:
+struct CreatorIterator<const C: usize, const R: usize>
+where
+    [(); C * R]:,
 {
     create_settings: BoardCreateSettings,
     solve_settings: SolveSettings,
@@ -62,8 +67,9 @@ where [(); C * R]:
     heap: BinaryHeap<SolvedBoard<C, R>>,
 }
 
-impl<const C: usize, const R: usize> CreatorIterator<C, R> 
-where [(); C * R]:
+impl<const C: usize, const R: usize> CreatorIterator<C, R>
+where
+    [(); C * R]:,
 {
     pub fn new(
         create_settings: BoardCreateSettings,
@@ -97,7 +103,8 @@ where [(); C * R]:
 }
 
 impl<const C: usize, const R: usize> Iterator for CreatorIterator<C, R>
-where [(); C * R]:
+where
+    [(); C * R]:,
 {
     type Item = Board<C, R>;
 
@@ -134,14 +141,16 @@ where [(); C * R]:
     }
 }
 
-fn mutate_board<const C: usize, const R: usize>
-(
+fn mutate_board<const C: usize, const R: usize>(
     board: &SolvedBoard<C, R>,
     solve_settings: SolveSettings,
     created_boards: &mut HashSet<String>,
     letter: Rune,
     index: usize,
-) -> Option<SolvedBoard<C, R>> where [(); C * R]: {
+) -> Option<SolvedBoard<C, R>>
+where
+    [(); C * R]:,
+{
     let current_letter = board.board[Coordinate(index as u8)];
     if current_letter == letter {
         return None;

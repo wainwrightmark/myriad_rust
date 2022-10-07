@@ -34,7 +34,7 @@ pub fn main() {
         //TODO use parallel
         .map(|b| {
             let s = b.to_single_string();
-            let solutions = solve_settings.solve(b.clone()).count();
+            let solutions = solve_settings.solve(b).count();
 
             format!("{}: {}", s, solutions)
         })
@@ -117,7 +117,7 @@ pub fn filter_good(board: &Board<3, 3>) -> bool {
 
     //if negative_operators == 0 && !board.runes
 
-    return true;
+    true
 }
 
 #[derive(Default, Debug, PartialEq, Eq, Clone)]

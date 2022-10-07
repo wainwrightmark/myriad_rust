@@ -101,10 +101,7 @@ impl Reducer<FullGameState> for OnCoordinatesSetMsg {
             return state;
         }
 
-        let mut letters = coordinates
-            .iter()
-            .map(|c| state.game.board[*c])
-            .peekable();
+        let mut letters = coordinates.iter().map(|c| state.game.board[*c]).peekable();
         let parse_result = parser::parse_and_evaluate(&mut letters);
 
         if let Ok(num) = parse_result {

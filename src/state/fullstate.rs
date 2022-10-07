@@ -20,16 +20,13 @@ impl FullGameState {}
 
 #[serde_as]
 #[derive(PartialEq, Eq, Store, Clone, Serialize, Deserialize)]
-pub struct Game
-{
-    
+pub struct Game {
     #[serde_as(as = "_")]
     pub board: Board<3, 3>,
     pub challenge_words: Vec<i32>,
     pub date: Option<NaiveDate>,
     pub solve_settings: SolveSettings,
-} 
-
+}
 
 pub const CHALLENGE_WORDS: usize = 3;
 

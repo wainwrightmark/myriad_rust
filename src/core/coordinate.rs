@@ -118,7 +118,7 @@ impl<const C: usize, const R: usize> Coordinate<C, R> {
     pub fn get_adjacent_positions<'a>(&'a self) -> impl Iterator<Item = Self> + 'a {
         (-1..=1)
             .cartesian_product(-1..=1)
-            .filter_map(|(r_offset, c_offset) : (isize, isize)| {
+            .filter_map(|(r_offset, c_offset): (isize, isize)| {
                 let new_row = (self.get_row() as isize) + r_offset;
 
                 if new_row < 0 || new_row as usize >= R {
@@ -189,7 +189,6 @@ impl<const C: usize, const R: usize> Coordinate<C, R> {
         c_dist + r_dist
     }
 
-    
     pub fn create(column: usize, row: usize) -> Self {
         Self((row * C + column) as u8)
     }

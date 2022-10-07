@@ -40,7 +40,12 @@ pub struct RecentWord {
 }
 
 impl RecentWordState {
-    fn with_word(&self, word: i32, word_type: FoundWordType, coordinate: Coordinate<GRID_COLUMNS, GRID_ROWS>) -> Self {
+    fn with_word(
+        &self,
+        word: i32,
+        word_type: FoundWordType,
+        coordinate: Coordinate<GRID_COLUMNS, GRID_ROWS>,
+    ) -> Self {
         let now = instant::Instant::now();
         let linger = word_type.linger_duration_ms();
 

@@ -7,7 +7,7 @@ use yewdux::prelude::*;
 
 #[derive(PartialEq, Eq, Clone, Default, Serialize, Deserialize, Store)]
 pub struct ChosenPositionsState {
-    pub positions: Vec<Coordinate<GRID_COLUMNS, GRID_ROWS> >,
+    pub positions: Vec<Coordinate<GRID_COLUMNS, GRID_ROWS>>,
 }
 
 impl ChosenPositionsState {
@@ -123,10 +123,7 @@ impl ChosenPositionsState {
 
             let board = Dispatch::<FullGameState>::new().get().game.board.clone();
 
-            let mut letters = new_chosen_positions
-                .iter()
-                .map(|c| board[*c])
-                .peekable();
+            let mut letters = new_chosen_positions.iter().map(|c| board[*c]).peekable();
 
             let parse_result = parse_and_evaluate(&mut letters);
 
@@ -190,9 +187,13 @@ impl Reducer<InputState> for InputMsg {
 }
 
 pub enum InputMsg {
-    Down { coordinate: Coordinate<GRID_COLUMNS, GRID_ROWS> },
+    Down {
+        coordinate: Coordinate<GRID_COLUMNS, GRID_ROWS>,
+    },
     Up {},
-    Enter { coordinate: Coordinate<GRID_COLUMNS, GRID_ROWS> },
+    Enter {
+        coordinate: Coordinate<GRID_COLUMNS, GRID_ROWS>,
+    },
 }
 
 pub struct OnClickMsg {

@@ -33,7 +33,9 @@ fn test_board(letters: &str, expected_count: usize) {
 
     let settings = SolveSettings { min: 1, max: 100 };
 
-    let solutions = settings.solve(board.clone()).collect::<Vec<FoundWord<3,3>>>();
+    let solutions = settings
+        .solve(board.clone())
+        .collect::<Vec<FoundWord<3, 3>>>();
 
     for r in solutions
         .iter()
@@ -82,7 +84,7 @@ fn test_create_boards() {
 #[test]
 pub fn test_type_sizes() {
     let letter = std::mem::size_of::<Rune>();
-    let coordinate = std::mem::size_of::<Coordinate<3,3>>();
+    let coordinate = std::mem::size_of::<Coordinate<3, 3>>();
     let board = std::mem::size_of::<Board<3, 3>>();
 
     println!("Size of letter: {letter}");

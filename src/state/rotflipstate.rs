@@ -25,7 +25,11 @@ pub struct RotFlipState {
 }
 
 impl RotFlipState {
-    pub fn get_location(&self, coordinate: &Coordinate<GRID_COLUMNS, GRID_ROWS>, square_size: f64) -> (f64, f64) {
+    pub fn get_location(
+        &self,
+        coordinate: &Coordinate<GRID_COLUMNS, GRID_ROWS>,
+        square_size: f64,
+    ) -> (f64, f64) {
         let rotated = coordinate.rotate_and_flip(self.rotate, self.flip);
 
         let cx = (rotated.get_column() as f64 + 0.5) * square_size;

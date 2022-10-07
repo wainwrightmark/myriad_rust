@@ -2,7 +2,7 @@ use super::coordinate::Coordinate;
 use super::solver::FoundWord;
 
 #[derive(PartialEq, Eq, Clone, Debug)]
-pub enum MoveResult<const C : usize, const  R: usize> {
+pub enum MoveResult<const C: usize, const R: usize> {
     WordComplete {
         word: FoundWord<C, R>,
     },
@@ -21,7 +21,7 @@ pub enum MoveResult<const C : usize, const  R: usize> {
     IllegalMove,
 }
 
-impl<const C : usize, const  R: usize> MoveResult<C, R> {
+impl<const C: usize, const R: usize> MoveResult<C, R> {
     pub fn is_legal(&self) -> bool {
         !matches!(self, MoveResult::IllegalMove)
     }
