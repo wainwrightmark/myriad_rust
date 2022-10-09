@@ -6,6 +6,7 @@ use itertools::Itertools;
 use myriad::prelude::*;
 use ntest::test_case;
 
+#[test_case("XCL+X-VII")]
 #[test_case("98_-7+524")]
 //#[test_case("7-6574+2/")]
 #[test_case("-+718325+")]
@@ -24,6 +25,7 @@ use ntest::test_case;
 //#[test_case("*6++47321")]
 #[test_case("129657-+3")]
 #[test_case("/97-1+463")]
+
 fn test_board_100(letters: &str) {
     test_board(letters, 100)
 }
@@ -62,7 +64,7 @@ fn test_create_boards() {
     let rng = rand::SeedableRng::seed_from_u64(100);
 
     let boards = settings
-        .create_boards::<3, 3>(solve_settings, rng)
+        .create_boards::<3, 3, ClassicGameMode>(solve_settings, rng)
         .take(number_to_return)
         .collect_vec();
 

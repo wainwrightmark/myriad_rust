@@ -1,4 +1,4 @@
-use crate::prelude::Rune;
+use crate::{prelude::Rune, rune::RomanNumeral};
 use std::iter::Peekable;
 
 use super::rune::RuneType;
@@ -83,6 +83,19 @@ fn parse_number<J: Iterator<Item = Rune>>(input: &mut Peekable<J>) -> R {
     Ok(current)
 }
 
+fn parse_roman_numeral<J: Iterator<Item = Rune>>(input: &mut Peekable<J>) -> R {
+    let mut current: usize = 0;
+    while let Some(n) = input.peek().and_then(|x| RomanNumeral::try_from(*x).ok()) {
+        input.next();
+        if let Some(combination) = n.try_suffix(&current) {
+            current = combination;
+        } else {
+            return Err(ParseFail::Failure);
+        }
+    }
+    Ok(current as i32)
+}
+
 fn parse_unary<J: Iterator<Item = Rune>>(input: &mut Peekable<J>) -> R {
     let mut negative = false;
     loop {
@@ -97,6 +110,9 @@ fn parse_unary<J: Iterator<Item = Rune>>(input: &mut Peekable<J>) -> R {
                     } else {
                         return Err(ParseFail::Failure);
                     }
+                }
+                RuneType::RomanNumeral => {
+                    return parse_roman_numeral(input).map(|i| if negative { -i } else { i })
                 }
                 RuneType::Digit => {
                     return parse_number(input).map(|i| if negative { -i } else { i })
@@ -145,6 +161,37 @@ mod tests {
     #[test_case("-2+3", 1)]
     #[test_case("--1", 1)]
     #[test_case("8-+7", 1)]
+
+    #[test_case("i", 1)]
+    #[test_case("ii", 2)]
+    #[test_case("iii", 3)]
+    #[test_case("iv", 4)]
+    #[test_case("v", 5)]
+    #[test_case("vi", 6)]
+    #[test_case("vii", 7)]
+    #[test_case("viii", 8)]
+    #[test_case("ix", 9)]
+    #[test_case("x", 10)]
+    #[test_case("xi", 11)]
+    #[test_case("xii", 12)]
+    #[test_case("xiii", 13)]
+    #[test_case("xiv", 14)]
+    #[test_case("xv", 15)]
+    #[test_case("xvi", 16)]
+
+    #[test_case("xx", 20)]
+    #[test_case("xxx", 30)]
+    #[test_case("xl", 40)]
+    #[test_case("l", 50)]
+    #[test_case("lx", 60)]
+    #[test_case("lxx", 70)]
+    #[test_case("lxxx", 80)]
+    #[test_case("xc", 90)]
+    #[test_case("c", 100)]
+    #[test_case("cc", 200)]
+
+    #[test_case("ii*x", 20)]
+    #[test_case("v-i", 4)]
     fn test_parse_success(input: &str, expected: i32) {
         let result = run(input);
         assert_eq!(result, Ok(expected))
@@ -153,7 +200,7 @@ mod tests {
     #[test_case("12-34+15-9", 16)]
     #[test_case("18*-1", 18)]
     #[test_case("1*-2", 2)]
-    #[test_case("12-34", 22)]
+    #[test_case("12-34", 22)]    
     fn test_parse_success_negative(input: &str, expected: i32) {
         let result = run(input);
         assert_eq!(result, Ok(-expected))
@@ -187,6 +234,9 @@ mod tests {
     #[test_case("_")]
     #[test_case("1_")]
     #[test_case("_1")]
+    #[test_case("iiii")]
+    #[test_case("iix")]
+    #[test_case("xxc")]
     fn test_failure(input: &str) {
         let result = run(input);
         assert_eq!(result, Err(Failure))

@@ -27,7 +27,7 @@ fn create_boards_and_solve(number_of_boards: usize) {
     let rng = rand::SeedableRng::seed_from_u64(seed);
 
     let boards = board_create_settings
-        .create_boards::<3, 3>(solve_settings, rng)
+        .create_boards::<3, 3, ClassicGameMode>(solve_settings, rng)
         .take(number_of_boards);
 
     for board in boards {

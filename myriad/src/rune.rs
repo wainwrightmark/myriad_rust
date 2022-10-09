@@ -19,6 +19,9 @@ use strum::FromRepr;
 pub enum RuneType {
     Digit,
     Operator,
+
+    RomanNumeral,
+
     Blank,
 }
 
@@ -71,6 +74,17 @@ pub enum Rune {
     #[strum(serialize = "/")]
     Divide = 19,
 
+    #[strum(serialize = "Ⅰ")]
+    RomanOne = 32,
+    #[strum(serialize = "Ⅴ")]
+    RomanFive = 33,
+    #[strum(serialize = "Ⅹ")]
+    RomanTen = 34,
+    #[strum(serialize = "Ⅼ")]
+    RomanFifty = 35,
+    #[strum(serialize = "Ⅽ")]
+    RomanOneHundred = 36,
+
     #[strum(serialize = "_")]
     Blank = 255,
 }
@@ -100,7 +114,13 @@ impl TryFrom<char> for Rune {
             return d.ok_or(());
         }
 
-        match rune {
+        match rune.to_ascii_lowercase() {
+            'i' => Ok(Rune::RomanOne),
+            'v' => Ok(Rune::RomanFive),
+            'x' => Ok(Rune::RomanTen),
+            'l' => Ok(Rune::RomanFifty),
+            'c' => Ok(Rune::RomanOneHundred),
+
             '-' => Ok(Rune::Minus),
             '⨉' => Ok(Rune::Times),
             '+' => Ok(Rune::Plus),
@@ -152,6 +172,83 @@ impl From<Rune> for RuneType {
             Rune::Minus => Operator,
             Rune::Divide => Operator,
             Rune::Blank => Blank,
+
+            Rune::RomanOne => RomanNumeral,
+            Rune::RomanFive => RomanNumeral,
+            Rune::RomanTen => RomanNumeral,
+            Rune::RomanFifty => RomanNumeral,
+            Rune::RomanOneHundred => RomanNumeral,
+        }
+    }
+}
+
+impl TryFrom<Rune> for RomanNumeral {
+    type Error = ();
+
+    fn try_from(value: Rune) -> Result<Self, Self::Error> {
+        match value {
+            Rune::RomanOne => Ok(RomanNumeral::I),
+            Rune::RomanFive => Ok(RomanNumeral::V),
+            Rune::RomanTen => Ok(RomanNumeral::X),
+            Rune::RomanFifty => Ok(RomanNumeral::L),
+            Rune::RomanOneHundred => Ok(RomanNumeral::C),
+            _ => Err(()),
+        }
+    }
+}
+
+#[derive(
+    PartialEq,
+    Debug,
+    Eq,
+    Copy,
+    Clone,
+    Serialize,
+    Deserialize,
+    Hash,
+    FromRepr,
+    EnumIter,
+    strum::Display,
+    strum::AsRefStr,
+)]
+pub enum RomanNumeral {
+    I,
+    V,
+    X,
+    L,
+    C,
+}
+
+impl RomanNumeral {
+    pub fn try_suffix(&self, prev: &usize) -> Option<usize> {
+        match self {
+            RomanNumeral::I => match prev % 10 {
+                3 => None,
+                4 => None,
+                8 => None,
+                9 => None,
+                _ => Some(prev + 1),
+            },
+            RomanNumeral::V => match prev % 10 {
+                0 => Some(prev + 5),
+                1 => Some(prev + 3),
+                _ => None,
+            },
+            RomanNumeral::X => match prev % 10 {
+                0 => Some(prev + 10),
+                1 => Some(prev + 8),
+                _ => None,
+            },
+            RomanNumeral::L => match prev % 100 {
+                0 => Some(prev + 50),
+                10 => Some(prev + 30),
+                _ => None,
+            },
+            RomanNumeral::C => match prev % 100 {
+                0 => Some(prev + 100),
+                10 => Some(prev + 80),
+                _ => None,
+            },
         }
     }
 }
