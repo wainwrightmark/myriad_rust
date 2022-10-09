@@ -41,7 +41,7 @@ pub struct BoardCreateSettings {
 }
 
 impl BoardCreateSettings {
-    pub fn create_boards<const C: usize, const R: usize, GM : GameMode>(
+    pub fn create_boards<const C: usize, const R: usize, GM: GameMode>(
         self,
         solve_settings: SolveSettings,
         rng: StdRng,
@@ -49,11 +49,11 @@ impl BoardCreateSettings {
     where
         [(); C * R]:,
     {
-        CreatorIterator::<C, R, GM> ::new(self, solve_settings, rng)
+        CreatorIterator::<C, R, GM>::new(self, solve_settings, rng)
     }
 }
 
-struct CreatorIterator<const C: usize, const R: usize, GM : GameMode>
+struct CreatorIterator<const C: usize, const R: usize, GM: GameMode>
 where
     [(); C * R]:,
 {
@@ -65,10 +65,10 @@ where
 
     created_boards: HashSet<String>,
     heap: BinaryHeap<SolvedBoard<C, R>>,
-    _game_mode: GM
+    _game_mode: GM,
 }
 
-impl<const C: usize, const R: usize, GM : GameMode> CreatorIterator<C, R, GM>
+impl<const C: usize, const R: usize, GM: GameMode> CreatorIterator<C, R, GM>
 where
     [(); C * R]:,
 {
@@ -99,12 +99,12 @@ where
             created_boards: Default::default(),
             heap,
             letter_positions,
-            _game_mode: GM::default()
+            _game_mode: GM::default(),
         }
     }
 }
 
-impl<const C: usize, const R: usize, GM : GameMode> Iterator for CreatorIterator<C, R, GM>
+impl<const C: usize, const R: usize, GM: GameMode> Iterator for CreatorIterator<C, R, GM>
 where
     [(); C * R]:,
 {

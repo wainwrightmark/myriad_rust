@@ -1,7 +1,7 @@
 use super::prelude::Rune;
 use super::prelude::Rune::*;
 
-pub trait GameMode : Default {
+pub trait GameMode: Default {
     fn legal_letters(&self) -> &'static [Rune];
 }
 
@@ -17,12 +17,20 @@ impl GameMode for ClassicGameMode {
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]
-pub struct CenturyGameMode{}
+pub struct CenturyGameMode {}
 
 impl GameMode for CenturyGameMode {
     fn legal_letters(&self) -> &'static [Rune] {
         &[
-            RomanOne, RomanFive, RomanTen, RomanFifty, RomanOneHundred, Plus, Times, Minus, Divide,
+            RomanOne,
+            RomanFive,
+            RomanTen,
+            RomanFifty,
+            RomanOneHundred,
+            Plus,
+            Times,
+            Minus,
+            Divide,
         ]
     }
 }

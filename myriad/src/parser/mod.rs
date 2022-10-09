@@ -161,7 +161,6 @@ mod tests {
     #[test_case("-2+3", 1)]
     #[test_case("--1", 1)]
     #[test_case("8-+7", 1)]
-
     #[test_case("i", 1)]
     #[test_case("ii", 2)]
     #[test_case("iii", 3)]
@@ -178,7 +177,6 @@ mod tests {
     #[test_case("xiv", 14)]
     #[test_case("xv", 15)]
     #[test_case("xvi", 16)]
-
     #[test_case("xx", 20)]
     #[test_case("xxx", 30)]
     #[test_case("xl", 40)]
@@ -189,7 +187,6 @@ mod tests {
     #[test_case("xc", 90)]
     #[test_case("c", 100)]
     #[test_case("cc", 200)]
-
     #[test_case("ii*x", 20)]
     #[test_case("v-i", 4)]
     fn test_parse_success(input: &str, expected: i32) {
@@ -200,7 +197,7 @@ mod tests {
     #[test_case("12-34+15-9", 16)]
     #[test_case("18*-1", 18)]
     #[test_case("1*-2", 2)]
-    #[test_case("12-34", 22)]    
+    #[test_case("12-34", 22)]
     fn test_parse_success_negative(input: &str, expected: i32) {
         let result = run(input);
         assert_eq!(result, Ok(-expected))
