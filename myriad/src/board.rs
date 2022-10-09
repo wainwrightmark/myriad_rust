@@ -1,6 +1,5 @@
 use std::ops::Index;
 use std::ops::IndexMut;
-use std::vec;
 
 use crate::parser::*;
 use crate::prelude::*;
@@ -225,51 +224,55 @@ where
         true
     }
 
-    pub fn get_board_data(&self) -> String {
-        let one_thousand_solve_settings = SolveSettings { min: 1, max: 1000 };
-        let ten_thousand_solve_settings = SolveSettings { min: 1, max: 10000 };
+    // pub fn get_board_data(&self) -> String {
+    //     let one_thousand_solve_settings = SolveSettings { min: 1, max: 1000 };
+    //     let ten_thousand_solve_settings = SolveSettings { min: 1, max: 10000 };
 
-        let one_thousand_result = one_thousand_solve_settings
-            .solve(self.clone())
-            .count()
-            .to_string();
-        let ten_thousand_result = ten_thousand_solve_settings
-            .solve(self.clone())
-            .count()
-            .to_string();
+    //     let one_thousand_result = one_thousand_solve_settings
+    //         .solve(self.clone())
+    //         .count()
+    //         .to_string();
+    //     let ten_thousand_result = ten_thousand_solve_settings
+    //         .solve(self.clone())
+    //         .count()
+    //         .to_string();
 
-        let mut strings = vec![
-            self.to_single_string(),
-            one_thousand_result,
-            ten_thousand_result,
-        ];
+    //     let mut strings = vec![
+    //         self.to_single_string(),
+    //         one_thousand_result,
+    //         ten_thousand_result,
+    //     ];
 
-        let mut nums = 0;
-        let mut operators = 0;
-        let mut blanks = 0;
-        for rune in self.runes {
-            let rt: RuneType = RuneType::from(rune);
+    //     let mut nums = 0;
+    //     let mut operators = 0;
+    //     let mut blanks = 0;
+    //     let mut numerals = 0;
 
-            match rt {
-                RuneType::Digit => nums += 1,
-                RuneType::Operator => operators += 1,
-                RuneType::Blank => blanks += 1,
-            }
-        }
+    //     for rune in self.runes {
+    //         let rt: RuneType = RuneType::from(rune);
 
-        strings.push(nums.to_string());
-        strings.push(operators.to_string());
-        strings.push(blanks.to_string());
+    //         match rt {
+    //             RuneType::Digit => nums += 1,
+    //             RuneType::Operator => operators += 1,
+    //             RuneType::Blank => blanks += 1,
+    //             RuneType::RomanNumeral => numerals += 1,
+    //         }
+    //     }
 
-        let legal_letters = ClassicGameMode {}.legal_letters();
+    //     strings.push(nums.to_string());
+    //     strings.push(operators.to_string());
+    //     strings.push(blanks.to_string());
+    //     strings.push(numerals.to_string());
 
-        for l in legal_letters {
-            let c = self.runes.iter().filter(|&x| x == l).count();
-            strings.push(c.to_string());
-        }
+    //     let legal_letters = ClassicGameMode {}.legal_letters();
 
-        strings.join(" ")
-    }
+    //     for l in legal_letters {
+    //         let c = self.runes.iter().filter(|&x| x == l).count();
+    //         strings.push(c.to_string());
+    //     }
+
+    //     strings.join(" ")
+    // }
 }
 
 #[cfg(test)]
