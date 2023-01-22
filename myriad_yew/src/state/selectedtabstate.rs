@@ -8,7 +8,7 @@ pub struct NumberFoundMsg {
 }
 
 impl Reducer<SelectedTabState> for NumberFoundMsg {
-    fn apply(&self, state: std::rc::Rc<SelectedTabState>) -> std::rc::Rc<SelectedTabState> {
+    fn apply(self, state: std::rc::Rc<SelectedTabState>) -> std::rc::Rc<SelectedTabState> {
         state.number_found(self.number).into()
     }
 }
@@ -18,7 +18,7 @@ pub struct TabSelectedMsg {
 }
 
 impl Reducer<SelectedTabState> for TabSelectedMsg {
-    fn apply(&self, state: std::rc::Rc<SelectedTabState>) -> std::rc::Rc<SelectedTabState> {
+    fn apply(self, state: std::rc::Rc<SelectedTabState>) -> std::rc::Rc<SelectedTabState> {
         state.tab_clicked(self.index).into()
     }
 }

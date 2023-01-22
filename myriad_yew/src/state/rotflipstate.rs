@@ -9,7 +9,7 @@ pub struct RotFlipMsg {
 }
 
 impl Reducer<RotFlipState> for RotFlipMsg {
-    fn apply(&self, state: std::rc::Rc<RotFlipState>) -> std::rc::Rc<RotFlipState> {
+    fn apply(self, state: std::rc::Rc<RotFlipState>) -> std::rc::Rc<RotFlipState> {
         RotFlipState {
             rotate: state.rotate + self.rotate,
             flip: state.flip ^ self.flip,

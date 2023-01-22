@@ -17,7 +17,7 @@ pub struct SaveGameMessage {
 }
 
 impl Reducer<HistoryState> for SaveGameMessage {
-    fn apply(&self, state: std::rc::Rc<HistoryState>) -> std::rc::Rc<HistoryState> {
+    fn apply(self, state: std::rc::Rc<HistoryState>) -> std::rc::Rc<HistoryState> {
         if self.found_words.is_empty() {
             return state; //no need to save
         }

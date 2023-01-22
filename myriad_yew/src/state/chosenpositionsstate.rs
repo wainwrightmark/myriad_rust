@@ -45,8 +45,8 @@ pub struct FindNumberMsg {
 }
 
 impl Reducer<ChosenPositionsState> for FindNumberMsg {
-    fn apply(&self, state: std::rc::Rc<ChosenPositionsState>) -> std::rc::Rc<ChosenPositionsState> {
-        //log::debug!("Clicked");
+    fn apply(self, state: std::rc::Rc<ChosenPositionsState>) -> std::rc::Rc<ChosenPositionsState> {
+        log::debug!("Clicked");
         let fs = Dispatch::<FullGameState>::new().get();
 
         if let Some(path) = fs.found_words.words.get(&self.number) {
@@ -155,12 +155,12 @@ pub struct InputState {
 }
 
 impl Reducer<InputState> for InputMsg {
-    fn apply(&self, state: std::rc::Rc<InputState>) -> std::rc::Rc<InputState> {
+    fn apply(self, state: std::rc::Rc<InputState>) -> std::rc::Rc<InputState> {
         match self {
             InputMsg::Down { coordinate } => {
                 //log::debug!("Input down {}", coordinate);
                 Dispatch::new().apply(OnClickMsg {
-                    coordinate: *coordinate,
+                    coordinate,
                     allow_abandon: true,
                 });
 
@@ -175,7 +175,7 @@ impl Reducer<InputState> for InputMsg {
                 if state.is_down {
                     //log::debug!("Input Enter {}", coordinate);
                     Dispatch::new().apply(OnClickMsg {
-                        coordinate: *coordinate,
+                        coordinate,
                         allow_abandon: false,
                     })
                 }
@@ -202,7 +202,7 @@ pub struct OnClickMsg {
 }
 
 impl Reducer<ChosenPositionsState> for OnClickMsg {
-    fn apply(&self, state: std::rc::Rc<ChosenPositionsState>) -> std::rc::Rc<ChosenPositionsState> {
+    fn apply(self, state: std::rc::Rc<ChosenPositionsState>) -> std::rc::Rc<ChosenPositionsState> {
         ChosenPositionsState::next(state, self.allow_abandon, self.coordinate)
     }
 }

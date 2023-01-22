@@ -10,7 +10,7 @@ pub struct LoadGameMessage {
 }
 
 impl Reducer<FullGameState> for LoadGameMessage {
-    fn apply(&self, previous: Rc<FullGameState>) -> Rc<FullGameState> {
+    fn apply(self, previous: Rc<FullGameState>) -> Rc<FullGameState> {
         let found_words = Dispatch::<HistoryState>::new()
             .get()
             .games
@@ -46,7 +46,7 @@ pub struct NewGameMsg {
 }
 
 impl Reducer<FullGameState> for NewGameMsg {
-    fn apply(&self, previous: Rc<FullGameState>) -> Rc<FullGameState> {
+    fn apply(self, previous: Rc<FullGameState>) -> Rc<FullGameState> {
         if self.today && previous.game.date == Some(Game::get_today_date()) {
             return previous;
         }
@@ -95,7 +95,7 @@ fn get_emoji(i: i32) -> String {
 }
 
 impl Reducer<FullGameState> for OnCoordinatesSetMsg {
-    fn apply(&self, state: Rc<FullGameState>) -> Rc<FullGameState> {
+    fn apply(self, state: Rc<FullGameState>) -> Rc<FullGameState> {
         let coordinates = self.coordinates.clone();
         if coordinates.is_empty() {
             return state;

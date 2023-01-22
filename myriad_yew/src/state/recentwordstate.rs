@@ -11,7 +11,7 @@ pub struct WordFoundMsg {
 }
 
 impl Reducer<RecentWordState> for WordFoundMsg {
-    fn apply(&self, state: std::rc::Rc<RecentWordState>) -> std::rc::Rc<RecentWordState> {
+    fn apply(self, state: std::rc::Rc<RecentWordState>) -> std::rc::Rc<RecentWordState> {
         state
             .with_word(self.word, self.word_type, self.coordinate)
             .into()
@@ -21,7 +21,7 @@ impl Reducer<RecentWordState> for WordFoundMsg {
 pub struct ClearExpiredWordsMsg {}
 
 impl Reducer<RecentWordState> for ClearExpiredWordsMsg {
-    fn apply(&self, state: std::rc::Rc<RecentWordState>) -> std::rc::Rc<RecentWordState> {
+    fn apply(self, state: std::rc::Rc<RecentWordState>) -> std::rc::Rc<RecentWordState> {
         state.clear_expired().into()
     }
 }
