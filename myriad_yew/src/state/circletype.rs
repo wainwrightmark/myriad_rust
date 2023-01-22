@@ -1,6 +1,6 @@
+use crate::state::prelude::*;
 use myriad::parser::*;
 use myriad::prelude::*;
-use crate::state::prelude::*;
 
 #[derive(PartialEq, Eq, Debug, Copy, Clone)]
 pub enum CircleType {

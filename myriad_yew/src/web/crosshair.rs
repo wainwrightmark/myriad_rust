@@ -1,6 +1,6 @@
-use myriad::prelude::*;
 use crate::state::prelude::*;
 use crate::web::prelude::*;
+use myriad::prelude::*;
 
 use num::ToPrimitive;
 use std::ops::Deref;
@@ -172,11 +172,11 @@ fn crosshair(properties: &CrossHairProperties) -> Html {
     html!(
         <g key="crosshair" class={"crosshair-group"} {style}>
 
-        <line key="line1" x1={(-HALF_CROSSHAIR_LENGTH).to_string()} x2={HALF_CROSSHAIR_LENGTH.to_string()} y1={0.0.to_string()} y2={0.0.to_string()}  class={line_classes} style={format!("transform: translate({}px, {}px) rotate({}deg) scaleX({scale});", l1x, l1y, l1rot )} />
-        <line key="line2" x1={(-HALF_CROSSHAIR_LENGTH).to_string()} x2={HALF_CROSSHAIR_LENGTH.to_string()} y1={0.0.to_string()} y2={0.0.to_string()}  class={line_classes} style={format!("transform: translate({}px, {}px) rotate({}deg) scaleX({scale});", l2x, l2y, l2rot )}/>
+        <line key="line1" x1={(-HALF_CROSSHAIR_LENGTH).to_string()} x2={HALF_CROSSHAIR_LENGTH.to_string()} y1={0.0.to_string()} y2={0.0.to_string()}  class={line_classes} style={format!("transform: translate({l1x}px, {l1y}px) rotate({l1rot}deg) scaleX({scale});" )} />
+        <line key="line2" x1={(-HALF_CROSSHAIR_LENGTH).to_string()} x2={HALF_CROSSHAIR_LENGTH.to_string()} y1={0.0.to_string()} y2={0.0.to_string()}  class={line_classes} style={format!("transform: translate({l2x}px, {l2y}px) rotate({l2rot}deg) scaleX({scale});" )}/>
 
-        <line key="line3" x1={(-HALF_CROSSHAIR_LENGTH).to_string()} x2={HALF_CROSSHAIR_LENGTH.to_string()} y1={0.0.to_string()} y2={0.0.to_string()}  class={line_classes} style={format!("transform: translate({}px, {}px) rotate({}deg) scaleX({scale});", l3x, l3y, l3rot )} />
-        <line key="line4" x1={(-HALF_CROSSHAIR_LENGTH).to_string()} x2={HALF_CROSSHAIR_LENGTH.to_string()} y1={0.0.to_string()} y2={0.0.to_string()}  class={line_classes} style={format!("transform: translate({}px, {}px) rotate({}deg) scaleX({scale});", l4x, l4y, l4rot )} />
+        <line key="line3" x1={(-HALF_CROSSHAIR_LENGTH).to_string()} x2={HALF_CROSSHAIR_LENGTH.to_string()} y1={0.0.to_string()} y2={0.0.to_string()}  class={line_classes} style={format!("transform: translate({l3x}px, {l3y}px) rotate({l3rot}deg) scaleX({scale});" )} />
+        <line key="line4" x1={(-HALF_CROSSHAIR_LENGTH).to_string()} x2={HALF_CROSSHAIR_LENGTH.to_string()} y1={0.0.to_string()} y2={0.0.to_string()}  class={line_classes} style={format!("transform: translate({l4x}px, {l4y}px) rotate({l4rot}deg) scaleX({scale});" )} />
         </g>
     )
 }

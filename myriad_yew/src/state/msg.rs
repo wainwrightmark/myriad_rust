@@ -1,6 +1,6 @@
-use myriad::{parser, prelude::*};
 use crate::state::prelude::*;
 use crate::web::prelude::*;
+use myriad::{parser, prelude::*};
 use num::ToPrimitive;
 use std::rc::Rc;
 use yewdux::prelude::*;
@@ -31,7 +31,7 @@ impl Reducer<FullGameState> for LoadGameMessage {
         });
 
         FullGameState {
-            game: self.game.clone().into(),
+            game: self.game.into(),
             found_words: Rc::new(FoundWordsState {
                 words: found_words,
                 most_recent: None,
@@ -96,7 +96,7 @@ fn get_emoji(i: i32) -> String {
 
 impl Reducer<FullGameState> for OnCoordinatesSetMsg {
     fn apply(self, state: Rc<FullGameState>) -> Rc<FullGameState> {
-        let coordinates = self.coordinates.clone();
+        let coordinates = self.coordinates;
         if coordinates.is_empty() {
             return state;
         }

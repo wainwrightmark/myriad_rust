@@ -165,7 +165,7 @@ impl BoardIterator {
             Divide => Blank,
             Blank => return None,
 
-            _=> return None
+            _ => return None,
         };
         Some(n)
     }

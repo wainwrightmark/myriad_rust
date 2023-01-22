@@ -1,6 +1,6 @@
-use myriad::prelude::*;
 use crate::state::prelude::*;
 use itertools::Itertools;
+use myriad::prelude::*;
 use num::ToPrimitive;
 use serde::*;
 use serde_with::serde_as;
@@ -59,7 +59,10 @@ impl Game {
         let settings = BoardCreateSettings {
             branching_factor: 3,
         };
-        let board = settings.create_boards::<GRID_COLUMNS, GRID_ROWS, ClassicGameMode> (solve_settings, rng).next().unwrap();
+        let board = settings
+            .create_boards::<GRID_COLUMNS, GRID_ROWS, ClassicGameMode>(solve_settings, rng)
+            .next()
+            .unwrap();
 
         let challenge_words = Self::create_challenge_words(solve_settings, &board);
 
@@ -82,7 +85,8 @@ impl Game {
         log::debug!("Generating new board with seed {:?}", seed);
         let rng = rand::SeedableRng::seed_from_u64(seed);
 
-        let mut boards = settings.create_boards::<GRID_COLUMNS, GRID_ROWS, ClassicGameMode>(solve_settings, rng);
+        let mut boards =
+            settings.create_boards::<GRID_COLUMNS, GRID_ROWS, ClassicGameMode>(solve_settings, rng);
         let board = boards.next().unwrap();
         let diff = instant::Instant::now() - start_instant;
 

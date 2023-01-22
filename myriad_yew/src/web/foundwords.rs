@@ -213,7 +213,7 @@ pub struct FoundWordBoxProperties {
 pub fn found_word_box(properties: &FoundWordBoxProperties) -> Html {
     let x = properties.x;
     let y = properties.y;
-    let style = format!("transform: translate({}px, {}px);", x, y);
+    let style = format!("transform: translate({x}px, {y}px);");
 
     let class = classes!(
         "found-word-group",

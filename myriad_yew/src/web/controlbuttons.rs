@@ -60,7 +60,7 @@ pub fn score_counter(properties: &ScoreCounterProperties) -> Html {
 
     html!(
         <>
-        <rect class={"score-counter-progress"} style={format!("transform: translate({}px, {}px);", x, y)} height={format!("{FOUND_WORD_HEIGHT}")} rx="5" width={format!("{}", FOUND_WORD_WIDTH * properties.width * properties.total_found.to_f64().unwrap() / 100.0 )}>
+        <rect class={"score-counter-progress"} style={format!("transform: translate({x}px, {y}px);")} height={format!("{FOUND_WORD_HEIGHT}")} rx="5" width={format!("{}", FOUND_WORD_WIDTH * properties.width * properties.total_found.to_f64().unwrap() / 100.0 )}>
         </rect>
         <FoundWordBox id={"score_counter"} text={format_number(properties.total_found as i32)} {x} {y} width_units={properties.width} {rect_class} {text_class} />
 
@@ -127,7 +127,7 @@ pub fn wainwrong_button(properties: &GameButtonProperties) -> Html {
     let text_class = classes!("button-text");
     let class = classes!("found-word-group", "found-word-group-button");
 
-    let style = format!("transform: translate({}px, {}px);", x, y);
+    let style = format!("transform: translate({x}px, {y}px);");
 
     html!(
      <g key={"wainwrong_link"} {style} {class} >
@@ -153,7 +153,7 @@ pub fn facebook_button(properties: &GameButtonProperties) -> Html {
     let rect_class = classes!("found-word-box", "found-word-box-button");
     let class = classes!("found-word-group", "found-word-group-button");
 
-    let style = format!("transform: translate({}px, {}px);", x, y);
+    let style = format!("transform: translate({x}px, {y}px);");
 
     html!(
         <g key={"share_link"} {style} {class} >

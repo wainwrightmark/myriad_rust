@@ -1,5 +1,5 @@
-use myriad::prelude::Coordinate;
 use crate::state::prelude::*;
+use myriad::prelude::Coordinate;
 use serde::*;
 use yewdux::prelude::*;
 

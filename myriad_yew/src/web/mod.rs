@@ -24,9 +24,9 @@ pub mod prelude {
         if num == 100 {
             "💯".to_string()
         } else if num < 10 {
-            format!("{:0>1}", num)
+            format!("{num:0>1}")
         } else {
-            format!("{:0>2}", num)
+            format!("{num:0>2}")
         }
     }
 
