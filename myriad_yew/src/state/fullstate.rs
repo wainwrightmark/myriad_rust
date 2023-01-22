@@ -34,11 +34,11 @@ impl Game {
     pub fn get_today_date() -> NaiveDate {
         let js_today = js_sys::Date::new_0();
 
-        NaiveDate::from_ymd(
+        NaiveDate::from_ymd_opt(
             js_today.get_full_year().to_i32().unwrap(),
             js_today.get_month() + 1,
             js_today.get_date(),
-        )
+        ).expect("Invalid date")
     }
 
     pub fn create_for_today() -> Self {
