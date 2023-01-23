@@ -10,7 +10,7 @@ pub struct GameButtonProperties {
     pub selected_tab: usize,
 
     pub position_number: i32,
-    pub width: f64,
+    pub width: f32,
 }
 
 #[function_component(TodayGameButton)]
@@ -47,7 +47,7 @@ pub struct ScoreCounterProperties {
     pub selected_tab: usize,
 
     pub position_number: i32,
-    pub width: f64,
+    pub width: f32,
 }
 
 #[function_component(ScoreCounter)]
@@ -60,7 +60,7 @@ pub fn score_counter(properties: &ScoreCounterProperties) -> Html {
 
     html!(
         <>
-        <rect class={"score-counter-progress"} style={format!("transform: translate({x}px, {y}px);")} height={format!("{FOUND_WORD_HEIGHT}")} rx="5" width={format!("{}", FOUND_WORD_WIDTH * properties.width * properties.total_found.to_f64().unwrap() / 100.0 )}>
+        <rect class={"score-counter-progress"} style={format!("transform: translate({x}px, {y}px);")} height={format!("{FOUND_WORD_HEIGHT}")} rx="5" width={format!("{}", FOUND_WORD_WIDTH * properties.width * properties.total_found.to_f32().unwrap() / 100.0 )}>
         </rect>
         <FoundWordBox id={"score_counter"} text={format_number(properties.total_found as i32)} {x} {y} width_units={properties.width} {rect_class} {text_class} />
 

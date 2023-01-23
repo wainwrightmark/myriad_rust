@@ -1,5 +1,6 @@
 use crate::parser::ParseFail;
 use crate::prelude::*;
+use geometrid::prelude8::PointAbsolute8;
 use itertools::Itertools;
 use num::ToPrimitive;
 use serde::{Deserialize, Serialize};
@@ -19,12 +20,10 @@ impl SolveSettings {
     }
 
     ///Get all solutions to this board within the range
-    pub fn solve<const C: usize, const R: usize>(
+    pub fn solve<const C: u8, const R: u8, const SIZE: usize>(
         self,
-        board: Board<C, R>,
+        board: Board<C, R, SIZE>,
     ) -> impl Iterator<Item = FoundWord<C, R>>
-    where
-        [(); C * R]:,
     {
         SolutionIter::new(board, self)
     }
@@ -41,32 +40,28 @@ impl Default for SolveSettings {
 }
 
 #[derive(PartialEq, Eq, Debug, Clone, Serialize, Deserialize)]
-pub struct FoundWord<const COLUMNS: usize, const ROWS: usize> {
+pub struct FoundWord<const C: u8, const R: u8> {
     pub result: i32,
-    pub path: Vec<Coordinate<COLUMNS, ROWS>>,
+    pub path: Vec<PointAbsolute8<C, R>>,
 }
 
-impl<const C: usize, const R: usize> std::fmt::Display for FoundWord<C, R> {
+impl<const C: u8, const R: u8> std::fmt::Display for FoundWord<C, R> {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "{} = {}", self.result, self.path.iter().join(""))
     }
 }
 
-struct SolutionIter<const COLUMNS: usize, const ROWS: usize>
-where
-    [(); COLUMNS * ROWS]:,
+struct SolutionIter<const C: u8, const R: u8, const SIZE: usize>
 {
     results: HashSet<i32>,
     settings: SolveSettings,
-    queue: VecDeque<Vec<Coordinate<COLUMNS, ROWS>>>,
-    board: Board<COLUMNS, ROWS>,
+    queue: VecDeque<Vec<PointAbsolute8<C, R>>>,
+    board: Board<C, R, SIZE>,
 }
 
-impl<const C: usize, const R: usize> SolutionIter<C, R>
-where
-    [(); C * R]:,
+impl<const C: u8, const R: u8, const SIZE: usize> SolutionIter<C, R, SIZE>
 {
-    pub fn new(board: Board<C, R>, settings: SolveSettings) -> Self {
+    pub fn new(board: Board<C, R, SIZE>, settings: SolveSettings) -> Self {
         Self {
             results: Default::default(),
             queue: VecDeque::from(vec![vec![]]),
@@ -75,7 +70,7 @@ where
         }
     }
 
-    fn add_to_queue(&mut self, coordinates: Vec<Coordinate<C, R>>) {
+    fn add_to_queue(&mut self, coordinates: Vec<PointAbsolute8<C, R>>) {
         if let Some(last) = coordinates.last() {
             for adjacent in last
                 .get_adjacent_positions()
@@ -86,7 +81,7 @@ where
                 self.queue.push_back(new_nodes);
             }
         } else {
-            for coordinate in Coordinate::get_positions_up_to() {
+            for coordinate in PointAbsolute8::points_by_row() {
                 let single_coordinate = vec![coordinate];
                 self.queue.push_back(single_coordinate);
             }
@@ -94,9 +89,7 @@ where
     }
 }
 
-impl<const C: usize, const R: usize> Iterator for SolutionIter<C, R>
-where
-    [(); C * R]:,
+impl<const C: u8, const R: u8, const SIZE: usize> Iterator for SolutionIter<C, R, SIZE>
 {
     type Item = FoundWord<C, R>;
 

@@ -20,7 +20,7 @@ pub fn recent_words() -> Html {
             let (mut startx, starty) = rot_flip
                 .get_location(&word.coordinate, SQUARE_SIZE);
 
-            if word.coordinate.get_column() == 2{
+            if word.coordinate.x() == 2{
                 startx *= 0.8; //little hack to prevent large numbers from being offscreen
             }
 

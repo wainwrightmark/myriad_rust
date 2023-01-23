@@ -1,5 +1,5 @@
 use crate::state::prelude::*;
-use myriad::prelude::Coordinate;
+use myriad::prelude::PointAbsolute8;
 use serde::*;
 use yewdux::prelude::*;
 
@@ -28,23 +28,41 @@ pub struct RotFlipState {
 impl RotFlipState {
     pub fn get_location(
         &self,
-        coordinate: &Coordinate<GRID_COLUMNS, GRID_ROWS>,
-        square_size: f64,
-    ) -> (f64, f64) {
-        let rotated = coordinate.rotate_and_flip(self.rotate, self.flip);
+        point: &PointAbsolute8<GRID_COLUMNS, GRID_ROWS>,
+        square_size: f32,
+    ) -> (f32, f32) {
+        let flipped = rotate_and_flip(point, self.rotate, self.flip);
 
-        let cx = (rotated.get_column() as f64 + 0.5) * square_size;
-        let cy = (rotated.get_row() as f64 + 0.5) * square_size;
+        let cx = (flipped.x() as f32 + 0.5) * square_size;
+        let cy = (flipped.y() as f32 + 0.5) * square_size;
 
         (cx, cy)
     }
 
     pub fn total_letters(&self) -> usize {
-        GRID_COLUMNS * GRID_ROWS
+        (GRID_COLUMNS * GRID_ROWS) as usize
     }
 
     pub fn new_game(&mut self) {
         self.rotate = (self.rotate + 1) % 4;
         self.flip = !self.flip;
     }
+}
+
+pub fn rotate_and_flip<const L: u8>(
+    point: &PointAbsolute8<L, L>,
+    mut rotate: i8,
+    flip: bool,
+) -> PointAbsolute8<L, L> {
+    while rotate < 0 {
+        rotate += 4
+    }
+
+    let rotated = point.rotate(rotate as u8); // .rotate_and_flip(self.rotate, self.flip);
+    let flipped = if flip {
+        rotated.flip_vertical()
+    } else {
+        rotated
+    };
+    flipped
 }

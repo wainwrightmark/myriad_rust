@@ -1,22 +1,19 @@
 use std::collections::{BinaryHeap, HashSet};
 
+use geometrid::prelude8::PointAbsolute8;
 use itertools::Itertools;
 use rand::prelude::{SliceRandom, StdRng};
 
 use crate::prelude::*;
 
 #[derive(Clone, Eq, PartialEq)]
-struct SolvedBoard<const C: usize, const R: usize>
-where
-    [(); C * R]:,
+struct SolvedBoard<const C: u8, const R: u8, const SIZE: usize>
 {
-    pub board: Board<C, R>,
+    pub board: Board<C, R, SIZE>,
     pub solutions: usize,
 }
 
-impl<const C: usize, const R: usize> Ord for SolvedBoard<C, R>
-where
-    [(); C * R]:,
+impl<const C: u8, const R: u8, const SIZE: usize> Ord for SolvedBoard<C, R, SIZE>
 {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         self.solutions
@@ -26,9 +23,7 @@ where
 }
 
 // `PartialOrd` needs to be implemented as well.
-impl<const C: usize, const R: usize> PartialOrd for SolvedBoard<C, R>
-where
-    [(); C * R]:,
+impl<const C: u8, const R: u8, const SIZE: usize> PartialOrd for SolvedBoard<C, R, SIZE>
 {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
         Some(self.cmp(other))
@@ -41,21 +36,17 @@ pub struct BoardCreateSettings {
 }
 
 impl BoardCreateSettings {
-    pub fn create_boards<const C: usize, const R: usize, GM: GameMode>(
+    pub fn create_boards<const L: u8, const SIZE: usize, GM: GameMode>(
         self,
         solve_settings: SolveSettings,
         rng: StdRng,
-    ) -> impl Iterator<Item = Board<C, R>>
-    where
-        [(); C * R]:,
+    ) -> impl Iterator<Item = Board<L,L, SIZE>>
     {
-        CreatorIterator::<C, R, GM>::new(self, solve_settings, rng)
+        CreatorIterator::<L,L, SIZE, GM>::new(self, solve_settings, rng)
     }
 }
 
-struct CreatorIterator<const C: usize, const R: usize, GM: GameMode>
-where
-    [(); C * R]:,
+struct CreatorIterator<const C: u8, const R: u8, const SIZE: usize, GM: GameMode>
 {
     create_settings: BoardCreateSettings,
     solve_settings: SolveSettings,
@@ -64,30 +55,27 @@ where
     letter_positions: Vec<(usize, Rune)>,
 
     created_boards: HashSet<String>,
-    heap: BinaryHeap<SolvedBoard<C, R>>,
+    heap: BinaryHeap<SolvedBoard<C, R, SIZE>>,
     _game_mode: GM,
 }
 
-impl<const C: usize, const R: usize, GM: GameMode> CreatorIterator<C, R, GM>
-where
-    [(); C * R]:,
+impl<const C: u8, const R: u8, const SIZE: usize, GM: GameMode> CreatorIterator<C, R, SIZE, GM>
 {
     pub fn new(
         create_settings: BoardCreateSettings,
         solve_settings: SolveSettings,
         rng: StdRng,
     ) -> Self {
-        let board_size = C * R;
 
-        let board1 = Board::try_create(&str::repeat("_", board_size)).unwrap();
+        let board1 = Board::try_create(&str::repeat("_", SIZE)).unwrap();
 
-        let mut heap = BinaryHeap::<SolvedBoard<C, R>>::new();
+        let mut heap = BinaryHeap::<SolvedBoard<C, R, SIZE>>::new();
         heap.push(SolvedBoard {
             board: board1,
             solutions: 0,
         });
 
-        let letter_positions = (0..board_size)
+        let letter_positions = (0..SIZE)
             .cartesian_product(GM::default().legal_letters().iter().cloned())
             .collect_vec();
 
@@ -104,11 +92,9 @@ where
     }
 }
 
-impl<const C: usize, const R: usize, GM: GameMode> Iterator for CreatorIterator<C, R, GM>
-where
-    [(); C * R]:,
+impl<const L: u8, const SIZE: usize, GM: GameMode> Iterator for CreatorIterator<L,L, SIZE, GM>
 {
-    type Item = Board<C, R>;
+    type Item = Board<L,L, SIZE>;
 
     fn next(&mut self) -> Option<Self::Item> {
         while let Some(sb) = self.heap.pop() {
@@ -143,25 +129,24 @@ where
     }
 }
 
-fn mutate_board<const C: usize, const R: usize>(
-    board: &SolvedBoard<C, R>,
+fn mutate_board<const L: u8,  const SIZE: usize>(
+    board: &SolvedBoard<L, L, SIZE>,
     solve_settings: SolveSettings,
     created_boards: &mut HashSet<String>,
     letter: Rune,
     index: usize,
-) -> Option<SolvedBoard<C, R>>
-where
-    [(); C * R]:,
+) -> Option<SolvedBoard<L, L, SIZE>>
 {
-    let current_letter = board.board[Coordinate(index as u8)];
+    let current_letter = board.board[PointAbsolute8::try_from_usize(index).unwrap()];
     if current_letter == letter {
         return None;
     };
 
     let mut new_board = board.board.clone();
-    new_board[Coordinate(index as u8)] = letter;
+    new_board[PointAbsolute8::try_from_usize(index).unwrap()] = letter;
 
-    if created_boards.insert(new_board.get_unique_string()) {
+    let unique_string = new_board.get_unique_string();
+    if created_boards.insert(unique_string) {
         let solutions = solve_settings.solve(new_board.clone());
         let solution_count = solutions.count();
 

@@ -11,7 +11,7 @@ itertools = "0.10"
 num = "0.4"
 num-traits = "0.2"
 serde = { version = "1", features = ["derive", "rc"] }
-serde_with = "2"
+geometrid = {git= "https://github.com/wainwrightmark/geometrid", features= ["std", "serde"]}
 rand = {version = "0.8"}
 strum = {version = "0.24", features = ["derive"]}
 static_assertions = "1.1.0"

@@ -1,6 +1,6 @@
 use crate::state::prelude::*;
 use crate::web::prelude::*;
-use myriad::prelude::*;
+use myriad::prelude::PointAbsolute8;
 
 use num::ToPrimitive;
 use std::ops::Deref;
@@ -9,7 +9,7 @@ use yewdux::prelude::*;
 
 #[function_component(CrosshairsSVG)]
 pub fn crosshairs_svg() -> Html {
-    let circles = Coordinate::<GRID_COLUMNS, GRID_ROWS>::get_positions_up_to()
+    let circles = PointAbsolute8::<GRID_COLUMNS, GRID_ROWS>::points_by_row()
         .map(|coordinate| html!(< Crosshair {coordinate} />))
         .collect::<Html>();
 
@@ -23,17 +23,17 @@ pub fn crosshairs_svg() -> Html {
 
 #[derive(PartialEq, Eq, Properties)]
 pub struct CrossHairProperties {
-    coordinate: Coordinate<GRID_COLUMNS, GRID_ROWS>,
+    coordinate: PointAbsolute8<GRID_COLUMNS, GRID_ROWS>,
 }
 
-const CROSSHAIR_LENGTH: f64 = 15.0;
-const HALF_CROSSHAIR_LENGTH: f64 = CROSSHAIR_LENGTH / 2.0;
-const CROSSHAIR_INSET: f64 = 12.5;
+const CROSSHAIR_LENGTH: f32 = 15.0;
+const HALF_CROSSHAIR_LENGTH: f32 = CROSSHAIR_LENGTH / 2.0;
+const CROSSHAIR_INSET: f32 = 12.5;
 
-const STRAIGHT_SCALE_X: f64 = SQUARE_SIZE / 4.0 / CROSSHAIR_LENGTH;
-const DIAGONAL_SCALE_X: f64 = STRAIGHT_SCALE_X * 1.42;
+const STRAIGHT_SCALE_X: f32 = SQUARE_SIZE / 4.0 / CROSSHAIR_LENGTH;
+const DIAGONAL_SCALE_X: f32 = STRAIGHT_SCALE_X * 1.42;
 
-const HALF_STOKE_WIDTH: f64 = 3.6;
+const HALF_STOKE_WIDTH: f32 = 3.6;
 
 #[function_component(Crosshair)]
 fn crosshair(properties: &CrossHairProperties) -> Html {
@@ -182,25 +182,25 @@ fn crosshair(properties: &CrossHairProperties) -> Html {
 }
 
 fn get_line_position(
-    c1: Coordinate<GRID_COLUMNS, GRID_ROWS>,
-    c2: Coordinate<GRID_COLUMNS, GRID_ROWS>,
+    c1: PointAbsolute8<GRID_COLUMNS, GRID_ROWS>,
+    c2: PointAbsolute8<GRID_COLUMNS, GRID_ROWS>,
     index: u8,
     rf: RotFlipState,
-) -> (f64, f64, f64) {
-    let c1a = c1.rotate_and_flip(rf.rotate, rf.flip);
-    let c2a = c2.rotate_and_flip(rf.rotate, rf.flip);
+) -> (f32, f32, f32) {
+    let c1a = rotate_and_flip(&c1, rf.rotate, rf.flip);
+    let c2a = rotate_and_flip(&c2, rf.rotate, rf.flip);
 
-    let x_dir = c2a.get_column().to_f64().unwrap() - c1a.get_column().to_f64().unwrap();
-    let y_dir = c2a.get_row().to_f64().unwrap() - c1a.get_row().to_f64().unwrap();
+    let x_dir = c2a.x().to_f32().unwrap() - c1a.x().to_f32().unwrap();
+    let y_dir = c2a.y().to_f32().unwrap() - c1a.y().to_f32().unwrap();
 
     let x = (x_dir * HALF_CROSSHAIR_LENGTH * DIAGONAL_SCALE_X) - (x_dir * HALF_STOKE_WIDTH)
-        + (x_dir / 4.0 * index.to_f64().unwrap() * SQUARE_SIZE)
+        + (x_dir / 4.0 * index.to_f32().unwrap() * SQUARE_SIZE)
         + SQUARE_MIDPOINT;
     let y = (y_dir * HALF_CROSSHAIR_LENGTH * DIAGONAL_SCALE_X) - (y_dir * HALF_STOKE_WIDTH)
-        + (y_dir / 4.0 * index.to_f64().unwrap() * SQUARE_SIZE)
+        + (y_dir / 4.0 * index.to_f32().unwrap() * SQUARE_SIZE)
         + SQUARE_MIDPOINT;
 
-    let rot = c1a.get_angle(c2a);
+    let rot = c1a.angle_to(&c2a);
 
     (x, y, rot)
 }

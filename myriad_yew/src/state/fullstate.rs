@@ -22,7 +22,7 @@ impl FullGameState {}
 #[derive(PartialEq, Eq, Store, Clone, Serialize, Deserialize)]
 pub struct Game {
     #[serde_as(as = "_")]
-    pub board: Board<3, 3>,
+    pub board: Board<3, 3, 9>,
     pub challenge_words: Vec<i32>,
     pub date: Option<NaiveDate>,
     pub solve_settings: SolveSettings,
@@ -60,7 +60,7 @@ impl Game {
             branching_factor: 3,
         };
         let board = settings
-            .create_boards::<GRID_COLUMNS, GRID_ROWS, ClassicGameMode>(solve_settings, rng)
+            .create_boards::<GRID_COLUMNS, 9, ClassicGameMode>(solve_settings, rng)
             .next()
             .unwrap();
 
@@ -86,7 +86,7 @@ impl Game {
         let rng = rand::SeedableRng::seed_from_u64(seed);
 
         let mut boards =
-            settings.create_boards::<GRID_COLUMNS, GRID_ROWS, ClassicGameMode>(solve_settings, rng);
+            settings.create_boards::<GRID_COLUMNS, 9, ClassicGameMode>(solve_settings, rng);
         let board = boards.next().unwrap();
         let diff = instant::Instant::now() - start_instant;
 
@@ -104,7 +104,7 @@ impl Game {
 
     fn create_challenge_words(
         solve_settings: SolveSettings,
-        board: &Board<GRID_COLUMNS, GRID_ROWS>,
+        board: &Board<GRID_COLUMNS, GRID_ROWS,9>,
     ) -> Vec<i32> {
         solve_settings
             .solve(board.clone())

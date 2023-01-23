@@ -1,5 +1,5 @@
 use itertools::Itertools;
-use myriad::prelude::*;
+use myriad::prelude::PointAbsolute8;
 use yewdux::prelude::*;
 
 use super::prelude::*;
@@ -7,7 +7,7 @@ use super::prelude::*;
 pub struct WordFoundMsg {
     pub word: i32,
     pub word_type: FoundWordType,
-    pub coordinate: Coordinate<GRID_COLUMNS, GRID_ROWS>,
+    pub coordinate: PointAbsolute8<GRID_COLUMNS, GRID_ROWS>,
 }
 
 impl Reducer<RecentWordState> for WordFoundMsg {
@@ -36,7 +36,7 @@ pub struct RecentWord {
     pub number: i32,
     pub word_type: FoundWordType,
     pub expiry_time: instant::Instant,
-    pub coordinate: Coordinate<GRID_COLUMNS, GRID_ROWS>,
+    pub coordinate: PointAbsolute8<GRID_COLUMNS, GRID_ROWS>,
 }
 
 impl RecentWordState {
@@ -44,7 +44,7 @@ impl RecentWordState {
         &self,
         word: i32,
         word_type: FoundWordType,
-        coordinate: Coordinate<GRID_COLUMNS, GRID_ROWS>,
+        coordinate: PointAbsolute8<GRID_COLUMNS, GRID_ROWS>,
     ) -> Self {
         let now = instant::Instant::now();
         let linger = word_type.linger_duration_ms();

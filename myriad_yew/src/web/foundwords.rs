@@ -46,7 +46,7 @@ pub fn more_tab_header(properties: &MoreTabHeaderProperties) -> Html {
     let class = classes!("tab-header", selected);
     let style = format!(
         "transform: translate({}px, {}px);",
-        TAB_HEADER_PADDING + (index.to_f64().unwrap() * (TAB_HEADER_WIDTH + TAB_HEADER_MARGIN)),
+        TAB_HEADER_PADDING + (index.to_f32().unwrap() * (TAB_HEADER_WIDTH + TAB_HEADER_MARGIN)),
         (SQUARE_SIZE * 3.0) + TAB_HEADER_TOP_MARGIN
     );
 
@@ -86,7 +86,7 @@ pub fn found_words_tab_header(
     let class = classes!("tab-header", selected, complete);
     let style = format!(
         "transform: translate({}px, {}px);",
-        TAB_HEADER_PADDING + (index.to_f64().unwrap() * (TAB_HEADER_WIDTH + TAB_HEADER_MARGIN)),
+        TAB_HEADER_PADDING + (index.to_f32().unwrap() * (TAB_HEADER_WIDTH + TAB_HEADER_MARGIN)),
         (SQUARE_SIZE * 3.0) + TAB_HEADER_TOP_MARGIN
     );
     html!(
@@ -203,9 +203,9 @@ pub struct FoundWordBoxProperties {
     pub text: String,
     pub rect_class: Classes,
     pub text_class: Classes,
-    pub x: f64,
-    pub y: f64,
-    pub width_units: f64,
+    pub x: f32,
+    pub y: f32,
+    pub width_units: f32,
     pub on_click: Option<Callback<MouseEvent>>,
 }
 
@@ -241,21 +241,21 @@ pub fn found_word_box(properties: &FoundWordBoxProperties) -> Html {
     )
 }
 
-pub fn get_found_word_position(number: i32, selected_index: usize, clamp: bool) -> (f64, f64) {
+pub fn get_found_word_position(number: i32, selected_index: usize, clamp: bool) -> (f32, f32) {
     let row_number = ((number - 1) % GOALSIZE) / 10;
     let y = BOARD_HEIGHT
         + TAB_HEADER_HEIGHT
         + TAB_HEADER_TOP_MARGIN
         + FOUND_WORD_MARGIN
-        + (FOUND_WORD_HEIGHT + FOUND_WORD_MARGIN) * row_number.to_f64().unwrap();
+        + (FOUND_WORD_HEIGHT + FOUND_WORD_MARGIN) * row_number.to_f32().unwrap();
 
     let row_position = ((number - 1) % GOALSIZE) % 10;
 
     let tab_x = FOUND_WORD_PADDING
-        + row_position.to_f64().unwrap() * (FOUND_WORD_MARGIN + FOUND_WORD_WIDTH);
+        + row_position.to_f32().unwrap() * (FOUND_WORD_MARGIN + FOUND_WORD_WIDTH);
 
     let index = (number - 1) / GOALSIZE;
-    let mut index_offset = (index - selected_index.to_i32().unwrap()).to_f64().unwrap();
+    let mut index_offset = (index - selected_index.to_i32().unwrap()).to_f32().unwrap();
     if clamp {
         index_offset = index_offset.min(1.0).max(-1.0);
     }

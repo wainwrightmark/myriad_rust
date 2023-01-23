@@ -24,7 +24,7 @@ pub fn main() {
 
     use Rune::*;
     let iterator = BoardIterator {
-        current: Board { runes: [One; 9] }, //todo start earlier
+        current: Board(Grid8([One; 9])), //todo start earlier
     };
 
     //let par_iter = iter::split(iterator, 100);
@@ -45,7 +45,7 @@ pub fn main() {
     fs::write("boards.txt", text).expect("Unable to write file");
 }
 
-pub fn filter_good(board: &Board<3, 3>) -> bool {
+pub fn filter_good(board: &Board<3, 3,9>) -> bool {
     use Rune::*;
     if !board.is_canonical_form() {
         return false;
@@ -57,7 +57,7 @@ pub fn filter_good(board: &Board<3, 3>) -> bool {
     let mut _positive_operators = 0;
     let mut _negative_operators = 0;
 
-    for rune in board.runes {
+    for rune in board.0.iter() {
         match rune {
             //Rune::Zero => {},
             One => {
@@ -122,19 +122,19 @@ pub fn filter_good(board: &Board<3, 3>) -> bool {
 
 #[derive(Default, Debug, PartialEq, Eq, Clone)]
 pub struct BoardIterator {
-    pub current: Board<3, 3>,
+    pub current: Board<3, 3,9>,
 }
 
 impl Iterator for BoardIterator {
-    type Item = Board<3, 3>;
+    type Item = Board<3, 3,9>;
 
     fn next(&mut self) -> Option<Self::Item> {
         for index in 0..9 {
-            if let Some(next_value) = Self::get_next(self.current.runes[index]) {
-                self.current.runes[index] = next_value;
+            if let Some(next_value) = Self::get_next(self.current.0.0[index]) {
+                self.current.0.0[index] = next_value;
                 return Some(self.current.clone());
             } else {
-                self.current.runes[index] = Self::first_rune()
+                self.current.0.0[index] = Self::first_rune()
             }
         }
 

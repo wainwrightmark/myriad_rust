@@ -3,93 +3,66 @@ use std::ops::IndexMut;
 
 use crate::parser::*;
 use crate::prelude::*;
+pub use geometrid::prelude8::*;
 use itertools::*;
 use serde::{Deserialize, Serialize};
-use serde_with::serde_as;
 
-#[serde_as]
-#[derive(PartialEq, Debug, Eq, Hash, Clone, Serialize, Deserialize, PartialOrd, Ord)]
-pub struct Board<const COLUMNS: usize, const ROWS: usize>
-where
-    [(); COLUMNS * ROWS]:,
-{
-    #[serde_as(as = "[_; COLUMNS * ROWS]")]
-    pub runes: [Rune; COLUMNS * ROWS],
-}
+#[derive(PartialEq, Debug, Eq, Hash, Clone, Serialize, Deserialize, PartialOrd, Ord, Default)]
+pub struct Board<const C: u8, const R: u8, const SIZE: usize>(pub Grid8<Rune, C, R, SIZE>);
 
-impl<const C: usize, const R: usize> Default for Board<C, R>
-where
-    [(); C * R]:,
-{
-    fn default() -> Self {
-        use Rune::*;
-        Self {
-            runes: [Zero; C * R],
-        }
-    }
-}
+static_assertions::assert_eq_size!(Board<3,3, 9>, [u8;9]);
 
-static_assertions::assert_eq_size!(Board<3,3>, [u8;9]);
-
-impl<const C: usize, const R: usize> Index<Coordinate<C, R>> for Board<C, R>
-where
-    [(); C * R]:,
+impl<const C: u8, const R: u8, const SIZE: usize> Index<PointAbsolute8<C, R>>
+    for Board<C, R, SIZE>
 {
     type Output = Rune;
 
-    fn index(&self, index: Coordinate<C, R>) -> &Self::Output {
-        &self.runes[index.0 as usize]
+    fn index(&self, index: PointAbsolute8<C, R>) -> &Self::Output {
+        &self.0[index]
     }
 }
 
-impl<const C: usize, const R: usize> IndexMut<Coordinate<C, R>> for Board<C, R>
-where
-    [(); C * R]:,
+impl<const C: u8, const R: u8, const SIZE: usize> IndexMut<PointAbsolute8<C, R>>
+    for Board<C, R, SIZE>
 {
-    fn index_mut(&mut self, index: Coordinate<C, R>) -> &mut Self::Output {
-        &mut self.runes[index.0 as usize]
+    fn index_mut(&mut self, index: PointAbsolute8<C, R>) -> &mut Self::Output {
+        &mut self.0[index]
     }
 }
 
-impl<const C: usize, const R: usize> std::fmt::Display for Board<C, R>
-where
-    [(); C * R]:,
-{
+impl<const C: u8, const R: u8, const SIZE: usize> std::fmt::Display for Board<C, R, SIZE> {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{}", self.to_multiline_string())
+        write!(f, "{}", self.0)
     }
 }
 
-impl<const C: usize, const R: usize> Board<C, R>
-where
-    [(); C * R]:,
-{
-    pub fn check(&self, nodes: &[Coordinate<C, R>]) -> Result<i32, ParseFail> {
+impl<const C: u8, const R: u8, const SIZE: usize> Board<C, R, SIZE> {
+    pub fn check(&self, nodes: &[PointAbsolute8<C, R>]) -> Result<i32, ParseFail> {
         let mut input = nodes.iter().map(|x| self[*x]).peekable();
 
         crate::parser::parse_and_evaluate(&mut input)
     }
 
-    pub fn try_create(letters: &str) -> Option<Board<C, R>> {
+    pub fn try_create(letters: &str) -> Option<Board<C, R, SIZE>> {
         let r: Result<Vec<Rune>, _> = letters.chars().map(Rune::try_from).collect();
 
         match r {
             Err(_) => None,
             Ok(vector) => {
-                let letters: [Rune; C * R] = vector
+                let letters: [Rune; SIZE] = vector
                     .into_iter()
-                    .pad_using(C * R, |_| Rune::Blank)
+                    .pad_using(SIZE, |_| Rune::Blank)
                     .collect_vec()
                     .try_into()
                     .unwrap();
 
-                Some(Board { runes: letters })
+                Some(Self(Grid8(letters)))
             }
         }
     }
 
-    pub fn get_word_text(&self, coordinates: &[Coordinate<C, R>]) -> String {
-        let word = coordinates
+    pub fn get_word_text(&self, ps: &[PointAbsolute8<C, R>]) -> String {
+        let word = ps
             .iter()
             .map(|c| {
                 let rune = &self[*c];
@@ -99,36 +72,16 @@ where
         word
     }
 
-    pub fn get_unique_string(&self) -> String {
-        //TODO improve
-        if R != C {
-            return format!("{}_{}", C, self.runes.iter().join(""));
-        }
-
-        let mut options = (0..4)
-            .into_iter()
-            .cartesian_product(0..2)
-            .map(|(rotate, reflect)| {
-                Coordinate::<C, R>::get_positions_up_to()
-                    .map(|c| c.rotate_and_flip(rotate, reflect == 0))
-                    .map(|c| self[c])
-                    .join("")
-            })
-            .sorted();
-
-        options.next().unwrap()
-    }
-
     pub fn to_multiline_string(&self) -> String {
-        let mut s = String::with_capacity(self.runes.len() + R);
+        let mut s = String::with_capacity(SIZE + (R as usize));
 
         for row in 0..R {
             if row != 0 {
                 s.push_str("\r\n")
             };
             for column in 0..C {
-                let coordinate = Coordinate::<C, R>::create(column, row);
-                let l = self[coordinate].to_string();
+                let p = PointAbsolute8::<C, R>::try_new(column, row).unwrap();
+                let l = self[p].to_string();
 
                 s.push_str(&l);
             }
@@ -138,11 +91,11 @@ where
     }
 
     pub fn to_single_string(&self) -> String {
-        let mut s = String::with_capacity(self.runes.len() + R as usize);
+        let mut s = String::with_capacity(SIZE + R as usize);
         for column in 0..C {
             for row in 0..R {
-                let coordinate = Coordinate::<C, R>::create(column, row);
-                let l = self[coordinate].to_string();
+                let p = PointAbsolute8::<C, R>::try_new(column, row).unwrap();
+                let l = self[p].to_string();
 
                 s.push_str(&l);
             }
@@ -153,54 +106,18 @@ where
 
     ///Flip along the vertical axis
     pub fn flip_vertical(&mut self) {
-        for column in 0..(C / 2) {
-            for row in 0..R {
-                let coordinate = Coordinate::create(column, row);
-                let o_coordinate = Coordinate::create(C - (1 + column), row);
-
-                let swap = self[coordinate];
-                self[coordinate] = self[o_coordinate];
-                self[o_coordinate] = swap;
-            }
-        }
+        self.0.flip_vertical()
     }
 
     ///Flip along the horizontal axis
     pub fn flip_horizontal(&mut self) {
-        for row in 0..(R / 2) {
-            for column in 0..C {
-                let coordinate = Coordinate::create(column, row);
-                let o_coordinate = Coordinate::create(column, R - (1 + row));
-
-                let swap = self[coordinate];
-                self[coordinate] = self[o_coordinate];
-                self[o_coordinate] = swap;
-            }
-        }
+        self.0.flip_horizontal()
     }
+}
 
+impl<const L: u8, const SIZE: usize> Board<L, L, SIZE> {
     pub fn rotate(&mut self) {
-        if R != C {
-            panic!("Cannot rotate uneven board");
-        }
-        for row in 0..=(R / 2) {
-            for column in row..=(C / 2) {
-                let o_row = R - (1 + row);
-                let o_column = C - (1 + column);
-                if row != o_row || column != o_column {
-                    let coordinate0 = Coordinate::create(column, row);
-                    let coordinate1 = Coordinate::create(row, o_column);
-                    let coordinate2 = Coordinate::create(o_column, o_row);
-                    let coordinate3 = Coordinate::create(o_row, column);
-
-                    let swap = self[coordinate0];
-                    self[coordinate0] = self[coordinate1];
-                    self[coordinate1] = self[coordinate2];
-                    self[coordinate2] = self[coordinate3];
-                    self[coordinate3] = swap;
-                }
-            }
-        }
+        self.0.rotate_clockwise()
     }
 
     pub fn is_canonical_form(&self) -> bool {
@@ -224,55 +141,21 @@ where
         true
     }
 
-    // pub fn get_board_data(&self) -> String {
-    //     let one_thousand_solve_settings = SolveSettings { min: 1, max: 1000 };
-    //     let ten_thousand_solve_settings = SolveSettings { min: 1, max: 10000 };
+    pub fn get_unique_string(&self) -> String {
+        let mut options = (0..4)
+            .into_iter()
+            .cartesian_product(0..2)
+            .map(|(rotate, reflect)| {
+                PointAbsolute8::<L, L>::points_by_row()
+                    .map(|c| c.rotate(rotate))
+                    .map(|c| if reflect == 0 { c } else { c.flip_horizontal() })
+                    .map(|c| self[c])
+                    .join("")
+            })
+            .sorted();
 
-    //     let one_thousand_result = one_thousand_solve_settings
-    //         .solve(self.clone())
-    //         .count()
-    //         .to_string();
-    //     let ten_thousand_result = ten_thousand_solve_settings
-    //         .solve(self.clone())
-    //         .count()
-    //         .to_string();
-
-    //     let mut strings = vec![
-    //         self.to_single_string(),
-    //         one_thousand_result,
-    //         ten_thousand_result,
-    //     ];
-
-    //     let mut nums = 0;
-    //     let mut operators = 0;
-    //     let mut blanks = 0;
-    //     let mut numerals = 0;
-
-    //     for rune in self.runes {
-    //         let rt: RuneType = RuneType::from(rune);
-
-    //         match rt {
-    //             RuneType::Digit => nums += 1,
-    //             RuneType::Operator => operators += 1,
-    //             RuneType::Blank => blanks += 1,
-    //             RuneType::RomanNumeral => numerals += 1,
-    //         }
-    //     }
-
-    //     strings.push(nums.to_string());
-    //     strings.push(operators.to_string());
-    //     strings.push(blanks.to_string());
-    //     strings.push(numerals.to_string());
-
-    //     let legal_letters = ClassicGameMode {}.legal_letters();
-
-    //     for l in legal_letters {
-    //         let c = self.runes.iter().filter(|&x| x == l).count();
-    //         strings.push(c.to_string());
-    //     }
-
-    //     strings.join(" ")
-    // }
+        options.next().unwrap()
+    }
 }
 
 #[cfg(test)]
@@ -291,10 +174,10 @@ mod tests {
     #[test_case("123456789", true, 2, "321654987")]
     #[test_case("123456789", true, 3, "963852741")]
     fn test_board_flip_rotate(input: &str, flip: bool, rotate: i32, expected: &str) {
-        let mut board = Board::<3, 3>::try_create(input).unwrap();
+        let mut board = Board::<3, 3, 9>::try_create(input).unwrap();
 
         if flip {
-            board.flip_horizontal();
+            board.flip_vertical();
         }
 
         for _ in 0..rotate {
@@ -302,7 +185,7 @@ mod tests {
         }
 
         let s = board.to_multiline_string();
-        let expected_multiline = Board::<3, 3>::try_create(expected)
+        let expected_multiline = Board::<3, 3, 9>::try_create(expected)
             .unwrap()
             .to_multiline_string();
 
@@ -311,7 +194,7 @@ mod tests {
 
     #[test_case("123456789")]
     fn test_is_canonical(input: &str) {
-        let board = Board::<3, 3>::try_create(input).unwrap();
+        let board = Board::<3, 3, 9>::try_create(input).unwrap();
 
         assert!(board.is_canonical_form());
 

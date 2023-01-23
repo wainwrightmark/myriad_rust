@@ -24,6 +24,6 @@ pub mod prelude {
 
     pub const GOALSIZE: i32 = 20;
 
-    pub const GRID_COLUMNS: usize = 3;
-    pub const GRID_ROWS: usize = 3;
+    pub const GRID_COLUMNS: u8 = 3;
+    pub const GRID_ROWS: u8 = 3;
 }

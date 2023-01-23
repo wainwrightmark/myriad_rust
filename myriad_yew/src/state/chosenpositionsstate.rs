@@ -7,7 +7,7 @@ use yewdux::prelude::*;
 
 #[derive(PartialEq, Eq, Clone, Default, Serialize, Deserialize, Store)]
 pub struct ChosenPositionsState {
-    pub positions: Vec<Coordinate<GRID_COLUMNS, GRID_ROWS>>,
+    pub positions: Vec<PointAbsolute8<GRID_COLUMNS, GRID_ROWS>>,
 }
 
 impl ChosenPositionsState {
@@ -80,7 +80,7 @@ impl ChosenPositionsState {
     pub fn next(
         state: std::rc::Rc<Self>,
         allow_abandon: bool,
-        coordinate: Coordinate<GRID_COLUMNS, GRID_ROWS>,
+        coordinate: PointAbsolute8<GRID_COLUMNS, GRID_ROWS>,
     ) -> std::rc::Rc<Self> {
         if let Some(last) = state.positions.last() {
             if last == &coordinate {
@@ -100,7 +100,7 @@ impl ChosenPositionsState {
         let find_result = state.positions.iter().find_position(|&z| z == &coordinate);
 
         if let Some((index, _)) = find_result {
-            let new_chosen_positions: Vec<Coordinate<GRID_COLUMNS, GRID_ROWS>> = state
+            let new_chosen_positions: Vec<PointAbsolute8<GRID_COLUMNS, GRID_ROWS>> = state
                 .positions
                 .iter()
                 .take(index + 1)
@@ -188,16 +188,16 @@ impl Reducer<InputState> for InputMsg {
 
 pub enum InputMsg {
     Down {
-        coordinate: Coordinate<GRID_COLUMNS, GRID_ROWS>,
+        coordinate: PointAbsolute8<GRID_COLUMNS, GRID_ROWS>,
     },
     Up {},
     Enter {
-        coordinate: Coordinate<GRID_COLUMNS, GRID_ROWS>,
+        coordinate: PointAbsolute8<GRID_COLUMNS, GRID_ROWS>,
     },
 }
 
 pub struct OnClickMsg {
-    pub coordinate: Coordinate<GRID_COLUMNS, GRID_ROWS>,
+    pub coordinate: PointAbsolute8<GRID_COLUMNS, GRID_ROWS>,
     pub allow_abandon: bool,
 }
 

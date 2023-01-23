@@ -1,6 +1,7 @@
 #![allow(incomplete_features)]
 #![feature(generic_const_exprs)]
 
+use geometrid::prelude8::PointAbsolute8;
 #[cfg(test)]
 use itertools::Itertools;
 use myriad::prelude::*;
@@ -31,7 +32,7 @@ fn test_board_100(letters: &str) {
 }
 
 fn test_board(letters: &str, expected_count: usize) {
-    let board = Board::<3, 3>::try_create(letters).expect("board should be created");
+    let board = Board::<3, 3,9>::try_create(letters).expect("board should be created");
 
     let settings = SolveSettings { min: 1, max: 100 };
 
@@ -63,8 +64,8 @@ fn test_create_boards() {
     };
     let rng = rand::SeedableRng::seed_from_u64(100);
 
-    let boards = settings
-        .create_boards::<3, 3, ClassicGameMode>(solve_settings, rng)
+    let boards: Vec<Board<3, 3, 9>> = settings
+        .create_boards::<3, 9, ClassicGameMode>(solve_settings, rng)
         .take(number_to_return)
         .collect_vec();
 
@@ -86,8 +87,12 @@ fn test_create_boards() {
 #[test]
 pub fn test_type_sizes() {
     let letter = std::mem::size_of::<Rune>();
-    let coordinate = std::mem::size_of::<Coordinate<3, 3>>();
-    let board = std::mem::size_of::<Board<3, 3>>();
+    let coordinate = std::mem::size_of::<PointAbsolute8<3, 3,>>();
+    let board = std::mem::size_of::<Board<3, 3, 9>>();
+
+    assert_eq!(1, letter);
+    assert_eq!(1, coordinate);
+    assert_eq!(9, board);
 
     println!("Size of letter: {letter}");
     println!("Size of coordinate: {coordinate}");

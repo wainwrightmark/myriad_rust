@@ -31,9 +31,9 @@ checksum = "d301b3b94cb4b2f23d7917810addbbaff90738e0ca2be692bd027e70d7e0330c"
 
 [[package]]
 name = "async-trait"
-version = "0.1.62"
+version = "0.1.63"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "689894c2db1ea643a50834b999abf1c110887402542955ff5451dab8f861f9ed"
+checksum = "eff18d764974428cf3a9328e23fc5c986f5fbed46e6cd4cdf42544df5d297ec1"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -82,7 +82,7 @@ checksum = "bef38d45163c2f1dde094a7dfd33ccf595c92905c8f8f4fdc18d06fb1037718a"
 name = "board_generator"
 version = "0.1.0"
 dependencies = [
- "clap 4.1.1",
+ "clap 4.1.2",
  "itertools",
  "myriad",
 ]
@@ -174,9 +174,9 @@ dependencies = [
 
 [[package]]
 name = "clap"
-version = "4.1.1"
+version = "4.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4ec7a4128863c188deefe750ac1d1dfe66c236909f845af04beed823638dc1b2"
+checksum = "0e638668a62aced2c9fb72b5135a33b4a500485ccf2a0e402e09aa04ab2fc115"
 dependencies = [
  "bitflags",
  "clap_derive",
@@ -554,6 +554,18 @@ dependencies = [
  "pin-project-lite",
  "pin-utils",
  "slab",
+]
+
+[[package]]
+name = "geometrid"
+version = "0.1.0"
+source = "git+https://github.com/wainwrightmark/geometrid#5f1793b19663209b4be99f48b2cc379e762b8fe5"
+dependencies = [
+ "itertools",
+ "serde",
+ "serde_arrays",
+ "strum",
+ "tinyvec",
 ]
 
 [[package]]
@@ -943,13 +955,13 @@ name = "myriad"
 version = "0.1.0"
 dependencies = [
  "criterion",
+ "geometrid",
  "itertools",
  "ntest",
  "num",
  "num-traits",
  "rand",
  "serde",
- "serde_with",
  "static_assertions",
  "strum",
 ]
@@ -1324,9 +1336,9 @@ dependencies = [
 
 [[package]]
 name = "rayon-core"
-version = "1.10.1"
+version = "1.10.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cac410af5d00ab6884528b4ab69d1e8e146e8d471201800fa1b4524126de6ad3"
+checksum = "356a0625f1954f730c0201cdab48611198dc6ce21f4acff55089b5a78e6e835b"
 dependencies = [
  "crossbeam-channel",
  "crossbeam-deque",
@@ -1420,6 +1432,15 @@ dependencies = [
  "js-sys",
  "serde",
  "wasm-bindgen",
+]
+
+[[package]]
+name = "serde_arrays"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "38636132857f68ec3d5f3eb121166d2af33cb55174c4d5ff645db6165cbef0fd"
+dependencies = [
+ "serde",
 ]
 
 [[package]]
@@ -1620,6 +1641,12 @@ dependencies = [
  "serde",
  "serde_json",
 ]
+
+[[package]]
+name = "tinyvec"
+version = "1.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "87cc5ceb3875bb20c2890005a4e226a4651264a5c75edb2421b52861a0a0cb50"
 
 [[package]]
 name = "tokio"
