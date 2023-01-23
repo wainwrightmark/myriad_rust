@@ -59,10 +59,10 @@ pub fn rotate_and_flip<const L: u8>(
     }
 
     let rotated = point.rotate(rotate as u8); // .rotate_and_flip(self.rotate, self.flip);
-    let flipped = if flip {
+
+    if flip {
         rotated.flip_vertical()
     } else {
         rotated
-    };
-    flipped
+    }
 }

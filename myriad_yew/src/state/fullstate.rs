@@ -38,7 +38,8 @@ impl Game {
             js_today.get_full_year().to_i32().unwrap(),
             js_today.get_month() + 1,
             js_today.get_date(),
-        ).expect("Invalid date")
+        )
+        .expect("Invalid date")
     }
 
     pub fn create_for_today() -> Self {
@@ -104,7 +105,7 @@ impl Game {
 
     fn create_challenge_words(
         solve_settings: SolveSettings,
-        board: &Board<GRID_COLUMNS, GRID_ROWS,9>,
+        board: &Board<GRID_COLUMNS, GRID_ROWS, 9>,
     ) -> Vec<i32> {
         solve_settings
             .solve(board.clone())

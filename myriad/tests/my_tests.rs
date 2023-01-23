@@ -32,7 +32,7 @@ fn test_board_100(letters: &str) {
 }
 
 fn test_board(letters: &str, expected_count: usize) {
-    let board = Board::<3, 3,9>::try_create(letters).expect("board should be created");
+    let board = Board::<3, 3, 9>::try_create(letters).expect("board should be created");
 
     let settings = SolveSettings { min: 1, max: 100 };
 
@@ -87,7 +87,7 @@ fn test_create_boards() {
 #[test]
 pub fn test_type_sizes() {
     let letter = std::mem::size_of::<Rune>();
-    let coordinate = std::mem::size_of::<PointAbsolute8<3, 3,>>();
+    let coordinate = std::mem::size_of::<PointAbsolute8<3, 3>>();
     let board = std::mem::size_of::<Board<3, 3, 9>>();
 
     assert_eq!(1, letter);

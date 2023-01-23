@@ -23,8 +23,7 @@ impl SolveSettings {
     pub fn solve<const C: u8, const R: u8, const SIZE: usize>(
         self,
         board: Board<C, R, SIZE>,
-    ) -> impl Iterator<Item = FoundWord<C, R>>
-    {
+    ) -> impl Iterator<Item = FoundWord<C, R>> {
         SolutionIter::new(board, self)
     }
 
@@ -51,16 +50,14 @@ impl<const C: u8, const R: u8> std::fmt::Display for FoundWord<C, R> {
     }
 }
 
-struct SolutionIter<const C: u8, const R: u8, const SIZE: usize>
-{
+struct SolutionIter<const C: u8, const R: u8, const SIZE: usize> {
     results: HashSet<i32>,
     settings: SolveSettings,
     queue: VecDeque<Vec<PointAbsolute8<C, R>>>,
     board: Board<C, R, SIZE>,
 }
 
-impl<const C: u8, const R: u8, const SIZE: usize> SolutionIter<C, R, SIZE>
-{
+impl<const C: u8, const R: u8, const SIZE: usize> SolutionIter<C, R, SIZE> {
     pub fn new(board: Board<C, R, SIZE>, settings: SolveSettings) -> Self {
         Self {
             results: Default::default(),
@@ -89,8 +86,7 @@ impl<const C: u8, const R: u8, const SIZE: usize> SolutionIter<C, R, SIZE>
     }
 }
 
-impl<const C: u8, const R: u8, const SIZE: usize> Iterator for SolutionIter<C, R, SIZE>
-{
+impl<const C: u8, const R: u8, const SIZE: usize> Iterator for SolutionIter<C, R, SIZE> {
     type Item = FoundWord<C, R>;
 
     fn next(&mut self) -> Option<Self::Item> {

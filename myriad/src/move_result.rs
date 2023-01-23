@@ -1,4 +1,3 @@
-
 use geometrid::prelude8::PointAbsolute8;
 
 use super::solver::FoundWord;
