@@ -10,7 +10,7 @@ use yewdux::prelude::*;
 use chrono::{Datelike, NaiveDate};
 
 #[derive(PartialEq, Eq, Store, Clone, Default, Serialize, Deserialize)]
-#[store(storage = "local")] // can also be "session"
+#[store(storage = "local", storage_tab_sync)] // can also be "session"
 pub struct FullGameState {
     pub game: Rc<Game>,
     pub found_words: Rc<FoundWordsState>,

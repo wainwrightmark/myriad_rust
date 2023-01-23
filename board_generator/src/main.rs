@@ -36,6 +36,10 @@ pub fn main() {
             let s = b.to_single_string();
             let solutions = solve_settings.solve(b).count();
 
+            if solutions == 100{
+                println!("{}: {}", s, solutions)
+            }
+
             format!("{}: {}", s, solutions)
         })
         .take(args.take);
