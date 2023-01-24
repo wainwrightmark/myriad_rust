@@ -49,6 +49,8 @@
   height: 100%;
   line-height: 180%;
   position: relative;
+
+  z-index: 500;
 }
 
 .recentWord {
@@ -228,18 +230,23 @@ Crosshairs
 
 .crosshair-group{
   pointer-events: none;
+  position: absolute;
 }
 
 .crosshair{
   stroke-width: 7.2;
   transition: all 1s ease-out;
   opacity: 1.0;
-  /* stroke-linecap: round;   */
+  margin: 0;
+  border: none;
+  position: absolute;
+  z-index: 100;
+  border-radius: 50%;
 }
 
 .crosshair-extended{
 
-  opacity: 0.5;
+  /* opacity: 0.5; */
 }
 
 .invisible{

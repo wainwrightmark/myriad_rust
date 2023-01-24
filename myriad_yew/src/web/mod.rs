@@ -31,7 +31,10 @@ pub mod prelude {
     }
 
     pub const SQUARE_SIZE: f32 = 120.0;
-    pub const SQUARE_MIDPOINT: f32 = SQUARE_SIZE / 2.0;
+
+    pub const CIRCLE_RATIO: f32 = 0.8;
+
+    // pub const SQUARE_MIDPOINT: f32 = SQUARE_SIZE / 2.0;
     pub const SVG_WIDTH: f32 = SQUARE_SIZE * 3.0;
     pub const SVG_HEIGHT: f32 = BOARD_HEIGHT
         + TAB_HEADER_TOP_MARGIN

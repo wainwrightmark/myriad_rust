@@ -69,8 +69,8 @@ fn circle(properties: &CircleProperties) -> Html {
     let onpointerenter =
         Dispatch::new().apply_callback(move |_: PointerEvent| InputMsg::Enter { coordinate });
 
-    let cx = location.0 - (size * 0.4);
-    let cy = location.1 - (size * 0.4);
+    let left = location.0 - (size * 0.5 * CIRCLE_RATIO);
+    let top = location.1 - (size * 0.5 * CIRCLE_RATIO);
 
     let text = if matches!(letter, Rune::Blank) {
         "".to_string()
@@ -80,11 +80,11 @@ fn circle(properties: &CircleProperties) -> Html {
     let key = format!("{coordinate}_key");
     let circle_id = format!("{coordinate}_bigCircle");
     let text_id = format!("{coordinate}_text");
-    let radius = format!("{:2}", size * 0.4);
-    let diameter = format!("{:2}", size * 0.8);
+    let radius = format!("{:2}", size * 0.5 * CIRCLE_RATIO);
+    let diameter = format!("{:2}", size * CIRCLE_RATIO);
 
     let g_style = format!(
-        "left: {cx}px; top: {cy}px;"
+        "left: {left}px; top: {top}px;"
     );
 
     let circle_type_class = match circle_type {
