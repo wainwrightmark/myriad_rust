@@ -9,152 +9,231 @@ use num::ToPrimitive;
 use yew::prelude::*;
 use yewdux::prelude::*;
 
-#[function_component(FoundWordsTabHeaders)]
-pub fn found_words_tab_headers() -> Html {
-    let state = use_selector(|state: &FullGameState| state.found_words.clone());
-    let selected_tab_state = use_store_value::<SelectedTabState>();
-
-    let buttons = (0..5)
-        .map(|index| found_words_tab_header(index, state.clone(), selected_tab_state.clone()))
-        .collect::<Html>();
-
-    html!(<g> { buttons } <MoveTabHeader index={5} {selected_tab_state}/> </g>)
-}
-
-#[derive(PartialEq, Eq, Properties)]
-pub struct MoreTabHeaderProperties {
-    index: usize,
-    selected_tab_state: Rc<SelectedTabState>,
-}
-
-#[function_component(MoveTabHeader)]
-pub fn more_tab_header(properties: &MoreTabHeaderProperties) -> Html {
-    let index = properties.index;
-    let selected_tab_state = &properties.selected_tab_state;
-
-    let onclick = Dispatch::new().apply_callback(move |_| TabSelectedMsg { index });
-
-    let key = format!("found_words_tab_header{index}");
-    let selected = if selected_tab_state.index == index {
-        Some("selected-tab")
-    } else if selected_tab_state.locked {
-        Some("locked-out-tab")
-    } else {
-        None
-    };
-
-    let class = classes!("tab-header", selected);
-    let style = format!(
-        "transform: translate({}px, {}px);",
-        TAB_HEADER_PADDING + (index.to_f32().unwrap() * (TAB_HEADER_WIDTH + TAB_HEADER_MARGIN)),
-        (SQUARE_SIZE * 3.0) + TAB_HEADER_TOP_MARGIN
-    );
-
+#[function_component(FoundWordsControl)]
+pub fn found_words_control() -> Html {
     html!(
-        <g {key} {style} {onclick}>
-        <rect {class} height={format!("{TAB_HEADER_HEIGHT}")} rx="5" width={format!("{TAB_HEADER_WIDTH}")}>
-        </rect>
-        <text class="tab-header-text" fill="Black" stroke="White">
-           {"☰"}
-        </text>
+        <div class="tabs six">
 
-        </g>
+        <input id="tab-1" type="radio" name="tabgroupB" />
+        <label class="pseudo button toggle" for="tab-1">{"20"}</label>
+
+        <input id="tab-2" type="radio" name="tabgroupB"/>
+        <label class="pseudo button toggle" for="tab-2">{"40"}</label>
+
+        <input id="tab-3" type="radio" name="tabgroupB"/>
+        <label class="pseudo button toggle" for="tab-3">{"60"}</label>
+
+        <input id="tab-4" type="radio" name="tabgroupB"/>
+        <label class="pseudo button toggle" for="tab-4">{"80"}</label>
+
+        <input id="tab-5" type="radio" name="tabgroupB"/>
+        <label class="pseudo button toggle" for="tab-5">{"100"}</label>
+
+        <input id="tab-6" type="radio" name="tabgroupB"/>
+        <label class="pseudo button toggle" for="tab-6">{"☰"}</label>
+
+
+        <div class="row">
+            <NumberedFoundWords min={1} max={20} />
+            <NumberedFoundWords min={21} max={40} />
+            <NumberedFoundWords min={41} max={60} />
+            <NumberedFoundWords min={61} max={80} />
+            <NumberedFoundWords min={81} max={100} />
+            <ControlButtons />
+        </div>
+        </div>
     )
 }
 
-pub fn found_words_tab_header(
-    index: usize,
-    state: Rc<Rc<FoundWordsState>>,
-    selected_tab_state: Rc<SelectedTabState>,
-) -> Html {
-    let onclick = Dispatch::new().apply_callback(move |_| TabSelectedMsg { index });
+// #[function_component(FoundWordsTabHeaders)]
+// pub fn found_words_tab_headers() -> Html {
+//     let state = use_selector(|state: &FullGameState| state.found_words.clone());
+//     let selected_tab_state = use_store_value::<SelectedTabState>();
 
-    let key = format!("found_words_tab_header{index}");
-    let selected = if selected_tab_state.index == index {
-        Some("selected-tab")
-    } else if selected_tab_state.locked {
-        Some("locked-out-tab")
-    } else {
-        None
-    };
-    let complete = if state.is_goal_complete(index) {
-        Some("complete-tab")
-    } else {
-        None
-    };
+//     let buttons = (0..5)
+//         .map(|index| found_words_tab_header(index, state.clone(), selected_tab_state.clone()))
+//         .collect::<Html>();
 
-    let class = classes!("tab-header", selected, complete);
-    let style = format!(
-        "transform: translate({}px, {}px);",
-        TAB_HEADER_PADDING + (index.to_f32().unwrap() * (TAB_HEADER_WIDTH + TAB_HEADER_MARGIN)),
-        (SQUARE_SIZE * 3.0) + TAB_HEADER_TOP_MARGIN
-    );
-    html!(
-    <g {key} {style} {onclick}>
-    <rect {class} height={format!("{TAB_HEADER_HEIGHT}")} rx="5" width={format!("{TAB_HEADER_WIDTH}")}>
-    </rect>
-    <text class="tab-header-text" fill="Black" stroke="White">
-       {format_number ((index.to_i32().unwrap()  + 1) * GOALSIZE)}
-    </text>
+//     html!(<g> { buttons } <MoveTabHeader index={5} {selected_tab_state}/> </g>)
+// }
 
-    </g>
-    )
-}
+// #[derive(PartialEq, Eq, Properties)]
+// pub struct MoreTabHeaderProperties {
+//     index: usize,
+//     selected_tab_state: Rc<SelectedTabState>,
+// }
+
+// #[function_component(MoveTabHeader)]
+// pub fn more_tab_header(properties: &MoreTabHeaderProperties) -> Html {
+//     let index = properties.index;
+//     let selected_tab_state = &properties.selected_tab_state;
+
+//     let onclick = Dispatch::new().apply_callback(move |_| TabSelectedMsg { index });
+
+//     let key = format!("found_words_tab_header{index}");
+//     let selected = if selected_tab_state.index == index {
+//         Some("selected-tab")
+//     } else if selected_tab_state.locked {
+//         Some("locked-out-tab")
+//     } else {
+//         None
+//     };
+
+//     let class = classes!("tab-header", selected);
+//     let style = format!(
+//         "transform: translate({}px, {}px);",
+//         TAB_HEADER_PADDING + (index.to_f32().unwrap() * (TAB_HEADER_WIDTH + TAB_HEADER_MARGIN)),
+//         (SQUARE_SIZE * 3.0) + TAB_HEADER_TOP_MARGIN
+//     );
+
+//     html!(
+//         <g {key} {style} {onclick}>
+//         <rect {class} height={format!("{TAB_HEADER_HEIGHT}")} rx="5" width={format!("{TAB_HEADER_WIDTH}")}>
+//         </rect>
+//         <text class="tab-header-text" fill="Black" stroke="White">
+//            {"☰"}
+//         </text>
+
+//         </g>
+//     )
+// }
+
+// pub fn found_words_tab_header(
+//     index: usize,
+//     state: Rc<Rc<FoundWordsState>>,
+//     selected_tab_state: Rc<SelectedTabState>,
+// ) -> Html {
+//     let onclick = Dispatch::new().apply_callback(move |_| TabSelectedMsg { index });
+
+//     let key = format!("found_words_tab_header{index}");
+//     let selected = if selected_tab_state.index == index {
+//         Some("selected-tab")
+//     } else if selected_tab_state.locked {
+//         Some("locked-out-tab")
+//     } else {
+//         None
+//     };
+//     let complete = if state.is_goal_complete(index) {
+//         Some("complete-tab")
+//     } else {
+//         None
+//     };
+
+//     let class = classes!("tab-header", selected, complete);
+//     let style = format!(
+//         "transform: translate({}px, {}px);",
+//         TAB_HEADER_PADDING + (index.to_f32().unwrap() * (TAB_HEADER_WIDTH + TAB_HEADER_MARGIN)),
+//         (SQUARE_SIZE * 3.0) + TAB_HEADER_TOP_MARGIN
+//     );
+//     html!(
+//     <g {key} {style} {onclick}>
+//     <rect {class} height={format!("{TAB_HEADER_HEIGHT}")} rx="5" width={format!("{TAB_HEADER_WIDTH}")}>
+//     </rect>
+//     <text class="tab-header-text" fill="Black" stroke="White">
+//        {format_number ((index.to_i32().unwrap()  + 1) * GOALSIZE)}
+//     </text>
+
+//     </g>
+//     )
+// }
 
 #[derive(PartialEq, Eq, Properties)]
 pub struct AllFoundWordsProperties {
-    pub cheat: bool,
+    pub min: i32,
+    pub max: i32,
 }
 
-#[function_component(AllFoundWords)]
-pub fn all_found_words(properties: &AllFoundWordsProperties) -> Html {
+#[function_component(NumberedFoundWords)]
+pub fn numbered_found_words(properties: &AllFoundWordsProperties) -> Html {
     let challenge_words = use_selector(|state: &FullGameState| state.game.challenge_words.clone());
     let found_words_state = use_selector(|state: &FullGameState| state.found_words.clone());
-    let selected_tab_state = use_store_value::<SelectedTabState>();
-    let selected_tab = selected_tab_state.index;
-
-    let total_found = found_words_state.words.len();
-    let cheat = properties.cheat;
-
-    let words = (1..101)
+    let cheat = false;
+    let words = ((properties.min)..=(properties.max))
         .map(|number| {
             let is_challenge = challenge_words.contains(&number);
             let is_found = found_words_state.words.contains_key(&number);
-            html!(<FoundWordsWord {number} {is_challenge} {is_found} {selected_tab} {cheat} />)
+            html!(<FoundWordsWord {number} {is_challenge} {is_found}  {cheat} />)
         })
         .collect::<Html>();
 
     html!(
-        <g>
-            {words}
+        <div>
+        <div style="width: 90%; margin: auto;">
+        <div class="flex ten">
+        {words}
+        </div>
+        </div>
+        </div>
 
-            <TodayGameButton {selected_tab} width={6.0} position_number={101}/>
-            <RandomGameButton {selected_tab} width={6.0} position_number={111}/>
-            <ScoreCounter {total_found} {selected_tab} width={1.5} position_number={106}/>
-            <FlipButton  {selected_tab} width={1.0} position_number={109}/>
-            <RotateButton  {selected_tab} width={1.0} position_number={108}/>
-            <HistoryButton {selected_tab} width={1.0} position_number={118}/>
-            <WainwrongButton {selected_tab} width={1.0} position_number={119}/>
-            <FacebookButton {selected_tab} width={1.0} position_number={116}/>
 
-        </g>
     )
 }
+
+#[function_component(ControlButtons)]
+pub fn control_buttons() -> Html {
+    html!(
+            <div>
+        <div style="width: 90%; margin: auto;">
+        <div class="flex ten">
+        <TodayGameButton />
+            <RandomGameButton />
+            <ScoreCounter />
+            <FlipButton  />
+            <RotateButton  />
+            <HistoryButton />
+            // <WainwrongButton />
+            // <FacebookButton />
+        </div>
+        </div>
+        </div>
+    )
+}
+
+// #[function_component(AllFoundWords)]
+// pub fn all_found_words(properties: &AllFoundWordsProperties) -> Html {
+//     let challenge_words = use_selector(|state: &FullGameState| state.game.challenge_words.clone());
+//     let found_words_state = use_selector(|state: &FullGameState| state.found_words.clone());
+//     // let selected_tab_state = use_store_value::<SelectedTabState>();
+//     // let selected_tab = selected_tab_state.index;
+
+//     let total_found = found_words_state.words.len();
+//     let cheat = properties.cheat;
+
+//     let words = (1..101)
+//         .map(|number| {
+//             let is_challenge = challenge_words.contains(&number);
+//             let is_found = found_words_state.words.contains_key(&number);
+//             html!(<FoundWordsWord {number} {is_challenge} {is_found} {selected_tab} {cheat} />)
+//         })
+//         .collect::<Html>();
+
+//     html!(
+//         <div>
+//             {words}
+
+//             // <TodayGameButton {selected_tab} width={6.0} position_number={101}/>
+//             // <RandomGameButton {selected_tab} width={6.0} position_number={111}/>
+//             // <ScoreCounter {total_found} {selected_tab} width={1.5} position_number={106}/>
+//             // <FlipButton  {selected_tab} width={1.0} position_number={109}/>
+//             // <RotateButton  {selected_tab} width={1.0} position_number={108}/>
+//             // <HistoryButton {selected_tab} width={1.0} position_number={118}/>
+//             // <WainwrongButton {selected_tab} width={1.0} position_number={119}/>
+//             // <FacebookButton {selected_tab} width={1.0} position_number={116}/>
+
+//         </div>
+//     )
+// }
 
 #[derive(PartialEq, Eq, Properties)]
 pub struct FoundWordProperties {
     pub number: i32,
     pub is_found: bool,
     pub is_challenge: bool,
-    pub selected_tab: usize,
     pub cheat: bool,
 }
 
 #[function_component(FoundWordsWord)]
 pub fn found_words_word(properties: &FoundWordProperties) -> Html {
-    //TODO onclick
-    //TODO allow swiping to change tabs
-
     let id = format!("found_words_word{}", properties.number);
     let number = properties.number;
     let cheat = properties.cheat;
@@ -165,10 +244,16 @@ pub fn found_words_word(properties: &FoundWordProperties) -> Html {
         None
     };
 
-    let rect_class = classes!(
+    let class = classes!(
         "found-word-box",
+        "found-word-text",
         if properties.is_found {
             Some("found-word-box-success")
+        } else {
+            None
+        },
+        if properties.is_found {
+            Some("found-word-text-success")
         } else {
             None
         },
@@ -178,66 +263,33 @@ pub fn found_words_word(properties: &FoundWordProperties) -> Html {
             None
         },
     );
-    let text_class = classes!(
-        "found-word-text",
-        if properties.is_found {
-            Some("found-word-text-success")
-        } else {
-            None
-        }
-    );
 
     let text = format_number(number);
 
-    //todo calculate position
-    let (x, y) = get_found_word_position(number, properties.selected_tab, false);
-
     html!(
-        <FoundWordBox {id} {text} {x} {y} width_units={1.0} {rect_class} {text_class} {on_click} />
+        <FoundWordBox {id} {text} {class}  {on_click} />
     )
 }
 
 #[derive(PartialEq, Properties)]
 pub struct FoundWordBoxProperties {
     pub id: String,
-    pub text: String,
-    pub rect_class: Classes,
-    pub text_class: Classes,
-    pub x: f32,
-    pub y: f32,
-    pub width_units: f32,
+    pub text: AttrValue,
+    pub class: Classes,
     pub on_click: Option<Callback<MouseEvent>>,
 }
 
 #[function_component(FoundWordBox)]
 pub fn found_word_box(properties: &FoundWordBoxProperties) -> Html {
-    let x = properties.x;
-    let y = properties.y;
-    let style = format!("transform: translate({x}px, {y}px);");
+    // let x = properties.x;
+    // let y = properties.y;
+    // let style = format!("transform: translate({x}px, {y}px);");
 
-    let class = classes!(
-        "found-word-group",
-        if properties.on_click.is_some() {
-            Some("found-word-group-button")
-        } else {
-            None
-        }
-    );
-    let role = if properties.on_click.is_some() {
-        Some("button")
-    } else {
-        None
-    };
-
+    let class = properties.class.clone();
     html!(
-     <g key={properties.id.clone()} {style}  {role} {class} onclick={properties.on_click.clone()}>
-     <rect class={properties.rect_class.clone()} height={format!("{FOUND_WORD_HEIGHT}")} rx="5" width={format!("{}", FOUND_WORD_WIDTH * properties.width_units)}>
-     </rect>
-     <text class={properties.text_class.clone()}>
+        <button key={properties.id.clone()} {class} onclick={properties.on_click.clone()} >
         {properties.text.clone()}
-     </text>
-
-     </g>
+        </button>
     )
 }
 

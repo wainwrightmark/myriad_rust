@@ -11,35 +11,41 @@ use yewdux::prelude::*;
 
 #[function_component(Circles)]
 pub fn circles() -> Html {
-
-    let node =  use_node_ref();
+    let node = use_node_ref();
     let (width, height) = yew_hooks::use_size(node.clone());
-    let mut size = (width.min(height) as f32) / 3.;
+    let mut square_size = (width.min(height) as f32) / 3.;
     //log::info!("{size}");
-    if size.is_zero() {size = SQUARE_SIZE};
+    if square_size.is_zero() {
+        square_size = SQUARE_SIZE
+    };
     let circles = PointAbsolute8::<GRID_COLUMNS, GRID_ROWS>::points_by_row()
-        .map(|coordinate| html!(< Circle {coordinate} {size} />))
+        .map(|coordinate| html!(< Circle {coordinate} {square_size} />))
         .collect::<Html>();
 
-        let onpointerup = Dispatch::new().apply_callback(move |_: PointerEvent| InputMsg::Up {});
+    let crosshairs = PointAbsolute8::<GRID_COLUMNS, GRID_ROWS>::points_by_row()
+        .map(|coordinate| html!(< Crosshair {coordinate} {square_size} />))
+        .collect::<Html>();
+
+    let onpointerup = Dispatch::new().apply_callback(move |_: PointerEvent| InputMsg::Up {});
 
     html! {
-          <div ref={node} id="circles" style="position:absolute; width: 100%; aspect-ratio: 1/1;" {onpointerup}>
+          <div ref={node} id="circles" style="position:relative; width: 100%; aspect-ratio: 1/1;" {onpointerup}>
     {circles}
+    {crosshairs}
     </div>
 
       }
 }
 
-#[derive(PartialEq,  Properties)]
+#[derive(PartialEq, Properties)]
 pub struct CircleProperties {
     pub coordinate: PointAbsolute8<GRID_COLUMNS, GRID_ROWS>,
-    pub size: f32
+    pub square_size: f32,
 }
 #[function_component(Circle)]
 fn circle(properties: &CircleProperties) -> Html {
     let coordinate = properties.coordinate;
-    let size = properties.size;
+    let size = properties.square_size;
 
     let location = use_selector_with_deps(
         |state: &RotFlipState, (co, size)| state.get_location(co, *size),
@@ -83,9 +89,7 @@ fn circle(properties: &CircleProperties) -> Html {
     let radius = format!("{:2}", size * 0.5 * CIRCLE_RATIO);
     let diameter = format!("{:2}", size * CIRCLE_RATIO);
 
-    let g_style = format!(
-        "left: {left}px; top: {top}px;"
-    );
+    let g_style = format!("left: {left}px; top: {top}px;");
 
     let circle_type_class = match circle_type {
         CircleType::Disabled => "circle-disabled",

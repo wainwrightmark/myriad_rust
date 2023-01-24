@@ -8,28 +8,10 @@ use std::ops::Deref;
 use yew::prelude::*;
 use yewdux::prelude::*;
 
-#[function_component(Crosshairs)]
-pub fn crosshairs() -> Html {
-    let node =  use_node_ref();
-    let (width, height) = yew_hooks::use_size(node.clone());
-    let mut square_size = (width.min(height) as f32) / 3.;
-    //log::info!("{size}");
-    if square_size.is_zero() {square_size = square_size};
-    let circles = PointAbsolute8::<GRID_COLUMNS, GRID_ROWS>::points_by_row()
-        .map(|coordinate| html!(< Crosshair {coordinate} {square_size} />))
-        .collect::<Html>();
-
-    html! {
-          <div ref={node}  id="crosshairs" style="position:absolute; width: 100%; aspect-ratio: 1/1; pointer-events:none;">
-    {circles}
-    </div>
-
-      }
-}
 
 #[derive(PartialEq,  Properties)]
 pub struct CrossHairProperties {
-    coordinate: PointAbsolute8<GRID_COLUMNS, GRID_ROWS>,
+    pub coordinate: PointAbsolute8<GRID_COLUMNS, GRID_ROWS>,
     pub square_size: f32
 }
 
@@ -44,7 +26,7 @@ const STROKE_WIDTH: f32 = 7.2;
 const HALF_STOKE_WIDTH: f32 = 3.6;
 
 #[function_component(Crosshair)]
-fn crosshair(properties: &CrossHairProperties) -> Html {
+pub fn crosshair(properties: &CrossHairProperties) -> Html {
     let coordinate = properties.coordinate;
     let board = use_selector(|state: &FullGameState| state.game.board.clone())
         .deref()

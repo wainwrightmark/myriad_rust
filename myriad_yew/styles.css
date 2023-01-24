@@ -139,53 +139,40 @@ Found Word
   transition: all 1s;
   
 }
-.found-word-group-button :active{
+/* .found-word-group-button :active{
   transition: all 1s;
   stroke-width: 5;
   stroke: black;
-}
+} */
 
 
 .button-text{
   line-height: 1.5;
   font-family: monospace;
   font-weight: bold;
-  dominant-baseline: hanging;
-  text-anchor: start;
+  text-anchor: middle;
   box-sizing: inherit;
-  font-size: 1.5em;
-  user-select: none;
-  pointer-events: none;
-  fill: black;
-  stroke: transparent;
-  transform: translate(2.5px, 5px);
+  color: black;
+  background-color: transparent;
 }
 
 .found-word-text{
   line-height: 1.5;
   font-family: monospace;
   font-weight: bold;
-  dominant-baseline: hanging;
   text-anchor: middle;
   box-sizing: inherit;
-  font-size: 1.5em;
-  user-select: none;
-  pointer-events: none;
-  fill: gray;
-  stroke: transparent;
-  transform: translate(15px, 5px);
+  color: black;
+  background-color: transparent;
+  /* transform: translate(15px, 5px); */
   transition: all 5s ease-in;
 }
 .found-word-text-success{
-  fill: black;
-  stroke: transparent;
+  background-color: green;
+  stroke: black;
 }
 
 .found-word-box{
-  stroke-width: 0;
-  stroke-linejoin: round;
-  fill: white;
-  stroke: black;
 
   transition: fill 5s ease-in;
 }

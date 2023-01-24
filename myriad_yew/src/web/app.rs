@@ -51,18 +51,18 @@ pub fn myriad_app(//route : Route
         <HistoryDialog/>
         <div class="container" style="position:relative;">
         <Circles />
-        <Crosshairs/>
-        <svg viewBox={view_box} class="myriadSVG">
-        <rect x="0" y="0" {width} {height} fill="white"  />
+        <FoundWordsControl/>
+        // <svg viewBox={view_box} class="myriadSVG">
+        // <rect x="0" y="0" {width} {height} fill="white"  />
 
 
 
 
-        <FoundWordsTabHeaders/>
-        <AllFoundWords {cheat} />
+        // <FoundWordsTabHeaders/>
+        // <AllFoundWords {cheat} />
 
-        <RecentWords/>
-        </svg>
+        // <RecentWords/>
+        // </svg>
 
 
 
