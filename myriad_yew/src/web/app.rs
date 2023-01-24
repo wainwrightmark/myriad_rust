@@ -71,3 +71,12 @@ pub fn myriad_app(//route : Route
 
     }
 }
+
+
+#[function_component(App)]
+pub fn game_area()-> Html{
+    let state = use_size(node.clone());
+
+
+
+}
