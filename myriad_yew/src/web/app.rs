@@ -42,18 +42,19 @@ pub fn myriad_app(//route : Route
 
     let cheat = false;
 
-    let onpointerup = Dispatch::new().apply_callback(move |_: PointerEvent| InputMsg::Up {});
+
 
     html! {
 
         <>
         <CongratsDialog/>
         <HistoryDialog/>
-        <div class="container">
-        <svg viewBox={view_box} class="myriadSVG" {onpointerup} >
+        <div class="container" style="position:relative;">
+        <Circles />
+        <svg viewBox={view_box} class="myriadSVG">
         <rect x="0" y="0" {width} {height} fill="white"  />
         <CrosshairsSVG/>
-        <CirclesSVG />
+
 
 
         <FoundWordsTabHeaders/>

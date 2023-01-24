@@ -11,6 +11,7 @@
 
 .square {
   transition: 1s ease-out;
+  position: absolute;
 }
 
 
@@ -19,6 +20,8 @@
   fill: black;
   fill-opacity: 0.01;
   transition: 3s cubic-bezier(0, 1.45, 0.72, 1.33);  
+
+  border: solid thick;
 }
 
 
@@ -37,6 +40,15 @@
   font-size: 3em;
   user-select: none;
   pointer-events: none;
+  margin: 0;
+  text-align: center;
+  stroke: white;
+  fill: black;
+  font-family: inherit;
+  font-weight: bold;
+  height: 100%;
+  line-height: 180%;
+  position: relative;
 }
 
 .recentWord {

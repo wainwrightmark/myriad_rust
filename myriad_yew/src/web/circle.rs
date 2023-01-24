@@ -5,34 +5,45 @@ use crate::web::prelude::*;
 use myriad::prelude::PointAbsolute8;
 use myriad::prelude::*;
 
+use num::Zero;
 use yew::prelude::*;
 use yewdux::prelude::*;
 
-#[function_component(CirclesSVG)]
-pub fn circles_svg() -> Html {
+#[function_component(Circles)]
+pub fn circles() -> Html {
+
+    let node =  use_node_ref();
+    let (width, height) = yew_hooks::use_size(node.clone());
+    let mut size = (width.min(height) as f32) / 3.;
+    //log::info!("{size}");
+    if size.is_zero() {size = SQUARE_SIZE};
     let circles = PointAbsolute8::<GRID_COLUMNS, GRID_ROWS>::points_by_row()
-        .map(|coordinate| html!(< Circle {coordinate} />))
+        .map(|coordinate| html!(< Circle {coordinate} {size} />))
         .collect::<Html>();
 
+        let onpointerup = Dispatch::new().apply_callback(move |_: PointerEvent| InputMsg::Up {});
+
     html! {
-          <g id="circles">
+          <div ref={node} id="circles" style="position:absolute; width: 100%; aspect-ratio: 1/1;" {onpointerup}>
     {circles}
-    </g>
+    </div>
 
       }
 }
 
-#[derive(PartialEq, Eq, Properties)]
+#[derive(PartialEq,  Properties)]
 pub struct CircleProperties {
     pub coordinate: PointAbsolute8<GRID_COLUMNS, GRID_ROWS>,
+    pub size: f32
 }
 #[function_component(Circle)]
 fn circle(properties: &CircleProperties) -> Html {
     let coordinate = properties.coordinate;
+    let size = properties.size;
 
     let location = use_selector_with_deps(
-        |state: &RotFlipState, co| state.get_location(co, SQUARE_SIZE),
-        coordinate,
+        |state: &RotFlipState, (co, size)| state.get_location(co, *size),
+        (coordinate, size),
     );
 
     let board = use_selector(|state: &FullGameState| state.game.board.clone());
@@ -58,8 +69,8 @@ fn circle(properties: &CircleProperties) -> Html {
     let onpointerenter =
         Dispatch::new().apply_callback(move |_: PointerEvent| InputMsg::Enter { coordinate });
 
-    let cx = location.0;
-    let cy = location.1;
+    let cx = location.0 - (size * 0.4);
+    let cy = location.1 - (size * 0.4);
 
     let text = if matches!(letter, Rune::Blank) {
         "".to_string()
@@ -69,10 +80,11 @@ fn circle(properties: &CircleProperties) -> Html {
     let key = format!("{coordinate}_key");
     let circle_id = format!("{coordinate}_bigCircle");
     let text_id = format!("{coordinate}_text");
-    let radius = format!("{:2}", SQUARE_SIZE * 0.4);
+    let radius = format!("{:2}", size * 0.4);
+    let diameter = format!("{:2}", size * 0.8);
 
     let g_style = format!(
-        " -webkit-transform: translate({cx}px, {cy}px); transform: translate({cx}px, {cy}px);"
+        "left: {cx}px; top: {cy}px;"
     );
 
     let circle_type_class = match circle_type {
@@ -86,35 +98,33 @@ fn circle(properties: &CircleProperties) -> Html {
 
     html! {
 
-
-
-        <g class="square"
+        <div class="square"
         {key}
        style={g_style}
        cursor={cursor}
 
         {onpointerdown}
-        {onpointerenter}
-       >
+        {onpointerenter}>
 
-
-      <circle
+        <div
         id={circle_id}
         class={circle_classes}
-        stroke={color}
-        r={radius}
+        style={
+            format!("width: {diameter}px;
+            height: {diameter}px;
+            border-radius: {radius}px;
+            border-color: {color};")
+        }
         >
-      </circle>
-
-      <text
+        <p
         id={text_id}
-        class="circle-text"
-        dominant-baseline="central"
-        text-anchor="middle"
-        stroke="@Colors.Shades.White"
-        fill="@Colors.Shades.Black">
+        class="circle-text">
         {text}
-      </text>
-    </g>
+      </p>
+      </div>
+
+
+
+        </div>
     }
 }
