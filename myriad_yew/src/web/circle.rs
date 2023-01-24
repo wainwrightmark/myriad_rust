@@ -35,12 +35,10 @@ fn circle(properties: &CircleProperties) -> Html {
         coordinate,
     );
 
-    let board = use_selector(|state: &FullGameState| state.game.board.clone())
-        .deref()
-        .clone();
+    let board = use_selector(|state: &FullGameState| state.game.board.clone());
 
     let circle_type = *use_selector_with_deps(
-        |state: &ChosenPositionsState, (co, board)| state.get_circle_type(co, board.clone()),
+        |state: &ChosenPositionsState, (co, board)| state.get_circle_type(co, &board),
         (coordinate, board),
     )
     .deref();

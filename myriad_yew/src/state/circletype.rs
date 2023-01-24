@@ -36,7 +36,7 @@ impl ChosenPositionsState {
     pub fn get_circle_type(
         &self,
         coordinate: &PointAbsolute8<GRID_COLUMNS, GRID_ROWS>,
-        board: Board<GRID_COLUMNS, GRID_ROWS, 9>,
+        board: &Board<GRID_COLUMNS, GRID_ROWS, 9>,
     ) -> CircleType {
         if let Some(position) = self.positions.iter().position(|c| c == coordinate) {
             if let Some(next) = self.positions.get(position + 1) {

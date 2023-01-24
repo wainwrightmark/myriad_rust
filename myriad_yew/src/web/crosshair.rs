@@ -43,7 +43,7 @@ fn crosshair(properties: &CrossHairProperties) -> Html {
         .clone();
 
     let circle_type = *use_selector_with_deps(
-        |state: &ChosenPositionsState, (co, board)| state.get_circle_type(co, board.clone()),
+        |state: &ChosenPositionsState, (co, board)| state.get_circle_type(co, board),
         (coordinate, board),
     )
     .deref();
