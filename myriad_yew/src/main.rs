@@ -1,6 +1,3 @@
-#![allow(incomplete_features)]
-#![feature(generic_const_exprs)]
-
 use crate::web::prelude::*;
 pub mod state;
 pub mod web;
