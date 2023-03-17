@@ -15,4 +15,5 @@ pub mod prelude {
     pub use crate::move_result::*;
     pub use crate::rune::*;
     pub use crate::solver::*;
+    pub use tinyvec::*;
 }

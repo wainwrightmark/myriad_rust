@@ -1,4 +1,5 @@
 use geometrid::prelude::Tile;
+use tinyvec::ArrayVec;
 
 use super::solver::FoundWord;
 
@@ -12,12 +13,12 @@ pub enum MoveResult<const C: u8, const R: u8> {
     },
     WordIncomplete {
         word: String,
-        coordinates: Vec<Tile<C, R>>,
+        coordinates: ArrayVec<[Tile<C, R>;9]>,
     },
     WordAbandoned,
     MoveRetraced {
         word: String,
-        coordinates: Vec<Tile<C, R>>,
+        coordinates: ArrayVec<[Tile<C, R>;9]>,
     },
     IllegalMove,
 }

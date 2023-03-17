@@ -7,7 +7,7 @@ use yewdux::prelude::*;
 
 #[derive(PartialEq, Eq, Clone, Default, Serialize, Deserialize, Store)]
 pub struct ChosenPositionsState {
-    pub positions: Vec<Tile<GRID_COLUMNS, GRID_ROWS>>,
+    pub positions: ArrayVec<[Tile<GRID_COLUMNS, GRID_ROWS>; 9]>,
 }
 
 impl ChosenPositionsState {
@@ -100,12 +100,8 @@ impl ChosenPositionsState {
         let find_result = state.positions.iter().find_position(|&z| z == &coordinate);
 
         if let Some((index, _)) = find_result {
-            let new_chosen_positions: Vec<Tile<GRID_COLUMNS, GRID_ROWS>> = state
-                .positions
-                .iter()
-                .take(index + 1)
-                .copied()
-                .collect_vec();
+            let new_chosen_positions: ArrayVec<[Tile<GRID_COLUMNS, GRID_ROWS>; 9]> =
+                state.positions.iter().take(index + 1).copied().collect();
 
             //TODO maybe send a find message here
 
@@ -117,7 +113,8 @@ impl ChosenPositionsState {
             .into(); //Retrace move
         }
 
-        if state.positions.is_empty() || state.positions.last().unwrap().is_adjacent_to(&coordinate) {
+        if state.positions.is_empty() || state.positions.last().unwrap().is_adjacent_to(&coordinate)
+        {
             let mut new_chosen_positions = state.positions.clone();
             new_chosen_positions.push(coordinate);
 

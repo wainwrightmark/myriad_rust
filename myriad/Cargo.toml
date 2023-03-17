@@ -15,6 +15,7 @@ geometrid = {git = "https://github.com/wainwrightmark/geometrid", features= ["st
 rand = {version = "0.8"}
 strum = {version = "0.24", features = ["derive"]}
 static_assertions = "1.1.0"
+tinyvec = {version= "1.6.0", features=["rustc_1_57", "serde"]}
 
 
 [dev-dependencies]

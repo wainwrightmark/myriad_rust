@@ -4,6 +4,7 @@ use geometrid::prelude::Tile;
 use itertools::Itertools;
 use num::ToPrimitive;
 use serde::{Deserialize, Serialize};
+use tinyvec::ArrayVec;
 use std::collections::{HashSet, VecDeque};
 
 #[derive(PartialEq, Eq, Debug, Copy, Clone, Serialize, Deserialize)]
@@ -41,7 +42,7 @@ impl Default for SolveSettings {
 #[derive(PartialEq, Eq, Debug, Clone, Serialize, Deserialize)]
 pub struct FoundWord<const C: u8, const R: u8> {
     pub result: i32,
-    pub path: Vec<Tile<C, R>>,
+    pub path: ArrayVec<[Tile<C, R>;9]>,
 }
 
 impl<const C: u8, const R: u8> std::fmt::Display for FoundWord<C, R> {
@@ -53,7 +54,7 @@ impl<const C: u8, const R: u8> std::fmt::Display for FoundWord<C, R> {
 struct SolutionIter<const C: u8, const R: u8, const SIZE: usize> {
     results: HashSet<i32>,
     settings: SolveSettings,
-    queue: VecDeque<Vec<Tile<C, R>>>,
+    queue: VecDeque<ArrayVec<[Tile<C, R>;9]>>,
     board: Board<C, R, SIZE>,
 }
 
@@ -61,13 +62,13 @@ impl<const C: u8, const R: u8, const SIZE: usize> SolutionIter<C, R, SIZE> {
     pub fn new(board: Board<C, R, SIZE>, settings: SolveSettings) -> Self {
         Self {
             results: Default::default(),
-            queue: VecDeque::from(vec![vec![]]),
+            queue: VecDeque::from(vec![Default::default()]),
             board,
             settings,
         }
     }
 
-    fn add_to_queue(&mut self, coordinates: Vec<Tile<C, R>>) {
+    fn add_to_queue(&mut self, coordinates: ArrayVec<[Tile<C, R>;9]>) {
         if let Some(last) = coordinates.last() {
             for adjacent in last
                 .iter_adjacent()
@@ -79,8 +80,10 @@ impl<const C: u8, const R: u8, const SIZE: usize> SolutionIter<C, R, SIZE> {
             }
         } else {
             for coordinate in Tile::iter_by_row() {
-                let single_coordinate = vec![coordinate];
-                self.queue.push_back(single_coordinate);
+                let mut path: ArrayVec<[Tile<C, R>;9]> = Default::default();
+                path.push(coordinate);
+
+                self.queue.push_back(path);
             }
         }
     }
