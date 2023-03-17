@@ -24,7 +24,7 @@ pub fn recent_words() -> Html {
                 startx *= 0.8; //little hack to prevent large numbers from being offscreen
             }
 
-            let(endx, endy) = crate::web::foundwords::get_found_word_position(word.number, selected_index, true);
+            let(endx, endy) = crate::web::found_words::get_found_word_position(word.number, selected_index, true);
 
             let style = format!("animation-duration: {}ms; --startx: {}px; --starty: {}px; --endx: {}px; --endy: {}px;",
              word.linger_duration_ms(),

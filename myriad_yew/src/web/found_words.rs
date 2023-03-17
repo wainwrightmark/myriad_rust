@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
-use crate::state::foundwordsstate::FoundWordsState;
-use crate::state::selectedtabstate::SelectedTabState;
+use crate::state::found_words_state::FoundWordsState;
+use crate::state::selected_tab_state::SelectedTabState;
 
 use crate::state::prelude::*;
 use crate::web::prelude::*;

@@ -1,26 +1,26 @@
-pub mod chosenpositionsstate;
-pub mod circletype;
-pub mod dialogstate;
-pub mod foundwordsstate;
-pub mod fullstate;
-pub mod historystate;
+pub mod chosen_positions_state;
+pub mod circle_type;
+pub mod dialog_state;
+pub mod found_words_state;
+pub mod full_state;
+pub mod history_state;
 pub mod msg;
-pub mod recentwordstate;
-pub mod rotflipstate;
-pub mod selectedtabstate;
+pub mod recent_word_state;
+pub mod rot_flip_state;
+pub mod selected_tab_state;
 
 pub mod prelude {
 
-    pub use crate::state::chosenpositionsstate::*;
-    pub use crate::state::circletype::*;
-    pub use crate::state::dialogstate::*;
-    pub use crate::state::foundwordsstate::*;
-    pub use crate::state::fullstate::*;
-    pub use crate::state::historystate::*;
+    pub use crate::state::chosen_positions_state::*;
+    pub use crate::state::circle_type::*;
+    pub use crate::state::dialog_state::*;
+    pub use crate::state::found_words_state::*;
+    pub use crate::state::full_state::*;
+    pub use crate::state::history_state::*;
     pub use crate::state::msg::*;
-    pub use crate::state::recentwordstate::*;
-    pub use crate::state::rotflipstate::*;
-    pub use crate::state::selectedtabstate::*;
+    pub use crate::state::recent_word_state::*;
+    pub use crate::state::rot_flip_state::*;
+    pub use crate::state::selected_tab_state::*;
 
     pub const GOALSIZE: i32 = 20;
 

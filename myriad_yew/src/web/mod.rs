@@ -1,24 +1,24 @@
 mod app;
 mod circle;
 mod confetti;
-mod controlbuttons;
+mod control_buttons;
 mod crosshair;
 mod dialog;
-mod foundwords;
+mod found_words;
 mod icons;
-mod recentwords;
+mod recent_words;
 
 pub mod prelude {
 
     pub use crate::web::app::*;
     pub use crate::web::circle::*;
     pub use crate::web::confetti::*;
-    pub use crate::web::controlbuttons::*;
+    pub use crate::web::control_buttons::*;
     pub use crate::web::crosshair::*;
     pub use crate::web::dialog::*;
-    pub use crate::web::foundwords::*;
+    pub use crate::web::found_words::*;
     pub use crate::web::icons::*;
-    pub use crate::web::recentwords::*;
+    pub use crate::web::recent_words::*;
 
     pub fn format_number(num: i32) -> String {
         if num == 100 {
