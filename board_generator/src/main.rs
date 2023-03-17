@@ -1,9 +1,7 @@
-#![allow(incomplete_features)]
-#![feature(generic_const_exprs)]
-
 use clap::Parser;
 use itertools::Itertools;
 use myriad::prelude::*;
+use core::time;
 //use rayon::prelude::*;
 use std::fs;
 
@@ -24,8 +22,10 @@ pub fn main() {
 
     use Rune::*;
     let iterator = BoardIterator {
-        current: Board(Grid8([One; 9])), //todo start earlier
+        current: Board(TileMap::from_fn(|_| One)), //todo start earlier
     };
+
+    let start_time = std::time::Instant::now();
 
     //let par_iter = iter::split(iterator, 100);
 
@@ -36,7 +36,7 @@ pub fn main() {
             let s = b.to_single_string();
             let solutions = solve_settings.solve(b).count();
 
-            if solutions == 100{
+            if solutions == 100 {
                 println!("{}: {}", s, solutions)
             }
 
@@ -45,6 +45,9 @@ pub fn main() {
         .take(args.take);
 
     let text = boards.join("\r\n");
+
+    let total_time = start_time.elapsed();
+    println!("Total Time: {total_time:?}");
 
     fs::write("boards.txt", text).expect("Unable to write file");
 }
@@ -133,15 +136,14 @@ impl Iterator for BoardIterator {
     type Item = Board<3, 3, 9>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        for index in 0..9 {
-            if let Some(next_value) = Self::get_next(self.current.0 .0[index]) {
-                self.current.0 .0[index] = next_value;
+        for tile in Tile::iter_by_row() {
+            if let Some(next_value) = Self::get_next(self.current.0[tile]) {
+                self.current.0[tile] = next_value;
                 return Some(self.current.clone());
             } else {
-                self.current.0 .0[index] = Self::first_rune()
+                self.current.0[tile] = Self::first_rune()
             }
         }
-
         None
     }
 }

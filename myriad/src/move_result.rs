@@ -1,4 +1,4 @@
-use geometrid::prelude8::PointAbsolute8;
+use geometrid::prelude::Tile;
 
 use super::solver::FoundWord;
 
@@ -12,12 +12,12 @@ pub enum MoveResult<const C: u8, const R: u8> {
     },
     WordIncomplete {
         word: String,
-        coordinates: Vec<PointAbsolute8<C, R>>,
+        coordinates: Vec<Tile<C, R>>,
     },
     WordAbandoned,
     MoveRetraced {
         word: String,
-        coordinates: Vec<PointAbsolute8<C, R>>,
+        coordinates: Vec<Tile<C, R>>,
     },
     IllegalMove,
 }

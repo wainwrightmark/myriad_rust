@@ -8,7 +8,7 @@ pub enum CircleType {
     LegalMove,
     LastPosition,
     IntermediatePosition {
-        next: PointAbsolute8<GRID_COLUMNS, GRID_ROWS>,
+        next: Tile<GRID_COLUMNS, GRID_ROWS>,
     },
 }
 
@@ -35,7 +35,7 @@ impl CircleType {
 impl ChosenPositionsState {
     pub fn get_circle_type(
         &self,
-        coordinate: &PointAbsolute8<GRID_COLUMNS, GRID_ROWS>,
+        coordinate: &Tile<GRID_COLUMNS, GRID_ROWS>,
         board: &Board<GRID_COLUMNS, GRID_ROWS, 9>,
     ) -> CircleType {
         if let Some(position) = self.positions.iter().position(|c| c == coordinate) {
@@ -47,7 +47,7 @@ impl ChosenPositionsState {
         }
 
         if let Some(last) = self.positions.last() {
-            if !last.is_adjacent(*coordinate) {
+            if !last.is_adjacent_to(coordinate) {
                 return CircleType::Disabled;
             }
         }

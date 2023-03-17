@@ -2,7 +2,7 @@ use std::ops::Deref;
 
 use crate::state::prelude::*;
 use crate::web::prelude::*;
-use myriad::prelude::PointAbsolute8;
+use myriad::prelude::Tile;
 use myriad::prelude::*;
 
 use yew::prelude::*;
@@ -10,7 +10,7 @@ use yewdux::prelude::*;
 
 #[function_component(CirclesSVG)]
 pub fn circles_svg() -> Html {
-    let circles = PointAbsolute8::<GRID_COLUMNS, GRID_ROWS>::points_by_row()
+    let circles = Tile::<GRID_COLUMNS, GRID_ROWS>::iter_by_row()
         .map(|coordinate| html!(< Circle {coordinate} />))
         .collect::<Html>();
 
@@ -24,7 +24,7 @@ pub fn circles_svg() -> Html {
 
 #[derive(PartialEq, Eq, Properties)]
 pub struct CircleProperties {
-    pub coordinate: PointAbsolute8<GRID_COLUMNS, GRID_ROWS>,
+    pub coordinate: Tile<GRID_COLUMNS, GRID_ROWS>,
 }
 #[function_component(Circle)]
 fn circle(properties: &CircleProperties) -> Html {

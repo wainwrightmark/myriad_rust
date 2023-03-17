@@ -1,6 +1,6 @@
 use std::collections::{BinaryHeap, HashSet};
 
-use geometrid::prelude8::PointAbsolute8;
+use geometrid::prelude::Tile;
 use itertools::Itertools;
 use rand::prelude::{SliceRandom, StdRng};
 
@@ -128,13 +128,13 @@ fn mutate_board<const L: u8, const SIZE: usize>(
     letter: Rune,
     index: usize,
 ) -> Option<SolvedBoard<L, L, SIZE>> {
-    let current_letter = board.board[PointAbsolute8::try_from_usize(index).unwrap()];
+    let current_letter = board.board[Tile::try_from_usize(index).unwrap()];
     if current_letter == letter {
         return None;
     };
 
     let mut new_board = board.board.clone();
-    new_board[PointAbsolute8::try_from_usize(index).unwrap()] = letter;
+    new_board[Tile::try_from_usize(index).unwrap()] = letter;
 
     let unique_string = new_board.get_unique_string();
     if created_boards.insert(unique_string) {

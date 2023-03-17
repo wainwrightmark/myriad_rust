@@ -1,10 +1,10 @@
 use crate::state::prelude::*;
-use myriad::prelude::PointAbsolute8;
+use myriad::prelude::{QuarterTurns, Tile};
 use serde::*;
 use yewdux::prelude::*;
 
 pub struct RotFlipMsg {
-    pub rotate: i8,
+    pub rotate: QuarterTurns,
     pub flip: bool,
 }
 
@@ -21,20 +21,20 @@ impl Reducer<RotFlipState> for RotFlipMsg {
 #[derive(PartialEq, Eq, Clone, Copy, Serialize, Deserialize, Store, Debug, Default)]
 #[store(storage = "local")] // can also be "session"
 pub struct RotFlipState {
-    pub rotate: i8,
+    pub rotate: QuarterTurns,
     pub flip: bool,
 }
 
 impl RotFlipState {
     pub fn get_location(
         &self,
-        point: &PointAbsolute8<GRID_COLUMNS, GRID_ROWS>,
+        point: &Tile<GRID_COLUMNS, GRID_ROWS>,
         square_size: f32,
     ) -> (f32, f32) {
         let flipped = rotate_and_flip(point, self.rotate, self.flip);
 
-        let cx = (flipped.x() as f32 + 0.5) * square_size;
-        let cy = (flipped.y() as f32 + 0.5) * square_size;
+        let cx = (flipped.col() as f32 + 0.5) * square_size;
+        let cy = (flipped.row() as f32 + 0.5) * square_size;
 
         (cx, cy)
     }
@@ -44,24 +44,20 @@ impl RotFlipState {
     }
 
     pub fn new_game(&mut self) {
-        self.rotate = (self.rotate + 1) % 4;
+        self.rotate = self.rotate + QuarterTurns::One;
         self.flip = !self.flip;
     }
 }
 
 pub fn rotate_and_flip<const L: u8>(
-    point: &PointAbsolute8<L, L>,
-    mut rotate: i8,
+    point: &Tile<L, L>,
+    rotate: QuarterTurns,
     flip: bool,
-) -> PointAbsolute8<L, L> {
-    while rotate < 0 {
-        rotate += 4
-    }
-
-    let rotated = point.rotate(rotate as u8); // .rotate_and_flip(self.rotate, self.flip);
+) -> Tile<L, L> {
+    let rotated = point.rotate(rotate);
 
     if flip {
-        rotated.flip_vertical()
+        rotated.flip(myriad::prelude::FlipAxes::Vertical)
     } else {
         rotated
     }

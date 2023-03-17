@@ -72,7 +72,7 @@ pub fn score_counter(properties: &ScoreCounterProperties) -> Html {
 pub fn rotate_button(properties: &GameButtonProperties) -> Html {
     let on_click: Option<Callback<MouseEvent>> =
         Some(Dispatch::new().apply_callback(|_| RotFlipMsg {
-            rotate: 1,
+            rotate: myriad::prelude::QuarterTurns::One,
             flip: false,
         }));
 
@@ -89,7 +89,7 @@ pub fn rotate_button(properties: &GameButtonProperties) -> Html {
 pub fn flip_button(properties: &GameButtonProperties) -> Html {
     let on_click: Option<Callback<MouseEvent>> =
         Some(Dispatch::new().apply_callback(|_| RotFlipMsg {
-            rotate: 0,
+            rotate: myriad::prelude::QuarterTurns::Zero,
             flip: true,
         }));
 

@@ -1,6 +1,6 @@
 use crate::parser::ParseFail;
 use crate::prelude::*;
-use geometrid::prelude8::PointAbsolute8;
+use geometrid::prelude::Tile;
 use itertools::Itertools;
 use num::ToPrimitive;
 use serde::{Deserialize, Serialize};
@@ -41,7 +41,7 @@ impl Default for SolveSettings {
 #[derive(PartialEq, Eq, Debug, Clone, Serialize, Deserialize)]
 pub struct FoundWord<const C: u8, const R: u8> {
     pub result: i32,
-    pub path: Vec<PointAbsolute8<C, R>>,
+    pub path: Vec<Tile<C, R>>,
 }
 
 impl<const C: u8, const R: u8> std::fmt::Display for FoundWord<C, R> {
@@ -53,7 +53,7 @@ impl<const C: u8, const R: u8> std::fmt::Display for FoundWord<C, R> {
 struct SolutionIter<const C: u8, const R: u8, const SIZE: usize> {
     results: HashSet<i32>,
     settings: SolveSettings,
-    queue: VecDeque<Vec<PointAbsolute8<C, R>>>,
+    queue: VecDeque<Vec<Tile<C, R>>>,
     board: Board<C, R, SIZE>,
 }
 
@@ -67,10 +67,10 @@ impl<const C: u8, const R: u8, const SIZE: usize> SolutionIter<C, R, SIZE> {
         }
     }
 
-    fn add_to_queue(&mut self, coordinates: Vec<PointAbsolute8<C, R>>) {
+    fn add_to_queue(&mut self, coordinates: Vec<Tile<C, R>>) {
         if let Some(last) = coordinates.last() {
             for adjacent in last
-                .get_adjacent_positions()
+                .iter_adjacent()
                 .filter(|x| !coordinates.contains(x))
             {
                 let mut new_nodes = coordinates.clone();
@@ -78,7 +78,7 @@ impl<const C: u8, const R: u8, const SIZE: usize> SolutionIter<C, R, SIZE> {
                 self.queue.push_back(new_nodes);
             }
         } else {
-            for coordinate in PointAbsolute8::points_by_row() {
+            for coordinate in Tile::iter_by_row() {
                 let single_coordinate = vec![coordinate];
                 self.queue.push_back(single_coordinate);
             }

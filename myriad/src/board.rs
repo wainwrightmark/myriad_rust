@@ -3,29 +3,30 @@ use std::ops::IndexMut;
 
 use crate::parser::*;
 use crate::prelude::*;
-pub use geometrid::prelude8::*;
+pub use geometrid::prelude::*;
 use itertools::*;
 use serde::{Deserialize, Serialize};
+use strum::IntoEnumIterator;
 
 #[derive(PartialEq, Debug, Eq, Hash, Clone, Serialize, Deserialize, PartialOrd, Ord, Default)]
-pub struct Board<const C: u8, const R: u8, const SIZE: usize>(pub Grid8<Rune, C, R, SIZE>);
+pub struct Board<const C: u8, const R: u8, const SIZE: usize>(pub TileMap<Rune, C, R, SIZE>);
 
 static_assertions::assert_eq_size!(Board<3,3, 9>, [u8;9]);
 
-impl<const C: u8, const R: u8, const SIZE: usize> Index<PointAbsolute8<C, R>>
+impl<const C: u8, const R: u8, const SIZE: usize> Index<Tile<C, R>>
     for Board<C, R, SIZE>
 {
     type Output = Rune;
 
-    fn index(&self, index: PointAbsolute8<C, R>) -> &Self::Output {
+    fn index(&self, index: Tile<C, R>) -> &Self::Output {
         &self.0[index]
     }
 }
 
-impl<const C: u8, const R: u8, const SIZE: usize> IndexMut<PointAbsolute8<C, R>>
+impl<const C: u8, const R: u8, const SIZE: usize> IndexMut<Tile<C, R>>
     for Board<C, R, SIZE>
 {
-    fn index_mut(&mut self, index: PointAbsolute8<C, R>) -> &mut Self::Output {
+    fn index_mut(&mut self, index: Tile<C, R>) -> &mut Self::Output {
         &mut self.0[index]
     }
 }
@@ -37,7 +38,7 @@ impl<const C: u8, const R: u8, const SIZE: usize> std::fmt::Display for Board<C,
 }
 
 impl<const C: u8, const R: u8, const SIZE: usize> Board<C, R, SIZE> {
-    pub fn check(&self, nodes: &[PointAbsolute8<C, R>]) -> Result<i32, ParseFail> {
+    pub fn check(&self, nodes: &[Tile<C, R>]) -> Result<i32, ParseFail> {
         let mut input = nodes.iter().map(|x| self[*x]).peekable();
 
         crate::parser::parse_and_evaluate(&mut input)
@@ -56,12 +57,12 @@ impl<const C: u8, const R: u8, const SIZE: usize> Board<C, R, SIZE> {
                     .try_into()
                     .unwrap();
 
-                Some(Self(Grid8(letters)))
+                Some(Self(TileMap::from_inner(letters)))
             }
         }
     }
 
-    pub fn get_word_text(&self, ps: &[PointAbsolute8<C, R>]) -> String {
+    pub fn get_word_text(&self, ps: &[Tile<C, R>]) -> String {
         let word = ps
             .iter()
             .map(|c| {
@@ -80,7 +81,7 @@ impl<const C: u8, const R: u8, const SIZE: usize> Board<C, R, SIZE> {
                 s.push_str("\r\n")
             };
             for column in 0..C {
-                let p = PointAbsolute8::<C, R>::try_new(column, row).unwrap();
+                let p = Tile::<C, R>::try_new(column, row).unwrap();
                 let l = self[p].to_string();
 
                 s.push_str(&l);
@@ -94,7 +95,7 @@ impl<const C: u8, const R: u8, const SIZE: usize> Board<C, R, SIZE> {
         let mut s = String::with_capacity(SIZE + R as usize);
         for column in 0..C {
             for row in 0..R {
-                let p = PointAbsolute8::<C, R>::try_new(column, row).unwrap();
+                let p = Tile::<C, R>::try_new(column, row).unwrap();
                 let l = self[p].to_string();
 
                 s.push_str(&l);
@@ -106,18 +107,18 @@ impl<const C: u8, const R: u8, const SIZE: usize> Board<C, R, SIZE> {
 
     ///Flip along the vertical axis
     pub fn flip_vertical(&mut self) {
-        self.0.flip_vertical()
+        self.0.flip(FlipAxes::Vertical)
     }
 
     ///Flip along the horizontal axis
     pub fn flip_horizontal(&mut self) {
-        self.0.flip_horizontal()
+        self.0.flip(FlipAxes::Horizontal)
     }
 }
 
 impl<const L: u8, const SIZE: usize> Board<L, L, SIZE> {
     pub fn rotate(&mut self) {
-        self.0.rotate_clockwise()
+        self.0.rotate(QuarterTurns::One)
     }
 
     pub fn is_canonical_form(&self) -> bool {
@@ -142,13 +143,12 @@ impl<const L: u8, const SIZE: usize> Board<L, L, SIZE> {
     }
 
     pub fn get_unique_string(&self) -> String {
-        let mut options = (0..4)
-            .into_iter()
-            .cartesian_product(0..2)
-            .map(|(rotate, reflect)| {
-                PointAbsolute8::<L, L>::points_by_row()
-                    .map(|c| c.rotate(rotate))
-                    .map(|c| if reflect == 0 { c } else { c.flip_horizontal() })
+        let mut options = QuarterTurns::iter()
+            .cartesian_product([FlipAxes::None, FlipAxes::Horizontal, FlipAxes::Horizontal].into_iter())
+            .map(|(quarter_turns, axes)| {
+                Tile::<L, L>::iter_by_row()
+                    .map(|c| c.rotate(quarter_turns))
+                    .map(|c| c.flip(axes))
                     .map(|c| self[c])
                     .join("")
             })

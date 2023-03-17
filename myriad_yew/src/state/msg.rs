@@ -74,7 +74,7 @@ impl Reducer<FullGameState> for NewGameMsg {
 }
 
 pub struct OnCoordinatesSetMsg {
-    pub coordinates: Vec<PointAbsolute8<GRID_COLUMNS, GRID_ROWS>>,
+    pub coordinates: Vec<Tile<GRID_COLUMNS, GRID_ROWS>>,
 }
 
 fn get_emoji(i: i32) -> String {

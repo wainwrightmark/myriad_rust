@@ -1,6 +1,6 @@
 use crate::state::prelude::*;
 use crate::web::prelude::*;
-use myriad::prelude::PointAbsolute8;
+use myriad::prelude::{Tile, HasCenter};
 
 use num::ToPrimitive;
 use std::ops::Deref;
@@ -9,7 +9,7 @@ use yewdux::prelude::*;
 
 #[function_component(CrosshairsSVG)]
 pub fn crosshairs_svg() -> Html {
-    let circles = PointAbsolute8::<GRID_COLUMNS, GRID_ROWS>::points_by_row()
+    let circles = Tile::<GRID_COLUMNS, GRID_ROWS>::iter_by_row()
         .map(|coordinate| html!(< Crosshair {coordinate} />))
         .collect::<Html>();
 
@@ -23,7 +23,7 @@ pub fn crosshairs_svg() -> Html {
 
 #[derive(PartialEq, Eq, Properties)]
 pub struct CrossHairProperties {
-    coordinate: PointAbsolute8<GRID_COLUMNS, GRID_ROWS>,
+    coordinate: Tile<GRID_COLUMNS, GRID_ROWS>,
 }
 
 const CROSSHAIR_LENGTH: f32 = 15.0;
@@ -160,7 +160,7 @@ fn crosshair(properties: &CrossHairProperties) -> Html {
     };
 
     let scale = if let CircleType::IntermediatePosition { next } = circle_type {
-        if next.is_orthogonal(coordinate) {
+        if next.is_contiguous_with(&coordinate) {
             STRAIGHT_SCALE_X
         } else {
             DIAGONAL_SCALE_X
@@ -182,16 +182,16 @@ fn crosshair(properties: &CrossHairProperties) -> Html {
 }
 
 fn get_line_position(
-    c1: PointAbsolute8<GRID_COLUMNS, GRID_ROWS>,
-    c2: PointAbsolute8<GRID_COLUMNS, GRID_ROWS>,
+    c1: Tile<GRID_COLUMNS, GRID_ROWS>,
+    c2: Tile<GRID_COLUMNS, GRID_ROWS>,
     index: u8,
     rf: RotFlipState,
 ) -> (f32, f32, f32) {
-    let c1a = rotate_and_flip(&c1, rf.rotate, rf.flip);
-    let c2a = rotate_and_flip(&c2, rf.rotate, rf.flip);
+    let c1a = rotate_and_flip(&c1, rf.rotate, rf.flip).get_vertex(&myriad::prelude::Corner::NorthEast).unwrap() .get_center(1.0);
+    let c2a = rotate_and_flip(&c2, rf.rotate, rf.flip).get_vertex(&myriad::prelude::Corner::NorthEast).unwrap().get_center(1.0);
 
-    let x_dir = c2a.x().to_f32().unwrap() - c1a.x().to_f32().unwrap();
-    let y_dir = c2a.y().to_f32().unwrap() - c1a.y().to_f32().unwrap();
+    let x_dir = c2a.x - c1a.x;
+    let y_dir = c2a.y - c1a.y;
 
     let x = (x_dir * HALF_CROSSHAIR_LENGTH * DIAGONAL_SCALE_X) - (x_dir * HALF_STOKE_WIDTH)
         + (x_dir / 4.0 * index.to_f32().unwrap() * SQUARE_SIZE)
@@ -200,7 +200,7 @@ fn get_line_position(
         + (y_dir / 4.0 * index.to_f32().unwrap() * SQUARE_SIZE)
         + SQUARE_MIDPOINT;
 
-    let rot = c1a.angle_to(&c2a);
+    let rot = f32::to_degrees(c1a.angle_to(&c2a));
 
     (x, y, rot)
 }
