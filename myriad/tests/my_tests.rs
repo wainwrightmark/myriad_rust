@@ -35,7 +35,7 @@ fn test_board(letters: &str, expected_count: usize) {
 
     let solutions = settings
         .solve(board.clone())
-        .collect::<Vec<FoundWord<3, 3>>>();
+        .collect::<Vec<FoundWord<3, 3, 9>>>();
 
     for r in solutions
         .iter()

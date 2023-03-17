@@ -24,7 +24,7 @@ impl SolveSettings {
     pub fn solve<const C: u8, const R: u8, const SIZE: usize>(
         self,
         board: Board<C, R, SIZE>,
-    ) -> impl Iterator<Item = FoundWord<C, R>> {
+    ) -> impl Iterator<Item = FoundWord<C, R, SIZE>> {
         SolutionIter::new(board, self)
     }
 
@@ -39,13 +39,19 @@ impl Default for SolveSettings {
     }
 }
 
-#[derive(PartialEq, Eq, Debug, Clone, Serialize, Deserialize)]
-pub struct FoundWord<const C: u8, const R: u8> {
-    pub result: i32,
-    pub path: ArrayVec<[Tile<C, R>;9]>,
+#[derive(Debug, Clone, Default)]
+pub struct Path<const C: u8, const R: u8, const SIZE: usize>{
+    tiles: ArrayVec<[Tile<C, R>;SIZE]>,
+    used: TileSet16<C, R, SIZE>
 }
 
-impl<const C: u8, const R: u8> std::fmt::Display for FoundWord<C, R> {
+#[derive(PartialEq, Eq, Debug, Clone, Serialize, Deserialize)]
+pub struct FoundWord<const C: u8, const R: u8, const SIZE: usize> {
+    pub result: i32,
+    pub path: ArrayVec<[Tile<C, R>;SIZE]>,
+}
+
+impl<const C: u8, const R: u8, const SIZE: usize> std::fmt::Display for FoundWord<C, R, SIZE> {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "{} = {}", self.result, self.path.iter().join(""))
     }
@@ -54,7 +60,7 @@ impl<const C: u8, const R: u8> std::fmt::Display for FoundWord<C, R> {
 struct SolutionIter<const C: u8, const R: u8, const SIZE: usize> {
     results: HashSet<i32>,
     settings: SolveSettings,
-    queue: VecDeque<ArrayVec<[Tile<C, R>;9]>>,
+    queue: VecDeque<Path<C, R, SIZE>>,
     board: Board<C, R, SIZE>,
 }
 
@@ -68,49 +74,52 @@ impl<const C: u8, const R: u8, const SIZE: usize> SolutionIter<C, R, SIZE> {
         }
     }
 
-    fn add_to_queue(&mut self, coordinates: ArrayVec<[Tile<C, R>;9]>) {
-        if let Some(last) = coordinates.last() {
+    fn add_to_queue(&mut self, path: Path<C, R, SIZE>) {
+        if let Some(last) = path.tiles.last() {
             for adjacent in last
                 .iter_adjacent()
-                .filter(|x| !coordinates.contains(x))
+                .filter(|x| !path.used.get_bit(x))
             {
-                let mut new_nodes = coordinates.clone();
-                new_nodes.push(adjacent);
-                self.queue.push_back(new_nodes);
+                let mut new_path = path.clone();
+                new_path.tiles.push(adjacent);
+                new_path.used.set_bit(&adjacent, true);
+                self.queue.push_back(new_path);
             }
         } else {
-            for coordinate in Tile::iter_by_row() {
-                let mut path: ArrayVec<[Tile<C, R>;9]> = Default::default();
-                path.push(coordinate);
+            for tile in Tile::iter_by_row() {
+                let mut tiles: ArrayVec<[Tile<C, R>;SIZE]> = Default::default();
+                let mut used : TileSet16::<C, R, SIZE>= Default::default();
+                tiles.push(tile);
+                used.set_bit(&tile, true);
 
-                self.queue.push_back(path);
+                self.queue.push_back(Path { tiles, used });
             }
         }
     }
 }
 
 impl<const C: u8, const R: u8, const SIZE: usize> Iterator for SolutionIter<C, R, SIZE> {
-    type Item = FoundWord<C, R>;
+    type Item = FoundWord<C, R, SIZE>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        while let Some(coordinates) = self.queue.pop_front() {
-            let check_result = self.board.check(&coordinates);
+        while let Some(path) = self.queue.pop_front() {
+            let check_result = self.board.check(&path.tiles);
 
             match check_result {
                 Ok(i) => {
-                    self.add_to_queue(coordinates.clone());
+                    self.add_to_queue(path.clone());
                     let should_return = self.settings.allow(i) && self.results.insert(i);
 
                     if should_return {
                         let found_word = FoundWord {
                             result: i,
-                            path: coordinates,
+                            path: path.tiles,
                         };
                         return Some(found_word);
                     }
                 }
                 Err(ParseFail::PartialSuccess) => {
-                    self.add_to_queue(coordinates);
+                    self.add_to_queue(path);
                 }
                 Err(ParseFail::Failure) => {}
             }

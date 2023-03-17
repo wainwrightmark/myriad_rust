@@ -7,11 +7,11 @@ use yewdux::prelude::*;
 
 #[derive(PartialEq, Eq, Clone, Default, Serialize, Deserialize, Store)]
 pub struct ChosenPositionsState {
-    pub positions: ArrayVec<[Tile<GRID_COLUMNS, GRID_ROWS>; 9]>,
+    pub positions: ArrayVec<[Tile<GRID_COLUMNS, GRID_ROWS>; GRID_SIZE]>,
 }
 
 impl ChosenPositionsState {
-    pub fn after_move_result(self, move_result: &MoveResult<GRID_COLUMNS, GRID_ROWS>) -> Self {
+    pub fn after_move_result(self, move_result: &MoveResult<GRID_COLUMNS, GRID_ROWS, GRID_SIZE>) -> Self {
         match move_result {
             MoveResult::WordComplete { word } => Self {
                 positions: word.path.to_owned(),

@@ -26,4 +26,5 @@ pub mod prelude {
 
     pub const GRID_COLUMNS: u8 = 3;
     pub const GRID_ROWS: u8 = 3;
+    pub const GRID_SIZE: usize = 9;
 }

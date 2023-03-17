@@ -6,12 +6,12 @@ use std::collections::BTreeMap;
 
 #[derive(PartialEq, Eq, Clone, Serialize, Deserialize, Default)]
 pub struct FoundWordsState {
-    pub words: BTreeMap<i32, FoundWord<GRID_COLUMNS, GRID_ROWS>>,
+    pub words: BTreeMap<i32, FoundWord<GRID_COLUMNS, GRID_ROWS, GRID_SIZE>>,
     pub most_recent: Option<i32>,
 }
 
 impl FoundWordsState {
-    pub fn with_word(&self, word: FoundWord<GRID_COLUMNS, GRID_ROWS>) -> Self {
+    pub fn with_word(&self, word: FoundWord<GRID_COLUMNS, GRID_ROWS, GRID_SIZE>) -> Self {
         let mut new_map = self.words.clone();
 
         let i = word.result;
@@ -23,7 +23,7 @@ impl FoundWordsState {
         }
     }
 
-    pub fn has_word(&self, word: &FoundWord<GRID_COLUMNS, GRID_ROWS>) -> bool {
+    pub fn has_word(&self, word: &FoundWord<GRID_COLUMNS, GRID_ROWS, GRID_SIZE>) -> bool {
         self.words.contains_key(&word.result)
     }
 
