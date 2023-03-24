@@ -13,7 +13,7 @@ pub struct CrossHairProperties {
 }
 
 
-const CROSSHAIR_LENGTH: f32 = 15.0;
+const CROSSHAIR_LENGTH: f32 = 20.0;
 const HALF_CROSSHAIR_LENGTH: f32 = CROSSHAIR_LENGTH / 2.0;
 // const CROSSHAIR_INSET: f32 = 12.5;
 const STROKE_WIDTH: f32 = 7.2;
@@ -68,7 +68,7 @@ pub fn crosshair(properties: &CrossHairProperties) -> Html {
     } else {
         1.0
     };
-    let offset = Center{x:-square_radius, y: -square_radius};
+    let offset = Center{x:-(square_radius * 0.9), y: -(square_radius * 0.9)};
     let style = (location + offset) .get_style();
     html!(
         <div key="crosshair" class={"crosshair-group"} {style}>
@@ -99,8 +99,7 @@ impl Transform {
         rot_flip: RotFlipState,
     )-> Self{
 
-        const CROSSHAIR_INSET: f32 = 12.5;
-        const SAUCE : f32 = 10.;
+        const CROSSHAIR_INSET: f32 = 10.;
 
 
         match circle_type{
@@ -126,8 +125,8 @@ impl Transform {
                 };
 
                 let x = match index{
-                    1 => CROSSHAIR_INSET + 2.5,
-                    2 => square_size - CROSSHAIR_INSET  + 7.5,
+                    1 => CROSSHAIR_INSET,
+                    2 => square_size - CROSSHAIR_INSET,
                     3 => square_radius,
                     4 => square_radius,
                     _=> unreachable!()
@@ -136,8 +135,8 @@ impl Transform {
                 let y = match index{
                     1 => square_radius,
                     2 => square_radius,
-                    3 => CROSSHAIR_INSET  + 2.5,
-                    4 => square_size - CROSSHAIR_INSET  + 10.0,
+                    3 => CROSSHAIR_INSET,
+                    4 => square_size - CROSSHAIR_INSET,
                     _=> unreachable!()
                 };
 
@@ -152,7 +151,7 @@ impl Transform {
     pub fn get_transform(&self, scale: f32) -> String {
         format!(
             "transform: translate({}px, {}px) rotate({}deg) scaleX({});",
-            self.x - (HALF_CROSSHAIR_LENGTH * 0.5), self.y -(HALF_STOKE_WIDTH * 0.5), self.rot, scale
+            self.x - (HALF_CROSSHAIR_LENGTH), self.y -(HALF_STOKE_WIDTH), self.rot, scale
         )
     }
 }
@@ -169,8 +168,8 @@ fn get_line_position(
 
     let square_radius = square_size / 2.;
 
-    let straight_scale_x: f32 = square_size / 4.0 / CROSSHAIR_LENGTH;
-    let diagonal_scale_x: f32 = straight_scale_x * 1.42;
+    let straight_scale_x: f32 = square_size / 4.5 / CROSSHAIR_LENGTH;
+    let diagonal_scale_x: f32 = straight_scale_x * 1.43;
 
     let x_dir = c2a.col().to_f32().unwrap() - c1a.col().to_f32().unwrap();
     let y_dir = c2a.row().to_f32().unwrap() - c1a.row().to_f32().unwrap();

@@ -274,9 +274,13 @@ Crosshairs
   border: none;
   position: absolute;
   z-index: 100;
-  border-radius: 50%;
+  border-radius: 10%;
 }
 
+.crosshair-extended {
+  z-index: 200;
+  /* border-radius: 0; */
+}
 
 .invisible{
   opacity: 0.0;
