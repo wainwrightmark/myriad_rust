@@ -167,10 +167,14 @@ pub enum InputMsg {
     Enter {
         coordinate: Tile<GRID_COLUMNS, GRID_ROWS>,
     },
+    None
 }
 
 impl Reducer<InputState> for InputMsg {
     fn apply(self, state: std::rc::Rc<InputState>) -> std::rc::Rc<InputState> {
+        if self == InputMsg::None{
+            return state;
+        }
         log::debug!("{self:?}");
         match self {
             InputMsg::Down { coordinate } => {
@@ -197,7 +201,8 @@ impl Reducer<InputState> for InputMsg {
                 }
 
                 state
-            }
+            },
+            InputMsg::None=> state
         }
     }
 }
@@ -213,7 +218,7 @@ pub struct OnClickMsg {
 impl Reducer<ChosenPositionsState> for OnClickMsg {
     fn apply(self, state: std::rc::Rc<ChosenPositionsState>) -> std::rc::Rc<ChosenPositionsState> {
 
-        log::debug!("{self:?}");
+        //log::debug!("{self:?}");
         ChosenPositionsState::next(state, self.allow_abandon, self.coordinate)
     }
 }

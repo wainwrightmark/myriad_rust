@@ -1,0 +1,7 @@
+[build]
+target = "myriad_yew/index.html"
+dist = "myriad_yew/dist"
+
+[serve]
+# address = "192.168.68.108"
+port = 8080
