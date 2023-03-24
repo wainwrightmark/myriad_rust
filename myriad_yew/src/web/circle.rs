@@ -2,37 +2,45 @@ use std::ops::Deref;
 
 use crate::state::prelude::*;
 use crate::web::prelude::*;
-use myriad::prelude::Tile;
 use myriad::prelude::*;
-
 use yew::prelude::*;
 use yewdux::prelude::*;
 
-#[function_component(CirclesSVG)]
-pub fn circles_svg() -> Html {
+#[function_component(Circles)]
+pub fn circles(game_size: &GameSize) -> Html {
+    let game_size = *game_size;
+
     let circles = Tile::<GRID_COLUMNS, GRID_ROWS>::iter_by_row()
-        .map(|coordinate| html!(< Circle {coordinate} />))
+        .map(|coordinate| html!(< Circle {coordinate} {game_size} />))
         .collect::<Html>();
 
+    let crosshairs = Tile::<GRID_COLUMNS, GRID_ROWS>::iter_by_row()
+        .map(|coordinate| html!(< Crosshair {coordinate} {game_size} />))
+        .collect::<Html>();
+
+    let onpointerup = Dispatch::new().apply_callback(move |_: PointerEvent| InputMsg::Up {});
+
     html! {
-          <g id="circles">
+          <div id="circles" class="circles" {onpointerup}>
     {circles}
-    </g>
+    {crosshairs}
+    </div>
 
       }
 }
 
-#[derive(PartialEq, Eq, Properties)]
+#[derive(PartialEq, Properties)]
 pub struct CircleProperties {
     pub coordinate: Tile<GRID_COLUMNS, GRID_ROWS>,
+    pub game_size: GameSize,
 }
 #[function_component(Circle)]
 fn circle(properties: &CircleProperties) -> Html {
     let coordinate = properties.coordinate;
 
     let location = use_selector_with_deps(
-        |state: &RotFlipState, co| state.get_location(co, SQUARE_SIZE),
-        coordinate,
+        |state: &RotFlipState, (co, size)| state.get_location(co, *size),
+        (coordinate, properties.game_size),
     );
 
     let board = use_selector(|state: &FullGameState| state.game.board.clone());
@@ -58,8 +66,12 @@ fn circle(properties: &CircleProperties) -> Html {
     let onpointerenter =
         Dispatch::new().apply_callback(move |_: PointerEvent| InputMsg::Enter { coordinate });
 
-    let cx = location.0;
-    let cy = location.1;
+        let onpointerup = Dispatch::new().apply_callback(move |_: PointerEvent| InputMsg::Up {});
+
+    let square_radius = properties.game_size.square_radius();
+
+    let left = location.x - (square_radius * CIRCLE_RATIO);
+    let top = location.y - (square_radius * CIRCLE_RATIO);
 
     let text = if matches!(letter, Rune::Blank) {
         "".to_string()
@@ -69,11 +81,9 @@ fn circle(properties: &CircleProperties) -> Html {
     let key = format!("{coordinate}_key");
     let circle_id = format!("{coordinate}_bigCircle");
     let text_id = format!("{coordinate}_text");
-    let radius = format!("{:2}", SQUARE_SIZE * 0.4);
+    let diameter = format!("{:2}", square_radius * 2.0 * CIRCLE_RATIO);
 
-    let g_style = format!(
-        " -webkit-transform: translate({cx}px, {cy}px); transform: translate({cx}px, {cy}px);"
-    );
+    let g_style = format!("left: {left}px; top: {top}px;");
 
     let circle_type_class = match circle_type {
         CircleType::Disabled => "circle-disabled",
@@ -86,35 +96,33 @@ fn circle(properties: &CircleProperties) -> Html {
 
     html! {
 
-
-
-        <g class="square"
+        <div class="square"
         {key}
        style={g_style}
        cursor={cursor}
 
         {onpointerdown}
-        {onpointerenter}
-       >
+        {onpointerup}
+        {onpointerenter}>
 
-
-      <circle
+        <div
         id={circle_id}
         class={circle_classes}
-        stroke={color}
-        r={radius}
+        style={
+            format!("width: {diameter}px;
+            height: {diameter}px;
+            border-color: {color};")
+        }
         >
-      </circle>
-
-      <text
+        <p
         id={text_id}
-        class="circle-text"
-        dominant-baseline="central"
-        text-anchor="middle"
-        stroke="@Colors.Shades.White"
-        fill="@Colors.Shades.Black">
+        class="circle-text">
         {text}
-      </text>
-    </g>
+      </p>
+      </div>
+
+
+
+        </div>
     }
 }

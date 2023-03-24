@@ -1,24 +1,69 @@
-.myriadSVG {
-  font-family: inherit;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-
-  width: 100%;
-  font-weight: bold;
+body {
+  touch-action: manipulation;
+  overscroll-behavior-x: none;
+  overscroll-behavior-y: none;
+  padding: 0;
+  margin: 0;
+  background-color: lightgray;
 }
+
+body.dark {
+  --bg-color: #000;
+  --bg-secondary-color: #131316;
+  --font-color: #f5f5f5;
+  --color-grey: #ccc;
+  --color-darkGrey: #777;
+}
+
+.container {
+  position: relative;
+  max-width: 400px;
+  margin: auto;
+  overflow-x: hidden;
+  background-color: whitesmoke;
+  aspect-ratio: 2/3;
+}
+
+dialog{
+  z-index: 2000;
+}
+
+
+/*Groups */
+
+.circles{
+  top:0;
+  left: 0;
+  position:absolute;
+  width: 100%;
+  aspect-ratio: 1/1;
+}
+
+.tab-headers, .found-words, .recent-words{
+  position: absolute;
+  top:0;
+  left: 0;
+}
+
 
 .square {
   transition: 1s ease-out;
+  position: absolute;
 }
 
 
 .circle {
-  stroke-width: 7.2;
-  fill: black;
-  fill-opacity: 0.01;
   transition: 3s cubic-bezier(0, 1.45, 0.72, 1.33);  
+  border: black solid thick;
+  border-radius: 50%;
+}
+
+.circle-legal{
+  cursor: pointer;
+}
+
+.circle-disabled{
+  cursor: not-allowed;
 }
 
 
@@ -37,18 +82,31 @@
   font-size: 3em;
   user-select: none;
   pointer-events: none;
+  margin: 0;
+  text-align: center;
+  color: black;
+  font-family: cursive ;
+  font-weight: 1000;
+  height: 100%;
+  line-height: 210%;
+  position: relative;
+
+  z-index: 500;
 }
 
-.recentWord {
+
+.recent-word {
+  position: absolute;
   font-family: monospace;
   
   animation-name: disappearAnimation;  
   animation-fill-mode: forwards;
   animation-timing-function: ease-out;
-
+  pointer-events: none;
   font-size: 3em;
-  dominant-baseline: hanging;
-  text-anchor: start;
+  margin: 0;
+  width: 30px;
+  height: 30px;
 }
 
 
@@ -69,10 +127,7 @@
   }
 }
 
-.container {
-  max-width: 400px;
-  margin: auto;
-}
+
 
 
 
@@ -82,13 +137,28 @@ Tab Header
 
 
 .tab-header{
-  stroke-width: 1;
   stroke: black;
   fill: white;
+  height: 50px;
+  width: 50px;
+  position:absolute;
+  border-radius: 5px;
+  padding: 0;
+  margin:2px;
+  line-height: 1.5;
+  font-family: monospace;
+  font-weight: bold;
+  box-sizing: inherit;
+  font-size: 2.5em;
+  user-select: none;
+  border-width: 1px;
+  border-color: black;
+  border-style: solid;
 }
 
 .selected-tab{
-  stroke-width: 3;
+  border-width: 3px;
+  margin:0;
   stroke-linejoin: round;
 }
 
@@ -101,80 +171,55 @@ Tab Header
   fill: green;
 }
 
-.tab-header-text{  
-  color: #111;
-  line-height: 1.5;
-  font-family: monospace;
-  font-weight: bold;
-  dominant-baseline: central;
-  text-anchor: middle;
-  box-sizing: inherit;
-  font-size: 2.5em;
-  user-select: none;
-  pointer-events: none;
-  fill: black;
-   stroke: transparent;
-   transform: translate(25px, 25px);
-}
 
 /*
 Found Word
 */
 
-.found-word-group{
+.found-word{
   transition: all 1s;
-  
+  padding: 0;
+  margin: 0;
+  font-size: 1em;
+  width: 30px;
+  height: 30px;
 }
-.found-word-group-button :active{
+/* .found-word-button :active{
   transition: all 1s;
   stroke-width: 5;
   stroke: black;
-}
+} */
 
 
 .button-text{
   line-height: 1.5;
   font-family: monospace;
   font-weight: bold;
-  dominant-baseline: hanging;
-  text-anchor: start;
+  text-anchor: middle;
   box-sizing: inherit;
-  font-size: 1.5em;
-  user-select: none;
-  pointer-events: none;
-  fill: black;
-  stroke: transparent;
-  transform: translate(2.5px, 5px);
+  color: black;
+  background-color: transparent;
 }
 
-.found-word-text{
+/* .found-word-text{
   line-height: 1.5;
   font-family: monospace;
   font-weight: bold;
-  dominant-baseline: hanging;
   text-anchor: middle;
   box-sizing: inherit;
-  font-size: 1.5em;
-  user-select: none;
-  pointer-events: none;
-  fill: gray;
-  stroke: transparent;
-  transform: translate(15px, 5px);
+  color: black;
+  background-color: transparent;
   transition: all 5s ease-in;
 }
 .found-word-text-success{
-  fill: black;
-  stroke: transparent;
-}
-
-.found-word-box{
-  stroke-width: 0;
-  stroke-linejoin: round;
-  fill: white;
+  background-color: green;
   stroke: black;
+} */
 
-  transition: fill 5s ease-in;
-}
+/* .found-word-box{
+
+  transition: background-color 5s ease-in;
+} */
 
 
 .score-counter-box{
@@ -190,14 +235,14 @@ Found Word
   transition: all 1s;
 }
 
-.found-word-box-success{
+/* .found-word-box-success{
   fill: green;
 }
 
 .found-word-box-challenge{
   stroke-width: 4;
   stroke: orangered;
-}
+} */
 
 .history-progress{
   background: green;
@@ -216,21 +261,26 @@ Crosshairs
 
 .crosshair-group{
   pointer-events: none;
+  position: absolute;
 }
 
 .crosshair{
   stroke-width: 7.2;
   transition: all 1s ease-out;
   opacity: 1.0;
-  /* stroke-linecap: round;   */
+  margin: 0;
+  border: none;
+  position: absolute;
+  z-index: 100;
+  border-radius: 50%;
 }
 
-.crosshair-extended{
-
-  opacity: 0.5;
-}
 
 .invisible{
   opacity: 0.0;
+}
 
+
+.confetti-canvas{
+  position: fixed; width: 100%; height: 100%; top: 0px; left: 0px; z-index: 1000; pointer-events: none;
 }

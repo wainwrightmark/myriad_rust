@@ -8,6 +8,7 @@ pub mod msg;
 pub mod recent_word_state;
 pub mod rot_flip_state;
 pub mod selected_tab_state;
+pub mod game_size;
 
 pub mod prelude {
 
@@ -21,6 +22,7 @@ pub mod prelude {
     pub use crate::state::recent_word_state::*;
     pub use crate::state::rot_flip_state::*;
     pub use crate::state::selected_tab_state::*;
+    pub use crate::state::game_size::*;
 
     pub const GOALSIZE: i32 = 20;
 

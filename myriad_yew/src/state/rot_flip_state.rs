@@ -1,5 +1,5 @@
 use crate::state::prelude::*;
-use myriad::prelude::{QuarterTurns, Tile};
+use myriad::prelude::{Center, QuarterTurns, Tile};
 use serde::*;
 use yewdux::prelude::*;
 
@@ -29,14 +29,14 @@ impl RotFlipState {
     pub fn get_location(
         &self,
         point: &Tile<GRID_COLUMNS, GRID_ROWS>,
-        square_size: f32,
-    ) -> (f32, f32) {
+        game_size: GameSize,
+    ) -> Center {
         let flipped = rotate_and_flip(point, self.rotate, self.flip);
 
-        let cx = (flipped.col() as f32 + 0.5) * square_size;
-        let cy = (flipped.row() as f32 + 0.5) * square_size;
+        let x = ((flipped.col() as f32) * game_size.square_length()) + game_size.square_radius();
+        let y = ((flipped.row() as f32) * game_size.square_length()) + game_size.square_radius();
 
-        (cx, cy)
+        Center { x, y }
     }
 
     pub fn total_letters(&self) -> usize {

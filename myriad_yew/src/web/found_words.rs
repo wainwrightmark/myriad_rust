@@ -10,21 +10,25 @@ use yew::prelude::*;
 use yewdux::prelude::*;
 
 #[function_component(FoundWordsTabHeaders)]
-pub fn found_words_tab_headers() -> Html {
+pub fn found_words_tab_headers(game_size: &GameSize) -> Html {
     let state = use_selector(|state: &FullGameState| state.found_words.clone());
     let selected_tab_state = use_store_value::<SelectedTabState>();
+    let game_size = *game_size;
 
     let buttons = (0..5)
-        .map(|index| found_words_tab_header(index, state.clone(), selected_tab_state.clone()))
+        .map(|index| {
+            found_words_tab_header(index, game_size, state.clone(), selected_tab_state.clone())
+        })
         .collect::<Html>();
 
-    html!(<g> { buttons } <MoveTabHeader index={5} {selected_tab_state}/> </g>)
+    html!(<div class="tab-headers"> { buttons } <MoveTabHeader index={5} {selected_tab_state} {game_size}/> </div>)
 }
 
-#[derive(PartialEq, Eq, Properties)]
+#[derive(PartialEq, Properties)]
 pub struct MoreTabHeaderProperties {
     index: usize,
     selected_tab_state: Rc<SelectedTabState>,
+    game_size: GameSize,
 }
 
 #[function_component(MoveTabHeader)]
@@ -43,27 +47,27 @@ pub fn more_tab_header(properties: &MoreTabHeaderProperties) -> Html {
         None
     };
 
+    let x = TAB_HEADER_PADDING + (index.to_f32().unwrap() * (TAB_HEADER_WIDTH + TAB_HEADER_MARGIN));
+    let y = (properties.game_size.square_length() * 3.0) + TAB_HEADER_TOP_MARGIN;
+
     let class = classes!("tab-header", selected);
     let style = format!(
-        "transform: translate({}px, {}px);",
-        TAB_HEADER_PADDING + (index.to_f32().unwrap() * (TAB_HEADER_WIDTH + TAB_HEADER_MARGIN)),
-        (SQUARE_SIZE * 3.0) + TAB_HEADER_TOP_MARGIN
+        "
+        transform: translate({x}px, {y}px);",
+
+
     );
 
     html!(
-        <g {key} {style} {onclick}>
-        <rect {class} height={format!("{TAB_HEADER_HEIGHT}")} rx="5" width={format!("{TAB_HEADER_WIDTH}")}>
-        </rect>
-        <text class="tab-header-text" fill="Black" stroke="White">
+        <button {class}  {style} {onclick} {key}>
            {"☰"}
-        </text>
-
-        </g>
+        </button>
     )
 }
 
 pub fn found_words_tab_header(
     index: usize,
+    game_size: GameSize,
     state: Rc<Rc<FoundWordsState>>,
     selected_tab_state: Rc<SelectedTabState>,
 ) -> Html {
@@ -87,23 +91,22 @@ pub fn found_words_tab_header(
     let style = format!(
         "transform: translate({}px, {}px);",
         TAB_HEADER_PADDING + (index.to_f32().unwrap() * (TAB_HEADER_WIDTH + TAB_HEADER_MARGIN)),
-        (SQUARE_SIZE * 3.0) + TAB_HEADER_TOP_MARGIN
+        (game_size.square_length() * 3.0) + TAB_HEADER_TOP_MARGIN
     );
-    html!(
-    <g {key} {style} {onclick}>
-    <rect {class} height={format!("{TAB_HEADER_HEIGHT}")} rx="5" width={format!("{TAB_HEADER_WIDTH}")}>
-    </rect>
-    <text class="tab-header-text" fill="Black" stroke="White">
-       {format_number ((index.to_i32().unwrap()  + 1) * GOALSIZE)}
-    </text>
 
-    </g>
+    html!(
+
+        <button {class}  {style} {onclick} {key}>
+        {format_number ((index.to_i32().unwrap()  + 1) * GOALSIZE)}
+     </button>
+
     )
 }
 
-#[derive(PartialEq, Eq, Properties)]
+#[derive(PartialEq, Properties)]
 pub struct AllFoundWordsProperties {
     pub cheat: bool,
+    pub game_size: GameSize,
 }
 
 #[function_component(AllFoundWords)]
@@ -115,39 +118,41 @@ pub fn all_found_words(properties: &AllFoundWordsProperties) -> Html {
 
     let total_found = found_words_state.words.len();
     let cheat = properties.cheat;
+    let game_size = properties.game_size;
 
     let words = (1..101)
         .map(|number| {
             let is_challenge = challenge_words.contains(&number);
             let is_found = found_words_state.words.contains_key(&number);
-            html!(<FoundWordsWord {number} {is_challenge} {is_found} {selected_tab} {cheat} />)
+            html!(<FoundWordsWord {number} {is_challenge} {is_found} {selected_tab} {cheat} {game_size} />)
         })
         .collect::<Html>();
 
     html!(
-        <g>
+        <div class="found-words">
             {words}
 
-            <TodayGameButton {selected_tab} width={6.0} position_number={101}/>
-            <RandomGameButton {selected_tab} width={6.0} position_number={111}/>
-            <ScoreCounter {total_found} {selected_tab} width={1.5} position_number={106}/>
-            <FlipButton  {selected_tab} width={1.0} position_number={109}/>
-            <RotateButton  {selected_tab} width={1.0} position_number={108}/>
-            <HistoryButton {selected_tab} width={1.0} position_number={118}/>
-            <WainwrongButton {selected_tab} width={1.0} position_number={119}/>
-            <FacebookButton {selected_tab} width={1.0} position_number={116}/>
+            <TodayGameButton {selected_tab} {game_size} width={6.0} position_number={101}/>
+            <RandomGameButton {selected_tab} {game_size} width={6.0} position_number={111}/>
+            <ScoreCounter {total_found} {selected_tab} {game_size} width={3.0} position_number={117}/>
+            <FlipButton  {selected_tab} {game_size} width={1.0} position_number={109}/>
+            <RotateButton  {selected_tab} {game_size} width={1.0} position_number={108}/>
+            // <HistoryButton {selected_tab} {game_size} width={1.0} position_number={118}/>
+            // <WainwrongButton {selected_tab} width={1.0} position_number={119}/>
+            // <FacebookButton {selected_tab} width={1.0} position_number={116}/>
 
-        </g>
+        </div>
     )
 }
 
-#[derive(PartialEq, Eq, Properties)]
+#[derive(PartialEq, Properties)]
 pub struct FoundWordProperties {
     pub number: i32,
     pub is_found: bool,
     pub is_challenge: bool,
     pub selected_tab: usize,
     pub cheat: bool,
+    pub game_size: GameSize,
 }
 
 #[function_component(FoundWordsWord)]
@@ -165,44 +170,52 @@ pub fn found_words_word(properties: &FoundWordProperties) -> Html {
         None
     };
 
-    let rect_class = classes!(
-        "found-word-box",
-        if properties.is_found {
-            Some("found-word-box-success")
-        } else {
-            None
-        },
-        if properties.is_challenge {
-            Some("found-word-box-challenge")
-        } else {
-            None
-        },
-    );
-    let text_class = classes!(
-        "found-word-text",
-        if properties.is_found {
-            Some("found-word-text-success")
-        } else {
-            None
-        }
-    );
+    let color = if properties.is_found{
+        "green"
+    }else{
+        "white"
+    };
+
+    // let rect_class = classes!(
+    //     "found-word-box",
+    //     if properties.is_found {
+    //         Some("found-word-box-success")
+    //     } else {
+    //         None
+    //     },
+    //     if properties.is_challenge {
+    //         Some("found-word-box-challenge")
+    //     } else {
+    //         None
+    //     },
+    // );
+    // let text_class = classes!(
+    //     "found-word-text",
+    //     if properties.is_found {
+    //         Some("found-word-text-success")
+    //     } else {
+    //         None
+    //     }
+    // );
 
     let text = format_number(number);
 
     //todo calculate position
-    let (x, y) = get_found_word_position(number, properties.selected_tab, false);
+    let (x, y) =
+        properties
+            .game_size
+            .get_found_word_position(number, properties.selected_tab, false);
 
     html!(
-        <FoundWordBox {id} {text} {x} {y} width_units={1.0} {rect_class} {text_class} {on_click} />
+        <FoundWordBox {id} {text} {x} {y} width_units={1.0} {color} {on_click} />
     )
 }
 
 #[derive(PartialEq, Properties)]
 pub struct FoundWordBoxProperties {
     pub id: String,
-    pub text: String,
-    pub rect_class: Classes,
-    pub text_class: Classes,
+    pub text: AttrValue,
+    pub color: AttrValue,
     pub x: f32,
     pub y: f32,
     pub width_units: f32,
@@ -213,55 +226,24 @@ pub struct FoundWordBoxProperties {
 pub fn found_word_box(properties: &FoundWordBoxProperties) -> Html {
     let x = properties.x;
     let y = properties.y;
-    let style = format!("transform: translate({x}px, {y}px);");
+    let width = format!("{}", FOUND_WORD_WIDTH * properties.width_units);
+    let height = format!("{FOUND_WORD_HEIGHT}");
+    let color = &properties.color;
+    let style = format!("position:absolute; transform: translate({x}px, {y}px); height: {height}px; width: {width}px; border-radius:5px; background-color: {color};");
 
     let class = classes!(
-        "found-word-group",
+        "found-word",
         if properties.on_click.is_some() {
-            Some("found-word-group-button")
+            Some("found-word-button")
         } else {
             None
         }
     );
-    let role = if properties.on_click.is_some() {
-        Some("button")
-    } else {
-        None
-    };
+    let key = properties.id.clone();
 
     html!(
-     <g key={properties.id.clone()} {style}  {role} {class} onclick={properties.on_click.clone()}>
-     <rect class={properties.rect_class.clone()} height={format!("{FOUND_WORD_HEIGHT}")} rx="5" width={format!("{}", FOUND_WORD_WIDTH * properties.width_units)}>
-     </rect>
-     <text class={properties.text_class.clone()}>
-        {properties.text.clone()}
-     </text>
-
-     </g>
+        <button {key} {style} {class} onclick={properties.on_click.clone()}>
+            {properties.text.clone()}
+        </button>
     )
-}
-
-pub fn get_found_word_position(number: i32, selected_index: usize, clamp: bool) -> (f32, f32) {
-    let row_number = ((number - 1) % GOALSIZE) / 10;
-    let y = BOARD_HEIGHT
-        + TAB_HEADER_HEIGHT
-        + TAB_HEADER_TOP_MARGIN
-        + FOUND_WORD_MARGIN
-        + (FOUND_WORD_HEIGHT + FOUND_WORD_MARGIN) * row_number.to_f32().unwrap();
-
-    let row_position = ((number - 1) % GOALSIZE) % 10;
-
-    let tab_x = FOUND_WORD_PADDING
-        + row_position.to_f32().unwrap() * (FOUND_WORD_MARGIN + FOUND_WORD_WIDTH);
-
-    let index = (number - 1) / GOALSIZE;
-    let mut index_offset = (index - selected_index.to_i32().unwrap()).to_f32().unwrap();
-    if clamp {
-        index_offset = index_offset.min(1.0).max(-1.0);
-    }
-
-    let offset_x = index_offset * SVG_WIDTH;
-
-    let x = tab_x + offset_x;
-    (x, y)
 }

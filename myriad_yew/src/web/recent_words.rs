@@ -6,7 +6,7 @@ use yew::prelude::*;
 use yewdux::prelude::*;
 
 #[function_component(RecentWords)]
-pub fn recent_words() -> Html {
+pub fn recent_words(game_size: &GameSize) -> Html {
     let recent_words_state = use_store_value::<RecentWordState>();
     let rot_flip = use_store_value::<RotFlipState>();
     let selected_index = *use_selector(|state: &SelectedTabState| state.index).deref();
@@ -17,42 +17,44 @@ pub fn recent_words() -> Html {
         .map(|word| {
             let key = format!("{}_({:?})", word.number, word.expiry_time);
 
-            let (mut startx, starty) = rot_flip
-                .get_location(&word.coordinate, SQUARE_SIZE);
+            let mut start_location = rot_flip
+                .get_location(&word.coordinate, *game_size);
 
             if word.coordinate.col() == 2{
-                startx *= 0.8; //little hack to prevent large numbers from being offscreen
+                start_location.x *= 0.8; //little hack to prevent large numbers from being offscreen
             }
 
-            let(endx, endy) = crate::web::found_words::get_found_word_position(word.number, selected_index, true);
+            let(endx, endy) = game_size.get_found_word_position(word.number, selected_index, true);
 
-            let style = format!("animation-duration: {}ms; --startx: {}px; --starty: {}px; --endx: {}px; --endy: {}px;",
+            let style = format!(
+                "animation-duration: {}ms; --startx: {}px; --starty: {}px; --endx: {}px; --endy: {}px; color: {}",
              word.linger_duration_ms(),
-             startx,
-             starty,
-             endx + 2.5,
-             endy + 5.0
+             start_location.x,
+             start_location.y,
+             endx,
+             endy,
+             word.get_color()
             );
 
             //word.word
             let text = format_number(word.number);
 
             html! {
-                <text
+                <p
                 {key}
-                fill={word.get_color()}
-                class="recentWord"
+                class="recent-word"
                 {style}
-                pointer-events="none"
                 >
                 {text}
 
-              </text>
+            </p>
             }
         })
         .collect::<Html>();
 
     html! {
+        <div class="recent-words">
         {recent_words}
+        </div>
     }
 }

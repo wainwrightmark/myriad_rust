@@ -50,10 +50,17 @@ impl Reducer<ChosenPositionsState> for FindNumberMsg {
         let fs = Dispatch::<FullGameState>::new().get();
 
         if let Some(path) = fs.found_words.words.get(&self.number) {
-            ChosenPositionsState {
-                positions: path.path.clone(),
+
+            if state.positions == path.path{
+                ChosenPositionsState::default().into()
+            }else{
+                ChosenPositionsState {
+                    positions: path.path.clone(),
+                }
+                .into()
             }
-            .into()
+
+
         } else {
             if self.cheat {
                 //log::debug!("Cheating");

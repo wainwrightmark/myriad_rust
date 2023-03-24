@@ -4,7 +4,7 @@ use serde::Deserialize;
 use serde::Serialize;
 use yew::prelude::*;
 use yewdux::prelude::*;
-
+use crate::web::found_words::*;
 // #[derive(Clone, Routable, PartialEq)]
 // enum Route {
 //     #[at("/Cheat")]
@@ -31,10 +31,17 @@ pub struct RouteQuery {
 #[function_component(App)]
 pub fn myriad_app(//route : Route
 ) -> Html {
-    let view_box = format!("0 0 {SVG_WIDTH} {SVG_HEIGHT}");
-    let width = format!("{SVG_WIDTH}");
-    let height = format!("{SVG_HEIGHT}");
 
+    let node = use_node_ref();
+
+
+    let (mut width,mut height) = yew_hooks::use_size(node.clone());
+    if width ==0 && height == 0{
+        width = 400;
+        height = 400;
+    }
+    let (width, height) = (width as f32, height as f32);
+    let game_size = GameSize{width, height};
     // let cheat = match route {
     //     Route::Cheat => true,
     //     Route::Home => false,
@@ -42,41 +49,20 @@ pub fn myriad_app(//route : Route
 
     let cheat = false;
 
-    let onpointerup = Dispatch::new().apply_callback(move |_: PointerEvent| InputMsg::Up {});
-
     html! {
-
         <>
         <CongratsDialog/>
         <HistoryDialog/>
-        <div class="container">
-        <svg viewBox={view_box} class="myriadSVG" {onpointerup} >
-        <rect x="0" y="0" {width} {height} fill="white"  />
-        <CrosshairsSVG/>
-        <CirclesSVG />
+        <div class="container" ref={node}>
+        <Circles {width} {height} />
+        <FoundWordsTabHeaders {width} {height}/>
+        <AllFoundWords {game_size} {cheat} />
 
+        <RecentWords {width} {height}/>
 
-        <FoundWordsTabHeaders/>
-        <AllFoundWords {cheat} />
-
-        <RecentWords/>
-        </svg>
-
-
-
-        <canvas id="confetti-canvas" style="position: fixed; width: 100%; height: 100%; top: 0px; left: 0px; z-index: 1000; pointer-events: none;"></canvas>
+        <canvas id="confetti-canvas" class="confetti-canvas"></canvas>
 
         </div>
         </>
-
     }
 }
-
-
-// #[function_component(App)]
-// pub fn game_area()-> Html{
-//     let state = use_size(node.clone());
-
-
-
-// }
