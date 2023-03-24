@@ -1,0 +1,31 @@
+{
+    "short_name": "Myriad",
+    "icons": [
+      {
+        "src": "/icon/icon.svg",
+        "type": "image/svg+xml",
+        "sizes": "500x500"
+      },
+      {
+        "src": "/icon/icon192.png",
+        "type": "image/png",
+        "sizes": "192x192"
+      },
+      {
+        "src": "/icon/icon512.png",
+        "type": "image/png",
+        "sizes": "512x512"
+      }
+    ],
+    "id": "/manifest.json",
+    "start_url": "/advanced",
+    "background_color": "#ffffff",
+    "display": "standalone",
+    "scope": "/",
+    "theme_color": "#FFFFFF",
+    "shortcuts": [
+    ],
+    "description": "Find every number from one to one hundred.",
+    "screenshots": [
+    ]
+  }
