@@ -1,4 +1,4 @@
-use crate::state::prelude::*;
+use crate::{state::prelude::*, web::prelude::*};
 use myriad::prelude::{Tile, Center, HasCenter};
 
 use num::ToPrimitive;
@@ -12,9 +12,6 @@ pub struct CrossHairProperties {
     pub game_size: GameSize,
 }
 
-// const CROSSHAIR_LENGTH: f32 = 15.0;
-// const HALF_CROSSHAIR_LENGTH: f32 = CROSSHAIR_LENGTH / 2.0;
-// const CROSSHAIR_INSET: f32 = 12.5;
 
 const CROSSHAIR_LENGTH: f32 = 15.0;
 const HALF_CROSSHAIR_LENGTH: f32 = CROSSHAIR_LENGTH / 2.0;
@@ -52,71 +49,12 @@ pub fn crosshair(properties: &CrossHairProperties) -> Html {
     let square_radius = properties.game_size.square_radius();
     let square_size = properties.game_size.square_length();
 
-    const CROSSHAIR_INSET: f32 = 12.5;
 
-    let l1 = match circle_type {
-        CircleType::LastPosition => Transform {
-            x: CROSSHAIR_INSET,
-            y: square_radius,
-            rot: 0.0,
-        },
-        CircleType::IntermediatePosition { next } => {
-            get_line_position(coordinate, next, 1, rot_flip, square_size)
-        }
-        _ => Transform {
-            x: CROSSHAIR_INSET,
-            y: square_radius,
-            rot: 90.0,
-        },
-    };
+    let l1 = Transform::get_section_transform(circle_type, square_radius, square_size, coordinate, 1, rot_flip);
+    let l2 = Transform::get_section_transform(circle_type, square_radius, square_size, coordinate, 2, rot_flip);
+    let l3 = Transform::get_section_transform(circle_type, square_radius, square_size, coordinate, 3, rot_flip);
+    let l4 = Transform::get_section_transform(circle_type, square_radius, square_size, coordinate, 4, rot_flip);
 
-    let l2 = match circle_type {
-        CircleType::LastPosition => Transform {
-            x: square_size - CROSSHAIR_INSET,
-            y: square_radius,
-            rot: 0.0,
-        },
-        CircleType::IntermediatePosition { next } => {
-            get_line_position(coordinate, next, 0, rot_flip, square_size)
-        }
-        _ => Transform {
-            x: square_size - CROSSHAIR_INSET,
-            y: square_radius,
-            rot: 90.0,
-        },
-    };
-
-    let l3 = match circle_type {
-        CircleType::LastPosition => Transform {
-            x: square_radius,
-            y: CROSSHAIR_INSET,
-            rot: -90.0,
-        },
-        CircleType::IntermediatePosition { next } => {
-            get_line_position(coordinate, next, 2, rot_flip, square_size)
-        }
-        _ => Transform {
-            x: square_radius,
-            y: CROSSHAIR_INSET,
-            rot: 0.0,
-        },
-    };
-
-    let l4 = match circle_type {
-        CircleType::LastPosition => Transform {
-            x: square_radius,
-            y: square_size - CROSSHAIR_INSET,
-            rot: -90.0,
-        },
-        CircleType::IntermediatePosition { next } => {
-            get_line_position(coordinate, next, 3, rot_flip, square_size)
-        }
-        _ => Transform {
-            x: square_radius,
-            y: square_size - CROSSHAIR_INSET,
-            rot: 0.0,
-        },
-    };
 
     let straight_scale_x: f32 = square_size / 4.0 / CROSSHAIR_LENGTH;
     let diagonal_scale_x: f32 = straight_scale_x * 1.42;
@@ -130,11 +68,6 @@ pub fn crosshair(properties: &CrossHairProperties) -> Html {
     } else {
         1.0
     };
-    // let left = location.x - radius;
-    // let top = location.y - radius;
-
-    // let left = -HALF_CROSSHAIR_LENGTH;
-    // let top = -HALF_STOKE_WIDTH;
     let offset = Center{x:-square_radius, y: -square_radius};
     let style = (location + offset) .get_style();
     html!(
@@ -149,6 +82,8 @@ pub fn crosshair(properties: &CrossHairProperties) -> Html {
     )
 }
 
+
+
 pub struct Transform {
     pub x: f32,
     pub y: f32,
@@ -156,6 +91,64 @@ pub struct Transform {
 }
 
 impl Transform {
+
+    pub fn get_section_transform(circle_type: CircleType, square_radius: f32, square_size: f32,
+
+        coordinate: Tile<GRID_COLUMNS, GRID_ROWS>,
+        index: u8,
+        rot_flip: RotFlipState,
+    )-> Self{
+
+        const CROSSHAIR_INSET: f32 = 12.5;
+        const SAUCE : f32 = 10.;
+
+
+        match circle_type{
+            CircleType::IntermediatePosition { next } => {
+                let new_index = match  index {
+                    1=> 1,
+                    2=> 0,
+                    3=> 2,
+                    4=> 3,
+                    _=> unreachable!()
+                };
+                get_line_position(coordinate, next, new_index, rot_flip, square_size)
+            },
+
+            _=>{
+                let rot = match (index, circle_type){
+
+                    (1 | 2, CircleType::LastPosition)=> 0.0,
+                    (1 | 2, _)=> 90.0,
+                    (3 | 4, CircleType::LastPosition)=> -90.0,
+                    (3 | 4, _)=> 0.0,
+                    _=> unreachable!()
+                };
+
+                let x = match index{
+                    1 => CROSSHAIR_INSET + 2.5,
+                    2 => square_size - CROSSHAIR_INSET  + 7.5,
+                    3 => square_radius,
+                    4 => square_radius,
+                    _=> unreachable!()
+                };
+
+                let y = match index{
+                    1 => square_radius,
+                    2 => square_radius,
+                    3 => CROSSHAIR_INSET  + 2.5,
+                    4 => square_size - CROSSHAIR_INSET  + 10.0,
+                    _=> unreachable!()
+                };
+
+                Self{
+                    x,y,rot
+                }
+            }
+        }
+
+    }
+
     pub fn get_transform(&self, scale: f32) -> String {
         format!(
             "transform: translate({}px, {}px) rotate({}deg) scaleX({});",

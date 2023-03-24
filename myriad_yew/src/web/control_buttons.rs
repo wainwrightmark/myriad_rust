@@ -26,9 +26,6 @@ pub fn todays_game_button(properties: &GameButtonProperties) -> Html {
         false,
     );
 
-    let rect_class = classes!("found-word-box", "found-word-box-button");
-    let text_class = classes!("button-text");
-
     html!(<FoundWordBox id={"today_game_button"} text={"Today's Game"} {x} {y} width_units={properties.width} color="white" {on_click} />)
 }
 
@@ -42,9 +39,6 @@ pub fn random_game_button(properties: &GameButtonProperties) -> Html {
         properties.selected_tab,
         false,
     );
-
-    let rect_class = classes!("found-word-box", "found-word-box-button");
-    let text_class = classes!("button-text");
 
     html!(<FoundWordBox id={"random_game_button"} text={"Random Game"} {x} {y} width_units={properties.width} color="white" {on_click} />)
 }
@@ -102,9 +96,6 @@ pub fn rotate_button(properties: &GameButtonProperties) -> Html {
         false,
     );
 
-    let rect_class = classes!("found-word-box", "found-word-box-button");
-    let text_class = classes!("button-text");
-
     html!(<FoundWordBox id={"rotate_button"} text={"⟳"} {x} {y} width_units={properties.width} color="white" {on_click} />)
 }
 
@@ -122,9 +113,6 @@ pub fn flip_button(properties: &GameButtonProperties) -> Html {
         false,
     );
 
-    let rect_class = classes!("found-word-box", "found-word-box-button");
-    let text_class = classes!("button-text");
-
     html!(<FoundWordBox id={"flip_button"} text={"⬌"} {x} {y} width_units={properties.width} color="white" {on_click} />)
 }
 
@@ -138,8 +126,6 @@ pub fn history_button(properties: &GameButtonProperties) -> Html {
     let (x, y) =properties.game_size.
         get_found_word_position(properties.position_number, properties.selected_tab, false);
 
-    let rect_class = classes!("found-word-box", "found-word-box-button");
-    let text_class = classes!("button-text");
 
     html!(<FoundWordBox id={"history_button"} text={"H"} {x} {y} width_units={properties.width} color="white" {on_click} />)
 }

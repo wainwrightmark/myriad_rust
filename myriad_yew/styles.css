@@ -53,8 +53,10 @@ dialog{
 
 
 .circle {
-  transition: 3s cubic-bezier(0, 1.45, 0.72, 1.33);  
-  border: black solid thick;
+  transition: 3s cubic-bezier(0, 1.45, 0.72, 1.33);
+  border-color: black;
+  border-style: solid;
+  border-width: 8px;
   border-radius: 50%;
 }
 

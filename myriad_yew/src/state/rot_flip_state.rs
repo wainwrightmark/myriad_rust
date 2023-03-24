@@ -33,7 +33,7 @@ impl RotFlipState {
     ) -> Center {
         let flipped = rotate_and_flip(point, self.rotate, self.flip);
 
-        let x = ((flipped.col() as f32) * game_size.square_length()) + game_size.square_radius();
+        let x = ((flipped.col() as f32) * game_size.square_length()) + (game_size.square_radius() * 0.9);
         let y = ((flipped.row() as f32) * game_size.square_length()) + game_size.square_radius();
 
         Center { x, y }
