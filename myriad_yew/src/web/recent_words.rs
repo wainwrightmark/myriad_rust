@@ -40,14 +40,14 @@ pub fn recent_words(game_size: &GameSize) -> Html {
             let text = format_number(word.number);
 
             html! {
-                <p
+                <button
                 {key}
                 class="recent-word"
                 {style}
                 >
                 {text}
 
-            </p>
+            </button>
             }
         })
         .collect::<Html>();

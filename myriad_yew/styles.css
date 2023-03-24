@@ -87,7 +87,7 @@ dialog{
   margin: 0;
   text-align: center;
   color: black;
-  font-family: cursive ;
+  font-family: 'Inconsolata', monospace;
   font-weight: 1000;
   height: 100%;
   line-height: 210%;
@@ -99,33 +99,39 @@ dialog{
 
 .recent-word {
   position: absolute;
-  font-family: monospace;
+  font-family: 'Inconsolata', monospace;
   
   animation-name: disappearAnimation;  
   animation-fill-mode: forwards;
   animation-timing-function: ease-out;
   pointer-events: none;
-  font-size: 3em;
+  font-size: 1em;
+  padding: 0;
   margin: 0;
+  text-align: center;
   width: 30px;
   height: 30px;
+  background: transparent;
+  border: none;
+  pointer-events: none;
+  user-select: none;
 }
 
 
 @keyframes disappearAnimation {
   0% {
     opacity: 1;
-    transform: translate(var(--startx), var(--starty)) ;
+    transform: translate(var(--startx), var(--starty)) scale(3) ;
   }
 
   50% {
     opacity: 0.2;
-    transform: translate(var(--endx), var(--endy)) scale(0.5) ;
+    transform: translate(var(--endx), var(--endy)) scale(1.5)  ;
   }
 
   100% {
     opacity: 0;
-    transform: translate(var(--endx), var(--endy)) scale(0.5) ;
+    transform: translate(var(--endx), var(--endy)) scale(1) ;
   }
 }
 
@@ -183,6 +189,7 @@ Found Word
   padding: 0;
   margin: 0;
   font-size: 1em;
+  font-family: 'Inconsolata', monospace;
   width: 30px;
   height: 30px;
 }
@@ -195,33 +202,13 @@ Found Word
 
 .button-text{
   line-height: 1.5;
-  font-family: monospace;
+  font-family: 'Inconsolata', monospace;
   font-weight: bold;
   text-anchor: middle;
   box-sizing: inherit;
   color: black;
   background-color: transparent;
 }
-
-/* .found-word-text{
-  line-height: 1.5;
-  font-family: monospace;
-  font-weight: bold;
-  text-anchor: middle;
-  box-sizing: inherit;
-  color: black;
-  background-color: transparent;
-  transition: all 5s ease-in;
-}
-.found-word-text-success{
-  background-color: green;
-  stroke: black;
-} */
-
-/* .found-word-box{
-
-  transition: background-color 5s ease-in;
-} */
 
 
 .score-counter-box{

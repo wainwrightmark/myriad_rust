@@ -51,7 +51,7 @@ fn get_tile_from_touch_event(ev: TouchEvent) -> Option<Tile<GRID_COLUMNS, GRID_R
 
     let id = element.id();
 
-    log::info!("touch move to {id}");
+    //log::info!("touch move to {id}");
 
     TILES.get(id.as_str()).cloned()
 }

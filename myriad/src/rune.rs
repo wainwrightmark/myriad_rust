@@ -67,11 +67,11 @@ pub enum Rune {
 
     #[strum(serialize = "+")]
     Plus = 16,
-    #[strum(serialize = "⨉")]
+    #[strum(serialize = "×")]
     Times = 17,
     #[strum(serialize = "-")]
     Minus = 18,
-    #[strum(serialize = "/")]
+    #[strum(serialize = "÷")]
     Divide = 19,
 
     #[strum(serialize = "Ⅰ")]
@@ -123,9 +123,11 @@ impl TryFrom<char> for Rune {
 
             '-' => Ok(Rune::Minus),
             '⨉' => Ok(Rune::Times),
+            '×' => Ok(Rune::Times),
             '+' => Ok(Rune::Plus),
             '*' => Ok(Rune::Times),
             '/' => Ok(Rune::Divide),
+            '÷' => Ok(Rune::Divide),
             '_' => Ok(Rune::Blank),
             _ => Err(()),
         }
