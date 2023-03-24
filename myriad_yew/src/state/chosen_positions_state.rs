@@ -158,8 +158,20 @@ pub struct InputState {
     is_down: bool,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum InputMsg {
+    Down {
+        coordinate: Tile<GRID_COLUMNS, GRID_ROWS>,
+    },
+    Up {},
+    Enter {
+        coordinate: Tile<GRID_COLUMNS, GRID_ROWS>,
+    },
+}
+
 impl Reducer<InputState> for InputMsg {
     fn apply(self, state: std::rc::Rc<InputState>) -> std::rc::Rc<InputState> {
+        log::debug!("{self:?}");
         match self {
             InputMsg::Down { coordinate } => {
                 //log::debug!("Input down {}", coordinate);
@@ -190,16 +202,9 @@ impl Reducer<InputState> for InputMsg {
     }
 }
 
-pub enum InputMsg {
-    Down {
-        coordinate: Tile<GRID_COLUMNS, GRID_ROWS>,
-    },
-    Up {},
-    Enter {
-        coordinate: Tile<GRID_COLUMNS, GRID_ROWS>,
-    },
-}
 
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct OnClickMsg {
     pub coordinate: Tile<GRID_COLUMNS, GRID_ROWS>,
     pub allow_abandon: bool,
@@ -207,6 +212,8 @@ pub struct OnClickMsg {
 
 impl Reducer<ChosenPositionsState> for OnClickMsg {
     fn apply(self, state: std::rc::Rc<ChosenPositionsState>) -> std::rc::Rc<ChosenPositionsState> {
+
+        log::debug!("{self:?}");
         ChosenPositionsState::next(state, self.allow_abandon, self.coordinate)
     }
 }

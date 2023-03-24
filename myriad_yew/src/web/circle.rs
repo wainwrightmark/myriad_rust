@@ -3,6 +3,8 @@ use std::ops::Deref;
 use crate::state::prelude::*;
 use crate::web::prelude::*;
 use myriad::prelude::*;
+use wasm_bindgen::JsCast;
+use web_sys::Element;
 use yew::prelude::*;
 use yewdux::prelude::*;
 
@@ -61,7 +63,8 @@ fn circle(properties: &CircleProperties) -> Html {
     let cursor = circle_type.get_cursor().to_string();
 
     let onpointerdown =
-        Dispatch::new().apply_callback(move |_: PointerEvent| InputMsg::Down { coordinate });
+        Dispatch::new().apply_callback(move |_: PointerEvent|{
+             InputMsg::Down { coordinate }});
 
     let onpointerenter =
         Dispatch::new().apply_callback(move |_: PointerEvent| InputMsg::Enter { coordinate });
@@ -101,13 +104,14 @@ fn circle(properties: &CircleProperties) -> Html {
        style={g_style}
        cursor={cursor}
 
-        {onpointerdown}
-        {onpointerup}
-        {onpointerenter}>
+        >
 
         <div
         id={circle_id}
         class={circle_classes}
+        {onpointerdown}
+        {onpointerup}
+        {onpointerenter}
         style={
             format!("width: {diameter}px;
             height: {diameter}px;
