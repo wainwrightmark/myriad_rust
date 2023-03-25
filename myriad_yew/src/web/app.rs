@@ -39,6 +39,12 @@ pub fn myriad_app(//route : Route
 
     let cheat = false;
 
+    if width == 0 && height == 0{
+        return html!(
+            <div class="container" ref={node}/>
+        );
+    }
+
     html! {
         <>
         <CongratsDialog/>
