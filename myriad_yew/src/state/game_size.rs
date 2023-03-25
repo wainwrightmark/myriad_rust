@@ -1,12 +1,43 @@
 use myriad::prelude::Center;
 use num::ToPrimitive;
-use yew::Properties;
-use super::prelude::GOALSIZE;
+use yewdux::store::{Store, Reducer};
+
+use super::prelude::*;
 /// The size of the game area
-#[derive(Copy, Clone, PartialEq, Debug, Properties)]
+#[derive(Copy, Clone, PartialEq, Debug, Store)]
 pub struct GameSize {
     pub width: f32,
     pub height: f32,
+}
+
+#[derive(Debug, Default, PartialEq, Eq)]
+pub struct SetSizeMessage{pub width: u32, pub height: u32}
+
+impl Reducer<GameSize> for SetSizeMessage{
+    fn apply(self,mut state: std::rc::Rc<GameSize>) -> std::rc::Rc<GameSize> {
+        if self == Default::default(){
+            return state;
+        }
+        let w = self.width as f32;
+        let h = self.height as f32;
+
+        if w == state.width && h == state.height{
+            return state;
+        }
+
+        let s = std::rc::Rc::make_mut(&mut state);
+        s.width= w;
+        s.height = h;
+
+
+        state
+    }
+}
+
+impl Default for GameSize{
+    fn default() -> Self {
+        Self { width: 400., height: 400. }
+    }
 }
 
 pub trait CenterStyle {
@@ -69,6 +100,11 @@ impl GameSize {
         let x = tab_x + offset_x;
         (x, y)
     }
+
+    pub fn get_tab_header_padding(&self)-> f32{
+
+        (self.width - ((TAB_HEADER_WIDTH + 3.0) * 6.0 + TAB_HEADER_MARGIN * 5.0)) / 2.0
+    }
 }
 
 pub const TAB_HEADER_TOP_MARGIN: f32 = 40.0;
@@ -81,5 +117,3 @@ pub const FOUND_WORD_HEIGHT: f32 = 30.0;
 pub const FOUND_WORD_MARGIN: f32 = 5.0;
 pub const FOUND_WORD_TOP_PADDING: f32 = 10.0;
 
-pub const TAB_HEADER_PADDING: f32 =
-        (400.0 - ((TAB_HEADER_WIDTH + 3.0) * 6.0 + TAB_HEADER_MARGIN * 5.0)) / 2.0;

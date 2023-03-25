@@ -2,103 +2,12 @@ use crate::state::selected_tab_state::SelectedTabState;
 
 use crate::state::prelude::*;
 use crate::web::prelude::*;
-use num::ToPrimitive;
 use yew::prelude::*;
 use yewdux::prelude::*;
-
-#[function_component(FoundWordsTabHeaders)]
-pub fn found_words_tab_headers(game_size: &GameSize) -> Html {
-    let game_size = *game_size;
-
-    let buttons = (0..5)
-        .map(|index| html!(<NumberTabHeader {index} {game_size}/> ))
-        .collect::<Html>();
-
-    html!(<div class="tab-headers"> { buttons } <MoreTabHeader index={5}  {game_size}/> </div>)
-}
-
-#[derive(PartialEq, Properties)]
-pub struct MoreTabHeaderProperties {
-    index: usize,
-    game_size: GameSize,
-}
-
-#[function_component(MoreTabHeader)]
-pub fn more_tab_header(properties: &MoreTabHeaderProperties) -> Html {
-    let index = properties.index;
-    let selected_tab_state = use_store_value::<SelectedTabState>();
-
-    let onclick = Dispatch::new().apply_callback(move |_| TabSelectedMsg { index });
-
-    let key = format!("found_words_tab_header{index}");
-    let selected = if selected_tab_state.index == index {
-        Some("selected-tab")
-    } else if selected_tab_state.locked {
-        Some("locked-out-tab")
-    } else {
-        None
-    };
-
-    let x = TAB_HEADER_PADDING + (index.to_f32().unwrap() * (TAB_HEADER_WIDTH + TAB_HEADER_MARGIN));
-    let y = (properties.game_size.square_length() * 3.0) + TAB_HEADER_TOP_MARGIN;
-
-    let class = classes!("tab-header", selected);
-    let style = format!(
-        "
-        transform: translate({x}px, {y}px);",
-    );
-
-    html!(
-        <button {class}  {style} {onclick} {key}>
-           {"☰"}
-        </button>
-    )
-}
-
-#[derive(PartialEq, Properties)]
-pub struct NumberTabHeaderProperties {
-    index: usize,
-    game_size: GameSize,
-}
-
-#[function_component(NumberTabHeader)]
-pub fn found_words_tab_header(properties: &NumberTabHeaderProperties) -> Html {
-    let index = properties.index;
-    let onclick = Dispatch::new().apply_callback(move |_| TabSelectedMsg { index });
-    let selected_tab_state = use_store_value::<SelectedTabState>();
-    let is_complete =
-        use_selector(move |state: &FullGameState| state.found_words.is_goal_complete(index));
-
-    let key = format!("found_words_tab_header{index}");
-    let selected = if selected_tab_state.index == index {
-        Some("selected-tab")
-    } else if selected_tab_state.locked {
-        Some("locked-out-tab")
-    } else {
-        None
-    };
-    let complete = is_complete.then(||"complete-tab");
-
-    let class = classes!("tab-header", selected, complete);
-    let style = format!(
-        "transform: translate({}px, {}px);",
-        TAB_HEADER_PADDING + (index.to_f32().unwrap() * (TAB_HEADER_WIDTH + TAB_HEADER_MARGIN)),
-        (properties.game_size.square_length() * 3.0) + TAB_HEADER_TOP_MARGIN
-    );
-
-    html!(
-
-        <button {class}  {style} {onclick} {key}>
-        {format_number ((index.to_i32().unwrap()  + 1) * GOALSIZE)}
-     </button>
-
-    )
-}
 
 #[derive(PartialEq, Properties)]
 pub struct AllFoundWordsProperties {
     pub cheat: bool,
-    pub game_size: GameSize,
 }
 
 #[function_component(AllFoundWords)]
@@ -110,13 +19,12 @@ pub fn all_found_words(properties: &AllFoundWordsProperties) -> Html {
 
     let total_found = found_words_state.words.len();
     let cheat = properties.cheat;
-    let game_size = properties.game_size;
 
     let words = (1..101)
         .map(|number| {
             let is_challenge = challenge_words.contains(&number);
             let is_found = found_words_state.words.contains_key(&number);
-            html!(<FoundWordsWord {number} {is_challenge} {is_found} {selected_tab} {cheat} {game_size} />)
+            html!(<FoundWordsWord {number} {is_challenge} {is_found} {selected_tab} {cheat}  />)
         })
         .collect::<Html>();
 
@@ -124,11 +32,11 @@ pub fn all_found_words(properties: &AllFoundWordsProperties) -> Html {
         <div class="found-words">
             {words}
 
-            <TodayGameButton {selected_tab} {game_size} width={6.0} position_number={101}/>
-            <RandomGameButton {selected_tab} {game_size} width={6.0} position_number={111}/>
-            <ScoreCounter {total_found} {selected_tab} {game_size} width={3.0} position_number={117}/>
-            <FlipButton  {selected_tab} {game_size} width={1.0} position_number={109}/>
-            <RotateButton  {selected_tab} {game_size} width={1.0} position_number={108}/>
+            <TodayGameButton {selected_tab}  width={6.0} position_number={101}/>
+            <RandomGameButton {selected_tab}  width={6.0} position_number={111}/>
+            <ScoreCounter {total_found} {selected_tab}  width={3.0} position_number={117}/>
+            <FlipButton  {selected_tab}  width={1.0} position_number={109}/>
+            <RotateButton  {selected_tab} width={1.0} position_number={108}/>
             // <HistoryButton {selected_tab} {game_size} width={1.0} position_number={118}/>
             // <WainwrongButton {selected_tab} width={1.0} position_number={119}/>
             // <FacebookButton {selected_tab} width={1.0} position_number={116}/>
@@ -144,7 +52,6 @@ pub struct FoundWordProperties {
     pub is_challenge: bool,
     pub selected_tab: usize,
     pub cheat: bool,
-    pub game_size: GameSize,
 }
 
 #[function_component(FoundWordsWord)]
@@ -191,12 +98,9 @@ pub fn found_words_word(properties: &FoundWordProperties) -> Html {
     // );
 
     let text = format_number(number);
-
+    let (game_size, _) = use_store::<GameSize>();
     //todo calculate position
-    let (x, y) =
-        properties
-            .game_size
-            .get_found_word_position(number, properties.selected_tab, false);
+    let (x, y) = game_size.get_found_word_position(number, properties.selected_tab, false);
 
     html!(
         <FoundWordBox {id} {text} {x} {y} width_units={1.0} {color} {on_click} />

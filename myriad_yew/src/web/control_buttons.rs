@@ -12,15 +12,15 @@ pub struct GameButtonProperties {
 
     pub position_number: i32,
     pub width: f32,
-    pub game_size: GameSize,
 }
 
 #[function_component(TodayGameButton)]
 pub fn todays_game_button(properties: &GameButtonProperties) -> Html {
+    let (game_size, _) = use_store::<GameSize>();
     let on_click: Option<Callback<MouseEvent>> =
         Some(Dispatch::new().apply_callback(|_| NewGameMsg { today: true }));
 
-    let (x, y) = properties.game_size.get_found_word_position(
+    let (x, y) = game_size.get_found_word_position(
         properties.position_number,
         properties.selected_tab,
         false,
@@ -31,10 +31,11 @@ pub fn todays_game_button(properties: &GameButtonProperties) -> Html {
 
 #[function_component(RandomGameButton)]
 pub fn random_game_button(properties: &GameButtonProperties) -> Html {
+    let (game_size, _) = use_store::<GameSize>();
     let on_click: Option<Callback<MouseEvent>> =
         Some(Dispatch::new().apply_callback(|_| NewGameMsg { today: false }));
 
-    let (x, y) = properties.game_size.get_found_word_position(
+    let (x, y) = game_size.get_found_word_position(
         properties.position_number,
         properties.selected_tab,
         false,
@@ -49,13 +50,13 @@ pub struct ScoreCounterProperties {
     pub selected_tab: usize,
 
     pub position_number: i32,
-    pub width: f32,
-    pub game_size: GameSize,
+    pub width: f32
 }
 
 #[function_component(ScoreCounter)]
 pub fn score_counter(properties: &ScoreCounterProperties) -> Html {
-    let (x, y) = properties.game_size.get_found_word_position(
+    let (game_size, _) = use_store::<GameSize>();
+    let (x, y) = game_size.get_found_word_position(
         properties.position_number,
         properties.selected_tab,
         false,
@@ -68,9 +69,7 @@ pub fn score_counter(properties: &ScoreCounterProperties) -> Html {
     let height = format!("{FOUND_WORD_HEIGHT}");
     let style = format!("position:absolute; transform: translate({x}px, {y}px); height: {height}px; width: {width}px; border-radius:5px; {gradient}");
 
-    let class = classes!(
-        "found-word",
-    );
+    let class = classes!("found-word",);
     let key = "score_counter";
 
     let text = format_number(properties.total_found as i32);
@@ -84,13 +83,14 @@ pub fn score_counter(properties: &ScoreCounterProperties) -> Html {
 
 #[function_component(RotateButton)]
 pub fn rotate_button(properties: &GameButtonProperties) -> Html {
+    let (game_size, _) = use_store::<GameSize>();
     let on_click: Option<Callback<MouseEvent>> =
         Some(Dispatch::new().apply_callback(|_| RotFlipMsg {
             rotate: myriad::prelude::QuarterTurns::One,
             flip: false,
         }));
 
-    let (x, y) = properties.game_size.get_found_word_position(
+    let (x, y) = game_size.get_found_word_position(
         properties.position_number,
         properties.selected_tab,
         false,
@@ -101,13 +101,14 @@ pub fn rotate_button(properties: &GameButtonProperties) -> Html {
 
 #[function_component(FlipButton)]
 pub fn flip_button(properties: &GameButtonProperties) -> Html {
+    let (game_size, _) = use_store::<GameSize>();
     let on_click: Option<Callback<MouseEvent>> =
         Some(Dispatch::new().apply_callback(|_| RotFlipMsg {
             rotate: myriad::prelude::QuarterTurns::Zero,
             flip: true,
         }));
 
-    let (x, y) = properties.game_size.get_found_word_position(
+    let (x, y) = game_size.get_found_word_position(
         properties.position_number,
         properties.selected_tab,
         false,
@@ -118,14 +119,17 @@ pub fn flip_button(properties: &GameButtonProperties) -> Html {
 
 #[function_component(HistoryButton)]
 pub fn history_button(properties: &GameButtonProperties) -> Html {
+    let (game_size, _) = use_store::<GameSize>();
     let on_click: Option<Callback<MouseEvent>> = Some(
         Dispatch::<DialogState>::new()
             .reduce_mut_callback(|s| s.history_dialog_type = Some(Default::default())),
     );
 
-    let (x, y) =properties.game_size.
-        get_found_word_position(properties.position_number, properties.selected_tab, false);
-
+    let (x, y) = game_size.get_found_word_position(
+        properties.position_number,
+        properties.selected_tab,
+        false,
+    );
 
     html!(<FoundWordBox id={"history_button"} text={"H"} {x} {y} width_units={properties.width} color="white" {on_click} />)
 }

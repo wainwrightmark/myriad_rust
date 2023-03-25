@@ -1,9 +1,10 @@
 use crate::state::prelude::*;
+use crate::web::found_words::*;
 use crate::web::prelude::*;
 use serde::Deserialize;
 use serde::Serialize;
 use yew::prelude::*;
-use crate::web::found_words::*;
+use yewdux::prelude::Dispatch;
 // #[derive(Clone, Routable, PartialEq)]
 // enum Route {
 //     #[at("/Cheat")]
@@ -30,21 +31,11 @@ pub struct RouteQuery {
 #[function_component(App)]
 pub fn myriad_app(//route : Route
 ) -> Html {
-
     let node = use_node_ref();
 
+    let (width, height) = yew_hooks::use_size(node.clone());
 
-    let (mut width,mut height) = yew_hooks::use_size(node.clone());
-    if width ==0 && height == 0{
-        width = 400;
-        height = 400;
-    }
-    let (width, height) = (width as f32, height as f32);
-    let game_size = GameSize{width, height};
-    // let cheat = match route {
-    //     Route::Cheat => true,
-    //     Route::Home => false,
-    // };
+    Dispatch::<GameSize>::new().apply(SetSizeMessage { width, height });
 
     let cheat = false;
 
@@ -53,12 +44,12 @@ pub fn myriad_app(//route : Route
         <CongratsDialog/>
         <HistoryDialog/>
         <div class="container" ref={node}>
-        <Circles {width} {height} />
-        <Crosshairs {width} {height}/>
-        <FoundWordsTabHeaders {width} {height}/>
-        <AllFoundWords {game_size} {cheat} />
+        <Circles  />
+        <Crosshairs />
+        <TabHeaders />
+        <AllFoundWords {cheat} />
 
-        <RecentWords {width} {height}/>
+        <RecentWords />
 
         <canvas id="confetti-canvas" class="confetti-canvas"></canvas>
 

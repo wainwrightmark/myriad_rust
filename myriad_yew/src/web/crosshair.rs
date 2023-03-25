@@ -1,16 +1,14 @@
-use crate::state::{prelude::*};
-use chrono::offset;
-use myriad::prelude::{Center, HasCenter, Tile};
+use crate::state::prelude::*;
+use myriad::prelude::*;
 
 use num::ToPrimitive;
-use std::ops::{Deref, Add};
+use std::ops::{Add, Deref};
 use yew::prelude::*;
 use yewdux::prelude::*;
 #[function_component(Crosshairs)]
-pub fn crosshairs(game_size: &GameSize) -> Html {
-    let game_size = game_size.clone();
+pub fn crosshairs() -> Html {
     let crosshairs = Tile::<GRID_COLUMNS, GRID_ROWS>::iter_by_row()
-        .map(|coordinate| html!(< Crosshair {coordinate} {game_size} />))
+        .map(|coordinate| html!(< Crosshair {coordinate}  />))
         .collect::<Html>();
 
     html!(<div class="crosshairs">{crosshairs}</div>)
@@ -19,7 +17,6 @@ pub fn crosshairs(game_size: &GameSize) -> Html {
 #[derive(PartialEq, Properties)]
 pub struct CrossHairProperties {
     pub coordinate: Tile<GRID_COLUMNS, GRID_ROWS>,
-    pub game_size: GameSize,
 }
 
 const CROSSHAIR_LENGTH: f32 = 20.0;
@@ -30,6 +27,7 @@ const HALF_STOKE_WIDTH: f32 = 3.6;
 
 #[function_component(Crosshair)]
 pub fn crosshair(properties: &CrossHairProperties) -> Html {
+    let (game_size, _) = use_store::<GameSize>();
     let coordinate = properties.coordinate;
     let board = use_selector(|state: &FullGameState| state.game.board.clone())
         .deref()
@@ -43,7 +41,7 @@ pub fn crosshair(properties: &CrossHairProperties) -> Html {
 
     let rot_flip = *use_store_value::<RotFlipState>().deref();
 
-    let location = rot_flip.get_location(&coordinate, properties.game_size);
+    let location = rot_flip.get_location(&coordinate, game_size.as_ref());
     //let radius = properties.game_size.square_radius();
 
     let color = circle_type.get_color();
@@ -54,8 +52,8 @@ pub fn crosshair(properties: &CrossHairProperties) -> Html {
         CircleType::LastPosition => "crosshair",
         CircleType::IntermediatePosition { next: _ } => "crosshair crosshair-extended",
     };
-    let square_radius = properties.game_size.square_radius();
-    let square_size = properties.game_size.square_length();
+    let square_radius = game_size.square_radius();
+    let square_size = game_size.square_length();
 
     let l1 = Transform::get_section_transform(
         circle_type,
@@ -127,14 +125,14 @@ pub struct Transform {
     pub rot: f32,
 }
 
-impl Add<Center> for Transform{
+impl Add<Center> for Transform {
     type Output = Self;
 
     fn add(self, rhs: Center) -> Self::Output {
-        Self{
+        Self {
             x: self.x + rhs.x,
             y: self.y + rhs.y,
-            rot: self.rot
+            rot: self.rot,
         }
     }
 }

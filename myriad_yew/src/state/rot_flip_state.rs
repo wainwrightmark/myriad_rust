@@ -29,7 +29,7 @@ impl RotFlipState {
     pub fn get_location(
         &self,
         point: &Tile<GRID_COLUMNS, GRID_ROWS>,
-        game_size: GameSize,
+        game_size: &GameSize,
     ) -> Center {
         let flipped = rotate_and_flip(point, self.rotate, self.flip);
 

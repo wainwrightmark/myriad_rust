@@ -6,7 +6,8 @@ use yew::prelude::*;
 use yewdux::prelude::*;
 
 #[function_component(RecentWords)]
-pub fn recent_words(game_size: &GameSize) -> Html {
+pub fn recent_words() -> Html {
+    let (game_size, _) = use_store::<GameSize>();
     let recent_words_state = use_store_value::<RecentWordState>();
     let rot_flip = use_store_value::<RotFlipState>();
     let selected_index = *use_selector(|state: &SelectedTabState| state.index).deref();
@@ -18,7 +19,7 @@ pub fn recent_words(game_size: &GameSize) -> Html {
             let key = format!("{}_({:?})", word.number, word.expiry_time);
 
             let mut start_location = rot_flip
-                .get_location(&word.coordinate, *game_size);
+                .get_location(&word.coordinate, game_size.as_ref());
 
             if word.coordinate.col() == 2{
                 start_location.x *= 0.8; //little hack to prevent large numbers from being offscreen

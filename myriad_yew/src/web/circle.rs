@@ -1,4 +1,5 @@
 use std::ops::Deref;
+use std::rc::Rc;
 
 use crate::state::prelude::*;
 use crate::web::prelude::*;
@@ -9,17 +10,15 @@ use yew::prelude::*;
 use yewdux::prelude::*;
 
 #[function_component(Circles)]
-pub fn circles(game_size: &GameSize) -> Html {
-    let game_size = *game_size;
-
+pub fn circles() -> Html {
     let circles = Tile::<GRID_COLUMNS, GRID_ROWS>::iter_by_row()
-        .map(|coordinate| html!(< Circle {coordinate} {game_size} />))
+        .map(|coordinate| html!(< Circle {coordinate} />))
         .collect::<Html>();
 
     let ontouchmove = Dispatch::new().apply_callback(move |ev: TouchEvent| {
         if let Some(tile) = get_tile_from_touch_event(ev) {
             InputMsg::Enter { coordinate: tile }
-        }else{
+        } else {
             InputMsg::None
         }
     });
@@ -67,15 +66,15 @@ static TILES: phf::Map<&'static str, Tile<GRID_COLUMNS, GRID_ROWS>> = phf_map! {
 #[derive(PartialEq, Properties)]
 pub struct CircleProperties {
     pub coordinate: Tile<GRID_COLUMNS, GRID_ROWS>,
-    pub game_size: GameSize,
 }
 #[function_component(Circle)]
 fn circle(properties: &CircleProperties) -> Html {
     let coordinate = properties.coordinate;
 
+    let game_size = use_store::<GameSize>().0.as_ref().clone();
     let location = use_selector_with_deps(
-        |state: &RotFlipState, (co, size)| state.get_location(co, *size),
-        (coordinate, properties.game_size),
+        |state: &RotFlipState, (co, size)| state.get_location(co, size),
+        (coordinate, game_size),
     );
 
     let board = use_selector(|state: &FullGameState| state.game.board.clone());
@@ -110,7 +109,7 @@ fn circle(properties: &CircleProperties) -> Html {
 
     let onpointerup = Dispatch::new().apply_callback(move |_: PointerEvent| InputMsg::Up {});
 
-    let square_radius = properties.game_size.square_radius();
+    let square_radius = game_size.square_radius();
 
     let left = location.x - (square_radius * CIRCLE_RATIO);
     let top = location.y - (square_radius * CIRCLE_RATIO);
