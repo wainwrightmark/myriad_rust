@@ -40,12 +40,15 @@ dialog{
   touch-action:none;
 }
 
-.tab-headers, .found-words, .recent-words{
+.tab-headers, .found-words, .recent-words, .crosshairs{
   position: absolute;
   top:0;
   left: 0;
 }
 
+.crosshairs{
+  pointer-events: none;
+}
 
 .square {
   transition: 1s ease-out;

@@ -54,6 +54,7 @@ pub fn myriad_app(//route : Route
         <HistoryDialog/>
         <div class="container" ref={node}>
         <Circles {width} {height} />
+        <Crosshairs {width} {height}/>
         <FoundWordsTabHeaders {width} {height}/>
         <AllFoundWords {game_size} {cheat} />
 

@@ -16,10 +16,6 @@ pub fn circles(game_size: &GameSize) -> Html {
         .map(|coordinate| html!(< Circle {coordinate} {game_size} />))
         .collect::<Html>();
 
-    let crosshairs = Tile::<GRID_COLUMNS, GRID_ROWS>::iter_by_row()
-        .map(|coordinate| html!(< Crosshair {coordinate} {game_size} />))
-        .collect::<Html>();
-
     let ontouchmove = Dispatch::new().apply_callback(move |ev: TouchEvent| {
         if let Some(tile) = get_tile_from_touch_event(ev) {
             InputMsg::Enter { coordinate: tile }
@@ -33,7 +29,6 @@ pub fn circles(game_size: &GameSize) -> Html {
     html! {
           <div id="circles" class="circles" {onpointerup} {ontouchmove}>
     {circles}
-    {crosshairs}
     </div>
 
       }

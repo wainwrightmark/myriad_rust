@@ -1,17 +1,26 @@
-use crate::{state::prelude::*};
-use myriad::prelude::{Tile, Center, HasCenter};
+use crate::state::{prelude::*};
+use chrono::offset;
+use myriad::prelude::{Center, HasCenter, Tile};
 
 use num::ToPrimitive;
-use std::ops::Deref;
+use std::ops::{Deref, Add};
 use yew::prelude::*;
 use yewdux::prelude::*;
+#[function_component(Crosshairs)]
+pub fn crosshairs(game_size: &GameSize) -> Html {
+    let game_size = game_size.clone();
+    let crosshairs = Tile::<GRID_COLUMNS, GRID_ROWS>::iter_by_row()
+        .map(|coordinate| html!(< Crosshair {coordinate} {game_size} />))
+        .collect::<Html>();
+
+    html!(<div class="crosshairs">{crosshairs}</div>)
+}
 
 #[derive(PartialEq, Properties)]
 pub struct CrossHairProperties {
     pub coordinate: Tile<GRID_COLUMNS, GRID_ROWS>,
     pub game_size: GameSize,
 }
-
 
 const CROSSHAIR_LENGTH: f32 = 20.0;
 const HALF_CROSSHAIR_LENGTH: f32 = CROSSHAIR_LENGTH / 2.0;
@@ -37,7 +46,6 @@ pub fn crosshair(properties: &CrossHairProperties) -> Html {
     let location = rot_flip.get_location(&coordinate, properties.game_size);
     //let radius = properties.game_size.square_radius();
 
-
     let color = circle_type.get_color();
 
     let line_classes = match circle_type {
@@ -49,12 +57,38 @@ pub fn crosshair(properties: &CrossHairProperties) -> Html {
     let square_radius = properties.game_size.square_radius();
     let square_size = properties.game_size.square_length();
 
-
-    let l1 = Transform::get_section_transform(circle_type, square_radius, square_size, coordinate, 1, rot_flip);
-    let l2 = Transform::get_section_transform(circle_type, square_radius, square_size, coordinate, 2, rot_flip);
-    let l3 = Transform::get_section_transform(circle_type, square_radius, square_size, coordinate, 3, rot_flip);
-    let l4 = Transform::get_section_transform(circle_type, square_radius, square_size, coordinate, 4, rot_flip);
-
+    let l1 = Transform::get_section_transform(
+        circle_type,
+        square_radius,
+        square_size,
+        coordinate,
+        1,
+        rot_flip,
+    );
+    let l2 = Transform::get_section_transform(
+        circle_type,
+        square_radius,
+        square_size,
+        coordinate,
+        2,
+        rot_flip,
+    );
+    let l3 = Transform::get_section_transform(
+        circle_type,
+        square_radius,
+        square_size,
+        coordinate,
+        3,
+        rot_flip,
+    );
+    let l4 = Transform::get_section_transform(
+        circle_type,
+        square_radius,
+        square_size,
+        coordinate,
+        4,
+        rot_flip,
+    );
 
     let straight_scale_x: f32 = square_size / 4.0 / CROSSHAIR_LENGTH;
     let diagonal_scale_x: f32 = straight_scale_x * 1.42;
@@ -68,21 +102,24 @@ pub fn crosshair(properties: &CrossHairProperties) -> Html {
     } else {
         1.0
     };
-    let offset = Center{x:-(square_radius * 0.9), y: -(square_radius * 0.9)};
-    let style = (location + offset) .get_style();
+    let offset = Center {
+        x: -(square_radius * 0.9),
+        y: -(square_radius * 0.9),
+    };
+    // let style = (location + offset).get_style();
+
+    let top_left = location + offset;
     html!(
-        <div key="crosshair" class={"crosshair-group"} {style}>
+        <div key="crosshair" class={"crosshair-group"} >
 
-        <hr key="line1" class={line_classes} style={format!("background-color: {color};  width: {CROSSHAIR_LENGTH}px; height:{STROKE_WIDTH}px; {}", l1.get_transform(scale) )} />
-        <hr key="line2" class={line_classes} style={format!("background-color: {color};  width: {CROSSHAIR_LENGTH}px; height:{STROKE_WIDTH}px; {}", l2.get_transform(scale) ) }/>
+        <hr key="line1" class={line_classes} style={format!("background-color: {color};  width: {CROSSHAIR_LENGTH}px; height:{STROKE_WIDTH}px; {}", (l1 + top_left).get_transform(scale) )} />
+        <hr key="line2" class={line_classes} style={format!("background-color: {color};  width: {CROSSHAIR_LENGTH}px; height:{STROKE_WIDTH}px; {}", (l2 + top_left).get_transform(scale) ) }/>
 
-        <hr key="line3" class={line_classes} style={format!("background-color: {color};  width: {CROSSHAIR_LENGTH}px; height:{STROKE_WIDTH}px; {}", l3.get_transform(scale) )} />
-        <hr key="line4" class={line_classes} style={format!("background-color: {color};  width: {CROSSHAIR_LENGTH}px; height:{STROKE_WIDTH}px; {}", l4.get_transform(scale) )} />
+        <hr key="line3" class={line_classes} style={format!("background-color: {color};  width: {CROSSHAIR_LENGTH}px; height:{STROKE_WIDTH}px; {}", (l3 + top_left).get_transform(scale) )} />
+        <hr key="line4" class={line_classes} style={format!("background-color: {color};  width: {CROSSHAIR_LENGTH}px; height:{STROKE_WIDTH}px; {}", (l4 + top_left).get_transform(scale) )} />
         </div>
     )
 }
-
-
 
 pub struct Transform {
     pub x: f32,
@@ -90,68 +127,79 @@ pub struct Transform {
     pub rot: f32,
 }
 
-impl Transform {
+impl Add<Center> for Transform{
+    type Output = Self;
 
-    pub fn get_section_transform(circle_type: CircleType, square_radius: f32, square_size: f32,
+    fn add(self, rhs: Center) -> Self::Output {
+        Self{
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+            rot: self.rot
+        }
+    }
+}
+
+impl Transform {
+    pub fn get_section_transform(
+        circle_type: CircleType,
+        square_radius: f32,
+        square_size: f32,
 
         coordinate: Tile<GRID_COLUMNS, GRID_ROWS>,
         index: u8,
         rot_flip: RotFlipState,
-    )-> Self{
-
+    ) -> Self {
         const CROSSHAIR_INSET: f32 = 10.;
 
-
-        match circle_type{
+        match circle_type {
             CircleType::IntermediatePosition { next } => {
-                let new_index = match  index {
-                    1=> 1,
-                    2=> 0,
-                    3=> 2,
-                    4=> 3,
-                    _=> unreachable!()
+                let new_index = match index {
+                    1 => 1,
+                    2 => 0,
+                    3 => 2,
+                    4 => 3,
+                    _ => unreachable!(),
                 };
                 get_line_position(coordinate, next, new_index, rot_flip, square_size)
-            },
+            }
 
-            _=>{
-                let rot = match (index, circle_type){
-
-                    (1 | 2, CircleType::LastPosition)=> 0.0,
-                    (1 | 2, _)=> 90.0,
-                    (3 | 4, CircleType::LastPosition)=> -90.0,
-                    (3 | 4, _)=> 0.0,
-                    _=> unreachable!()
+            _ => {
+                let rot = match (index, circle_type) {
+                    (1 | 2, CircleType::LastPosition) => 0.0,
+                    (1 | 2, _) => 90.0,
+                    (3 | 4, CircleType::LastPosition) => -90.0,
+                    (3 | 4, _) => 0.0,
+                    _ => unreachable!(),
                 };
 
-                let x = match index{
+                let x = match index {
                     1 => CROSSHAIR_INSET,
                     2 => square_size - CROSSHAIR_INSET,
                     3 => square_radius,
                     4 => square_radius,
-                    _=> unreachable!()
+                    _ => unreachable!(),
                 };
 
-                let y = match index{
+                let y = match index {
                     1 => square_radius,
                     2 => square_radius,
                     3 => CROSSHAIR_INSET,
                     4 => square_size - CROSSHAIR_INSET,
-                    _=> unreachable!()
+                    _ => unreachable!(),
                 };
 
-                Self{
-                    x,y,rot
-                }
+                Self { x, y, rot }
             }
         }
-
     }
 
     pub fn get_transform(&self, scale: f32) -> String {
         format!(
             "transform: translate({}px, {}px) rotate({}deg) scaleX({});",
-            self.x - (HALF_CROSSHAIR_LENGTH), self.y -(HALF_STOKE_WIDTH), self.rot, scale
+            self.x - (HALF_CROSSHAIR_LENGTH),
+            self.y - (HALF_STOKE_WIDTH),
+            self.rot,
+            scale
         )
     }
 }
