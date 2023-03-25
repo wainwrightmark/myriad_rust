@@ -1,6 +1,3 @@
-use std::rc::Rc;
-
-use crate::state::found_words_state::FoundWordsState;
 use crate::state::selected_tab_state::SelectedTabState;
 
 use crate::state::prelude::*;
@@ -11,30 +8,25 @@ use yewdux::prelude::*;
 
 #[function_component(FoundWordsTabHeaders)]
 pub fn found_words_tab_headers(game_size: &GameSize) -> Html {
-    let state = use_selector(|state: &FullGameState| state.found_words.clone());
-    let selected_tab_state = use_store_value::<SelectedTabState>();
     let game_size = *game_size;
 
     let buttons = (0..5)
-        .map(|index| {
-            found_words_tab_header(index, game_size, state.clone(), selected_tab_state.clone())
-        })
+        .map(|index| html!(<NumberTabHeader {index} {game_size}/> ))
         .collect::<Html>();
 
-    html!(<div class="tab-headers"> { buttons } <MoveTabHeader index={5} {selected_tab_state} {game_size}/> </div>)
+    html!(<div class="tab-headers"> { buttons } <MoreTabHeader index={5}  {game_size}/> </div>)
 }
 
 #[derive(PartialEq, Properties)]
 pub struct MoreTabHeaderProperties {
     index: usize,
-    selected_tab_state: Rc<SelectedTabState>,
     game_size: GameSize,
 }
 
-#[function_component(MoveTabHeader)]
+#[function_component(MoreTabHeader)]
 pub fn more_tab_header(properties: &MoreTabHeaderProperties) -> Html {
     let index = properties.index;
-    let selected_tab_state = &properties.selected_tab_state;
+    let selected_tab_state = use_store_value::<SelectedTabState>();
 
     let onclick = Dispatch::new().apply_callback(move |_| TabSelectedMsg { index });
 
@@ -54,8 +46,6 @@ pub fn more_tab_header(properties: &MoreTabHeaderProperties) -> Html {
     let style = format!(
         "
         transform: translate({x}px, {y}px);",
-
-
     );
 
     html!(
@@ -65,13 +55,19 @@ pub fn more_tab_header(properties: &MoreTabHeaderProperties) -> Html {
     )
 }
 
-pub fn found_words_tab_header(
+#[derive(PartialEq, Properties)]
+pub struct NumberTabHeaderProperties {
     index: usize,
     game_size: GameSize,
-    state: Rc<Rc<FoundWordsState>>,
-    selected_tab_state: Rc<SelectedTabState>,
-) -> Html {
+}
+
+#[function_component(NumberTabHeader)]
+pub fn found_words_tab_header(properties: &NumberTabHeaderProperties) -> Html {
+    let index = properties.index;
     let onclick = Dispatch::new().apply_callback(move |_| TabSelectedMsg { index });
+    let selected_tab_state = use_store_value::<SelectedTabState>();
+    let is_complete =
+        use_selector(move |state: &FullGameState| state.found_words.is_goal_complete(index));
 
     let key = format!("found_words_tab_header{index}");
     let selected = if selected_tab_state.index == index {
@@ -81,17 +77,13 @@ pub fn found_words_tab_header(
     } else {
         None
     };
-    let complete = if state.is_goal_complete(index) {
-        Some("complete-tab")
-    } else {
-        None
-    };
+    let complete = is_complete.then(||"complete-tab");
 
     let class = classes!("tab-header", selected, complete);
     let style = format!(
         "transform: translate({}px, {}px);",
         TAB_HEADER_PADDING + (index.to_f32().unwrap() * (TAB_HEADER_WIDTH + TAB_HEADER_MARGIN)),
-        (game_size.square_length() * 3.0) + TAB_HEADER_TOP_MARGIN
+        (properties.game_size.square_length() * 3.0) + TAB_HEADER_TOP_MARGIN
     );
 
     html!(
@@ -170,9 +162,9 @@ pub fn found_words_word(properties: &FoundWordProperties) -> Html {
         None
     };
 
-    let color = if properties.is_found{
+    let color = if properties.is_found {
         "green"
-    }else{
+    } else {
         "white"
     };
 

@@ -76,8 +76,8 @@ dialog{
 
 .circle-disabled:hover {
   transform: scale(0.9);
-  fill: red;
-  fill-opacity: 0.1;
+  background-color: rgba(255, 0, 0, 0.2);
+
 }
 
 .circle-text {
@@ -145,8 +145,6 @@ Tab Header
 
 
 .tab-header{
-  stroke: black;
-  fill: white;
   height: 50px;
   width: 50px;
   position:absolute;
@@ -167,16 +165,15 @@ Tab Header
 .selected-tab{
   border-width: 3px;
   margin:0;
-  stroke-linejoin: round;
 }
 
 .locked-out-tab{
-  fill: gray;
+  background-color: gray;
   opacity: 50%;
 }
 
 .complete-tab{
-  fill: green;
+  background-color: green;
 }
 
 
@@ -193,11 +190,6 @@ Found Word
   width: 30px;
   height: 30px;
 }
-/* .found-word-button :active{
-  transition: all 1s;
-  stroke-width: 5;
-  stroke: black;
-} */
 
 
 .button-text{
@@ -210,28 +202,6 @@ Found Word
   background-color: transparent;
 }
 
-
-.score-counter-box{
-  stroke-width: 1;
-  stroke-linejoin: round;
-  fill: transparent;
-  stroke: black;
-}
-
-.score-counter-progress{
-  fill: green;
-  stroke: transparent;
-  transition: all 1s;
-}
-
-/* .found-word-box-success{
-  fill: green;
-}
-
-.found-word-box-challenge{
-  stroke-width: 4;
-  stroke: orangered;
-} */
 
 .history-progress{
   background: green;
