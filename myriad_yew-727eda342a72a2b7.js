@@ -854,24 +854,24 @@ function getImports() {
         const ret = wasm.memory;
         return addHeapObject(ret);
     };
-    imports.wbg.__wbindgen_closure_wrapper585 = function(arg0, arg1, arg2) {
-        const ret = makeMutClosure(arg0, arg1, 117, __wbg_adapter_26);
+    imports.wbg.__wbindgen_closure_wrapper786 = function(arg0, arg1, arg2) {
+        const ret = makeMutClosure(arg0, arg1, 301, __wbg_adapter_26);
         return addHeapObject(ret);
     };
-    imports.wbg.__wbindgen_closure_wrapper1455 = function(arg0, arg1, arg2) {
-        const ret = makeClosure(arg0, arg1, 704, __wbg_adapter_29);
+    imports.wbg.__wbindgen_closure_wrapper1512 = function(arg0, arg1, arg2) {
+        const ret = makeClosure(arg0, arg1, 748, __wbg_adapter_29);
         return addHeapObject(ret);
     };
-    imports.wbg.__wbindgen_closure_wrapper1457 = function(arg0, arg1, arg2) {
-        const ret = makeClosure(arg0, arg1, 704, __wbg_adapter_32);
+    imports.wbg.__wbindgen_closure_wrapper1514 = function(arg0, arg1, arg2) {
+        const ret = makeClosure(arg0, arg1, 748, __wbg_adapter_32);
         return addHeapObject(ret);
     };
-    imports.wbg.__wbindgen_closure_wrapper1643 = function(arg0, arg1, arg2) {
-        const ret = makeMutClosure(arg0, arg1, 785, __wbg_adapter_35);
+    imports.wbg.__wbindgen_closure_wrapper1700 = function(arg0, arg1, arg2) {
+        const ret = makeMutClosure(arg0, arg1, 829, __wbg_adapter_35);
         return addHeapObject(ret);
     };
-    imports.wbg.__wbindgen_closure_wrapper2010 = function(arg0, arg1, arg2) {
-        const ret = makeMutClosure(arg0, arg1, 903, __wbg_adapter_38);
+    imports.wbg.__wbindgen_closure_wrapper2067 = function(arg0, arg1, arg2) {
+        const ret = makeMutClosure(arg0, arg1, 947, __wbg_adapter_38);
         return addHeapObject(ret);
     };
 
@@ -910,7 +910,7 @@ function initSync(module) {
 
 async function init(input) {
     if (typeof input === 'undefined') {
-        input = new URL('myriad_yew-dffabe8fc6f9e2a2_bg.wasm', import.meta.url);
+        input = new URL('myriad_yew-727eda342a72a2b7_bg.wasm', import.meta.url);
     }
     const imports = getImports();
 
