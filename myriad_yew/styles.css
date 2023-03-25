@@ -37,6 +37,7 @@ dialog{
   position:absolute;
   width: 100%;
   aspect-ratio: 1/1;
+  touch-action:none;
 }
 
 .tab-headers, .found-words, .recent-words{
@@ -115,6 +116,7 @@ dialog{
   border: none;
   pointer-events: none;
   user-select: none;
+  z-index: 1500;
 }
 
 

@@ -4,9 +4,8 @@ use crate::state::prelude::*;
 use crate::web::prelude::*;
 use myriad::prelude::*;
 use wasm_bindgen::JsCast;
-use web_sys::{window, Document, Element};
+use web_sys::*;
 use yew::prelude::*;
-use yew_router::components::_LinkProps::to;
 use yewdux::prelude::*;
 
 #[function_component(Circles)]
