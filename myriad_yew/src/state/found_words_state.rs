@@ -1,8 +1,7 @@
 use crate::state::prelude::*;
 use myriad::prelude::*;
-use num::{iter::Range, ToPrimitive};
 use serde::{Deserialize, Serialize};
-use std::collections::BTreeMap;
+use std::{collections::BTreeMap, ops::Range};
 
 #[derive(PartialEq, Eq, Clone, Serialize, Deserialize, Default)]
 pub struct FoundWordsState {
@@ -28,15 +27,12 @@ impl FoundWordsState {
     }
 
     pub fn is_goal_complete(&self, index: usize) -> bool {
-        let u = index.to_i32().unwrap();
+        let u = index as i32;
 
-        self.has_all_words(&mut num::iter::range(
-            (u * GOALSIZE) + 1,
-            ((u + 1) * GOALSIZE) + 1,
-        ))
+        self.has_all_words(((u * GOALSIZE) + 1)..(((u + 1) * GOALSIZE) + 1))
     }
 
-    pub fn has_all_words(&self, range: &mut Range<i32>) -> bool {
+    pub fn has_all_words(&self, mut range: Range<i32>) -> bool {
         if self.words.len() < range.size_hint().0 {
             return false;
         }

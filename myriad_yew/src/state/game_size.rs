@@ -1,5 +1,4 @@
 use myriad::prelude::Center;
-use num::ToPrimitive;
 use yewdux::store::{Store, Reducer};
 
 use super::prelude::*;
@@ -79,7 +78,7 @@ impl GameSize {
             + TAB_HEADER_HEIGHT
             + TAB_HEADER_TOP_MARGIN
             + FOUND_WORD_MARGIN
-            + (FOUND_WORD_HEIGHT + FOUND_WORD_MARGIN) * row_number.to_f32().unwrap();
+            + (FOUND_WORD_HEIGHT + FOUND_WORD_MARGIN) * row_number as f32;
 
         let row_position = ((number - 1) % GOALSIZE) % 10;
 
@@ -87,10 +86,10 @@ impl GameSize {
             (self.width - (FOUND_WORD_WIDTH * 10.0 + FOUND_WORD_MARGIN * 9.0)) / 2.0;
 
         let tab_x = found_word_padding
-            + row_position.to_f32().unwrap() * (FOUND_WORD_MARGIN + FOUND_WORD_WIDTH);
+            + row_position as f32 * (FOUND_WORD_MARGIN + FOUND_WORD_WIDTH);
 
         let index = (number - 1) / GOALSIZE;
-        let mut index_offset = (index - selected_index.to_i32().unwrap()).to_f32().unwrap();
+        let mut index_offset = (index - selected_index as i32) as f32;
         if clamp {
             index_offset = index_offset.min(1.0).max(-1.0);
         }

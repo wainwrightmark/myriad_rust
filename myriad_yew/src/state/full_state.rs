@@ -1,7 +1,6 @@
 use crate::state::prelude::*;
 use itertools::Itertools;
 use myriad::prelude::*;
-use num::ToPrimitive;
 use serde::*;
 use serde_with::serde_as;
 use std::rc::Rc;
@@ -34,7 +33,7 @@ impl Game {
         let js_today = js_sys::Date::new_0();
 
         NaiveDate::from_ymd_opt(
-            js_today.get_full_year().to_i32().unwrap(),
+            js_today.get_full_year() as i32,
             js_today.get_month() + 1,
             js_today.get_date(),
         )
@@ -51,10 +50,8 @@ impl Game {
     pub fn create_for_date(date: NaiveDate) -> Self {
         let solve_settings = SolveSettings::default();
 
-        let seed = (date.year().abs() * 2000)
-            + (date.month().to_i32().unwrap() * 100)
-            + date.day().to_i32().unwrap();
-        let rng = rand::SeedableRng::seed_from_u64(seed.to_u64().unwrap());
+        let seed: u32 = (date.year().abs_diff(0) * 2000) + (date.month() * 100) + date.day();
+        let rng = rand::SeedableRng::seed_from_u64(seed as u64);
 
         let settings = BoardCreateSettings {
             branching_factor: 3,

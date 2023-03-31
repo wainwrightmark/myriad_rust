@@ -1,7 +1,6 @@
 use crate::state::prelude::*;
 use myriad::prelude::*;
 
-use num::ToPrimitive;
 use std::ops::{Add, Deref};
 use yew::prelude::*;
 use yewdux::prelude::*;
@@ -217,14 +216,14 @@ fn get_line_position(
     let straight_scale_x: f32 = square_size / 4.5 / CROSSHAIR_LENGTH;
     let diagonal_scale_x: f32 = straight_scale_x * 1.43;
 
-    let x_dir = c2a.col().to_f32().unwrap() - c1a.col().to_f32().unwrap();
-    let y_dir = c2a.row().to_f32().unwrap() - c1a.row().to_f32().unwrap();
+    let x_dir: f32 = f32::from(c2a.col()) - f32::from(c1a.col());
+    let y_dir: f32 = f32::from(c2a.row()) - f32::from(c1a.row());
 
     let x = (x_dir * HALF_CROSSHAIR_LENGTH * diagonal_scale_x) - (x_dir * HALF_STOKE_WIDTH)
-        + (x_dir / 4.0 * index.to_f32().unwrap() * square_size)
+        + (x_dir / 4.0 * f32::from(index) * square_size)
         + square_radius;
     let y = (y_dir * HALF_CROSSHAIR_LENGTH * diagonal_scale_x) - (y_dir * HALF_STOKE_WIDTH)
-        + (y_dir / 4.0 * index.to_f32().unwrap() * square_size)
+        + (y_dir / 4.0 * f32::from(index) * square_size)
         + square_radius;
 
     let rot = f32::to_degrees(c1a.get_center(1.0).angle_to(&c2a.get_center(1.0)));

@@ -10,8 +10,6 @@ edition= "2021"
 myriad = { path = "../myriad" }
 
 itertools = "0.10"
-num = "0.4"
-num-traits = "0.2"
 serde = { version = "1", features = ["derive", "rc"] }
 serde_with = "2"
 rand = {version = "0.8"}
@@ -24,7 +22,7 @@ yew = { version="0.20", features = ["csr",] }
 yewdux = { version="0.9" }
 yew-hooks = "0.2.0"
 yew-router = { version="0.17" }
-chrono = {version="0.4", features = ["serde", "wasmbind"]}
+chrono = {version="0.4", features = ["serde", "wasmbind"], default-features=false}
 getrandom = {version="0.2", features=["js"]}
 wasm-bindgen-futures = "0.4"
 wasm-bindgen= { version = "0.2", features = ["serde"] }

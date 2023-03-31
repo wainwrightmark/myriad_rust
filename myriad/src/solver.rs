@@ -2,7 +2,6 @@ use crate::parser::ParseFail;
 use crate::prelude::*;
 use geometrid::prelude::Tile;
 use itertools::Itertools;
-use num::ToPrimitive;
 use serde::{Deserialize, Serialize};
 use tinyvec::ArrayVec;
 use std::collections::{HashSet, VecDeque};
@@ -29,7 +28,7 @@ impl SolveSettings {
     }
 
     pub fn total_solutions(&self) -> usize {
-        (self.max - self.min + 1).to_usize().unwrap()
+        (self.max - self.min + 1) as usize
     }
 }
 

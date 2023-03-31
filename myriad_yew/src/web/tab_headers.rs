@@ -2,7 +2,6 @@ use crate::state::selected_tab_state::SelectedTabState;
 
 use crate::state::prelude::*;
 use crate::web::prelude::*;
-use num::ToPrimitive;
 use yew::prelude::*;
 use yewdux::prelude::*;
 
@@ -37,7 +36,8 @@ pub fn more_tab_header(properties: &MoreTabHeaderProperties) -> Html {
         None
     };
 
-    let x = game_size.get_tab_header_padding() + (index.to_f32().unwrap() * (TAB_HEADER_WIDTH + TAB_HEADER_MARGIN));
+    let x = game_size.get_tab_header_padding()
+        + (index as f32 * (TAB_HEADER_WIDTH + TAB_HEADER_MARGIN));
     let y = (game_size.square_length() * 3.0) + TAB_HEADER_TOP_MARGIN;
 
     let class = classes!("tab-header", selected);
@@ -80,14 +80,15 @@ pub fn found_words_tab_header(properties: &NumberTabHeaderProperties) -> Html {
     let class = classes!("tab-header", selected, complete);
     let style = format!(
         "transform: translate({}px, {}px);",
-        game_size.get_tab_header_padding() + (index.to_f32().unwrap() * (TAB_HEADER_WIDTH + TAB_HEADER_MARGIN)),
+        game_size.get_tab_header_padding()
+            + (index as f32 * (TAB_HEADER_WIDTH + TAB_HEADER_MARGIN)),
         (game_size.square_length() * 3.0) + TAB_HEADER_TOP_MARGIN
     );
 
     html!(
 
         <button {class}  {style} {onclick} {key}>
-        {format_number ((index.to_i32().unwrap()  + 1) * GOALSIZE)}
+        {format_number ((index as i32  + 1) * GOALSIZE)}
      </button>
 
     )

@@ -8,8 +8,8 @@ edition= "2021"
 
 [dependencies]
 itertools = "0.10"
-num = "0.4"
-num-traits = "0.2"
+# num = "0.4"
+# num-traits = "0.2"
 serde = { version = "1", features = ["derive", "rc"] }
 geometrid = {git = "https://github.com/wainwrightmark/geometrid", features= ["std", "serde"]}
 rand = {version = "0.8"}

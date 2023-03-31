@@ -1,7 +1,6 @@
 use crate::state::prelude::*;
 use crate::web::prelude::*;
 use myriad::{parser, prelude::*};
-use num::ToPrimitive;
 use std::rc::Rc;
 use yewdux::prelude::*;
 
@@ -124,7 +123,7 @@ impl Reducer<FullGameState> for OnCoordinatesSetMsg {
                 Dispatch::new().apply(NumberFoundMsg { number });
                 let ns = state.found_words.with_word(found_word);
 
-                let len = ns.words.len().to_i32().unwrap();
+                let len = ns.words.len() as i32;
 
                 if len % 10 == 0 {
                     make_confetti(get_emoji(len / 10), 10 + len);

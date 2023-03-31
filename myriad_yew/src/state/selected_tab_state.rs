@@ -1,5 +1,4 @@
 use crate::state::prelude::*;
-use num::ToPrimitive;
 use serde::*;
 use yewdux::prelude::{Reducer, Store};
 
@@ -54,13 +53,13 @@ impl SelectedTabState {
 
     pub fn number_found(self, number: i32) -> Self {
         if self.locked {
-            self
-        } else {
-            let i = (number - 1) / GOALSIZE;
-            SelectedTabState {
-                index: i.to_usize().unwrap(),
-                locked: false,
-            }
+            return self;
+        }
+
+        let Some(index) = ((number - 1) / GOALSIZE).try_into().ok() else {return self;};
+        SelectedTabState {
+            index,
+            locked: false,
         }
     }
 }
