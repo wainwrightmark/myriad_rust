@@ -74,10 +74,6 @@ pub fn congrats_dialog() -> Html {
 
     if let Some(dialog_type) = state.congratulations_dialog_type {
         let message: &str = match dialog_type {
-            CongratsDialogType::Challenge => {
-                "Well done, you beat challenge mode!\r\nNow try for 💯!"
-                //quote = "I%20beat%20challenge%20mode%20in%20myriad%21";
-            }
             CongratsDialogType::OneHundred => {
                 "Well done, you got 💯!"
                 //quote = "I%20got%20%F0%9F%92%AF%20in%20myriad%21"

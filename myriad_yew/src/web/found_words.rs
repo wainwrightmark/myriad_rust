@@ -12,7 +12,6 @@ pub struct AllFoundWordsProperties {
 
 #[function_component(AllFoundWords)]
 pub fn all_found_words(properties: &AllFoundWordsProperties) -> Html {
-    let challenge_words = use_selector(|state: &FullGameState| state.game.challenge_words.clone());
     let found_words_state = use_selector(|state: &FullGameState| state.found_words.clone());
     let selected_tab_state = use_store_value::<SelectedTabState>();
     let selected_tab = selected_tab_state.index;
@@ -22,9 +21,8 @@ pub fn all_found_words(properties: &AllFoundWordsProperties) -> Html {
 
     let words = (1..101)
         .map(|number| {
-            let is_challenge = challenge_words.contains(&number);
             let is_found = found_words_state.words.contains_key(&number);
-            html!(<FoundWordsWord {number} {is_challenge} {is_found} {selected_tab} {cheat}  />)
+            html!(<FoundWordsWord {number}  {is_found} {selected_tab} {cheat}  />)
         })
         .collect::<Html>();
 
@@ -49,14 +47,12 @@ pub fn all_found_words(properties: &AllFoundWordsProperties) -> Html {
 pub struct FoundWordProperties {
     pub number: i32,
     pub is_found: bool,
-    pub is_challenge: bool,
     pub selected_tab: usize,
     pub cheat: bool,
 }
 
 #[function_component(FoundWordsWord)]
 pub fn found_words_word(properties: &FoundWordProperties) -> Html {
-    //TODO onclick
     //TODO allow swiping to change tabs
 
     let id = format!("found_words_word{}", properties.number);

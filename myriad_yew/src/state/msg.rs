@@ -134,17 +134,8 @@ impl Reducer<FullGameState> for OnCoordinatesSetMsg {
                     Dispatch::<DialogState>::new().reduce_mut(|s| {
                         s.congratulations_dialog_type = Some(CongratsDialogType::OneHundred)
                     });
-                } else if state.game.challenge_words.contains(&number)
-                    && state
-                        .game
-                        .challenge_words
-                        .iter()
-                        .all(|w| ns.words.contains_key(w))
-                {
-                    Dispatch::<DialogState>::new().reduce_mut(|s| {
-                        s.congratulations_dialog_type = Some(CongratsDialogType::Challenge)
-                    });
                 }
+
 
                 ns.into()
             } else {

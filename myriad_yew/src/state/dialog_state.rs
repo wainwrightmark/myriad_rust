@@ -10,7 +10,6 @@ pub struct DialogState {
 
 #[derive(PartialEq, Eq, Clone, Copy, Serialize, Deserialize)]
 pub enum CongratsDialogType {
-    Challenge,
     OneHundred,
 }
 

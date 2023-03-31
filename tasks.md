@@ -1,8 +1,8 @@
 - [ ] Use routing
-- [ ] Store history of all games
+- [x] Store history of all games
 - [ ] Roman Numerals (Century)
 - [ ] Tutorial
-- [ ] Touch to scroll FoundWords
+- [ ] Swipe to scroll FoundWords
 - [ ] Confetti Listener
 - [ ] Confetti in Rust
 - [x] Flip and rotate
@@ -11,5 +11,13 @@
 - [ ] Cheat mode
 - [ ] Accessibility
 - [ ] Idle animations
-- [ ] Share on facebook
-- [ ] Animations on IOS
+- [x] Share on facebook
+- [x] Animations on IOS
+- [ ] Dark Mode
+- [ ] Landscape mode (device orientation)
+- [ ] Logging
+- [ ] Number box above FoundWords
+- [ ] Remove Challenge word
+- [ ] Word difficulty indicator
+
+- [ ] Multiplayer

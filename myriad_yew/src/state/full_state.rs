@@ -23,7 +23,6 @@ impl FullGameState {}
 pub struct Game {
     #[serde_as(as = "_")]
     pub board: Board<3, 3, 9>,
-    pub challenge_words: Vec<i32>,
     pub date: Option<NaiveDate>,
     pub solve_settings: SolveSettings,
 }
@@ -71,7 +70,6 @@ impl Game {
             board,
             date: Some(date),
             solve_settings,
-            challenge_words,
         }
     }
 
@@ -93,13 +91,10 @@ impl Game {
 
         log::debug!("Board '{:?}' generated in {:?}", board, diff);
 
-        let challenge_words = Self::create_challenge_words(solve_settings, &board);
-
         Game {
             board,
             date: None,
             solve_settings,
-            challenge_words,
         }
     }
 
