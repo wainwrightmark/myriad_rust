@@ -4,19 +4,19 @@ use serde::{Deserialize, Serialize};
 use std::{collections::BTreeMap, ops::Range};
 
 #[derive(PartialEq, Eq, Clone, Serialize, Deserialize, Default)]
-pub struct FoundWordsState {
+pub struct FoundWordsTracker {
     pub words: BTreeMap<i32, FoundWord<GRID_COLUMNS, GRID_ROWS, GRID_SIZE>>,
     pub most_recent: Option<i32>,
 }
 
-impl FoundWordsState {
+impl FoundWordsTracker {
     pub fn with_word(&self, word: FoundWord<GRID_COLUMNS, GRID_ROWS, GRID_SIZE>) -> Self {
         let mut new_map = self.words.clone();
 
         let i = word.result;
         new_map.insert(i, word);
 
-        FoundWordsState {
+        FoundWordsTracker {
             words: new_map,
             most_recent: Some(i),
         }

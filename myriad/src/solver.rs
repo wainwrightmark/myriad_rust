@@ -4,7 +4,7 @@ use geometrid::prelude::Tile;
 use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 use tinyvec::ArrayVec;
-use std::collections::{HashSet, VecDeque};
+use std::{collections::{HashSet, VecDeque}, num::NonZeroU8};
 
 #[derive(PartialEq, Eq, Debug, Copy, Clone, Serialize, Deserialize)]
 pub struct SolveSettings {
@@ -53,6 +53,18 @@ pub struct FoundWord<const C: u8, const R: u8, const SIZE: usize> {
 impl<const C: u8, const R: u8, const SIZE: usize> std::fmt::Display for FoundWord<C, R, SIZE> {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "{} = {}", self.result, self.path.iter().join(""))
+    }
+}
+
+impl FoundWord<3,3,9>{
+    pub fn get_difficulty(&self)-> Difficulty{
+        if self.path.len() >0 && self.path.len() <= 9{
+            Difficulty(NonZeroU8::new(self.path.len() as u8).unwrap())
+        }
+        else{
+            panic!("Word has wrong path length to have difficulty");
+
+        }
     }
 }
 

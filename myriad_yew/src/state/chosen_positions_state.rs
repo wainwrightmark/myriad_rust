@@ -5,13 +5,69 @@ use myriad::prelude::*;
 use serde::*;
 use yewdux::prelude::*;
 
-#[derive(PartialEq, Eq, Clone, Default, Serialize, Deserialize, Store)]
+use super::info_bar_state::{InfoBarSetMessage, InfoBarState};
+
+#[derive(PartialEq, Eq, Clone, Default, Serialize, Deserialize)]
 pub struct ChosenPositionsState {
     pub positions: ArrayVec<[Tile<GRID_COLUMNS, GRID_ROWS>; GRID_SIZE]>,
 }
 
+impl Store for ChosenPositionsState {
+    fn new() -> Self {
+        init_listener(CPSListener);
+        Default::default()
+    }
+
+    fn should_notify(&self, old: &Self) -> bool {
+        self != old
+    }
+}
+
+#[derive(Debug, Default)]
+pub struct CPSListener;
+
+impl Listener for CPSListener {
+    type Store = ChosenPositionsState;
+
+    fn on_change(&mut self, state: std::rc::Rc<Self::Store>) {
+        let new_chosen_positions = state.positions;
+
+        let board = Dispatch::<FullGameState>::new().get().game.board.clone();
+
+        let mut letters = new_chosen_positions.iter().map(|c| board[*c]).peekable();
+
+        let parse_result = parse_and_evaluate(&mut letters);
+
+        let infobar_state: InfoBarState;
+
+        match parse_result {
+            Ok(number) => {
+                if number >= 1 && number <= 100 {
+                    infobar_state = InfoBarState::ValidNumber(number);
+                } else {
+                    infobar_state = InfoBarState::InvalidNumber(number);
+                }
+            }
+            Err(parse_fail) => match parse_fail {
+                myriad::parser::ParseFail::PartialSuccess => {
+                    let text = new_chosen_positions.iter().map(|c| board[*c]).join("");
+                    infobar_state = InfoBarState::Equation(text)
+                }
+                myriad::parser::ParseFail::Failure => {
+                    return;
+                }
+            },
+        }
+
+        Dispatch::new().apply(InfoBarSetMessage(infobar_state));
+    }
+}
+
 impl ChosenPositionsState {
-    pub fn after_move_result(self, move_result: &MoveResult<GRID_COLUMNS, GRID_ROWS, GRID_SIZE>) -> Self {
+    pub fn after_move_result(
+        self,
+        move_result: &MoveResult<GRID_COLUMNS, GRID_ROWS, GRID_SIZE>,
+    ) -> Self {
         match move_result {
             MoveResult::WordComplete { word } => Self {
                 positions: word.path.to_owned(),
@@ -50,17 +106,14 @@ impl Reducer<ChosenPositionsState> for FindNumberMsg {
         let fs = Dispatch::<FullGameState>::new().get();
 
         if let Some(path) = fs.found_words.words.get(&self.number) {
-
-            if state.positions == path.path{
+            if state.positions == path.path {
                 ChosenPositionsState::default().into()
-            }else{
+            } else {
                 ChosenPositionsState {
                     positions: path.path.clone(),
                 }
                 .into()
             }
-
-
         } else {
             if self.cheat {
                 //log::debug!("Cheating");
@@ -167,12 +220,12 @@ pub enum InputMsg {
     Enter {
         coordinate: Tile<GRID_COLUMNS, GRID_ROWS>,
     },
-    None
+    None,
 }
 
 impl Reducer<InputState> for InputMsg {
     fn apply(self, state: std::rc::Rc<InputState>) -> std::rc::Rc<InputState> {
-        if self == InputMsg::None{
+        if self == InputMsg::None {
             return state;
         }
         log::debug!("{self:?}");
@@ -201,13 +254,11 @@ impl Reducer<InputState> for InputMsg {
                 }
 
                 state
-            },
-            InputMsg::None=> state
+            }
+            InputMsg::None => state,
         }
     }
 }
-
-
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct OnClickMsg {
@@ -217,7 +268,6 @@ pub struct OnClickMsg {
 
 impl Reducer<ChosenPositionsState> for OnClickMsg {
     fn apply(self, state: std::rc::Rc<ChosenPositionsState>) -> std::rc::Rc<ChosenPositionsState> {
-
         //log::debug!("{self:?}");
         ChosenPositionsState::next(state, self.allow_abandon, self.coordinate)
     }

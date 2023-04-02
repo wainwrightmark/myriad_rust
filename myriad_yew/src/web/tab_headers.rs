@@ -38,7 +38,7 @@ pub fn more_tab_header(properties: &MoreTabHeaderProperties) -> Html {
 
     let x = game_size.get_tab_header_padding()
         + (index as f32 * (TAB_HEADER_WIDTH + TAB_HEADER_MARGIN));
-    let y = (game_size.square_length() * 3.0) + TAB_HEADER_TOP_MARGIN;
+    let y = (game_size.square_length() * 3.0) + TAB_HEADER_TOP_MARGIN + INFO_BAR_HEIGHT ;
 
     let class = classes!("tab-header", selected);
     let style = format!(
@@ -82,7 +82,7 @@ pub fn found_words_tab_header(properties: &NumberTabHeaderProperties) -> Html {
         "transform: translate({}px, {}px);",
         game_size.get_tab_header_padding()
             + (index as f32 * (TAB_HEADER_WIDTH + TAB_HEADER_MARGIN)),
-        (game_size.square_length() * 3.0) + TAB_HEADER_TOP_MARGIN
+        (game_size.square_length() * 3.0) + TAB_HEADER_TOP_MARGIN + INFO_BAR_HEIGHT
     );
 
     html!(

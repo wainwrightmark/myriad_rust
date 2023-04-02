@@ -31,7 +31,7 @@ impl Reducer<FullGameState> for LoadGameMessage {
 
         FullGameState {
             game: self.game.into(),
-            found_words: Rc::new(FoundWordsState {
+            found_words: Rc::new(FoundWordsTracker {
                 words: found_words,
                 most_recent: None,
             }),
@@ -118,7 +118,7 @@ impl Reducer<FullGameState> for OnCoordinatesSetMsg {
                 FoundWordType::NotInRange
             };
 
-            let new_found_words: Rc<FoundWordsState> = if word_type == FoundWordType::Found {
+            let new_found_words: Rc<FoundWordsTracker> = if word_type == FoundWordType::Found {
                 let number = found_word.result;
                 Dispatch::new().apply(NumberFoundMsg { number });
                 let ns = state.found_words.with_word(found_word);

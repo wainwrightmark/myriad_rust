@@ -52,6 +52,7 @@ pub fn myriad_app(//route : Route
         <div class="container" ref={node}>
         <Circles  />
         <Crosshairs />
+        <InfoBar/>
         <TabHeaders />
         <AllFoundWords {cheat} />
 

@@ -9,6 +9,7 @@ pub mod recent_word_state;
 pub mod rot_flip_state;
 pub mod selected_tab_state;
 pub mod game_size;
+pub mod info_bar_state;
 
 pub mod prelude {
 

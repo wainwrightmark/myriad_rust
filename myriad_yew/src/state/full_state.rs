@@ -1,5 +1,4 @@
 use crate::state::prelude::*;
-use itertools::Itertools;
 use myriad::prelude::*;
 use serde::*;
 use serde_with::serde_as;
@@ -12,7 +11,7 @@ use chrono::{Datelike, NaiveDate};
 #[store(storage = "local", storage_tab_sync)] // can also be "session"
 pub struct FullGameState {
     pub game: Rc<Game>,
-    pub found_words: Rc<FoundWordsState>,
+    pub found_words: Rc<FoundWordsTracker>,
 }
 
 impl FullGameState {}
@@ -24,6 +23,7 @@ pub struct Game {
     pub board: Board<3, 3, 9>,
     pub date: Option<NaiveDate>,
     pub solve_settings: SolveSettings,
+    pub difficulties: Rc<Vec<Option<Difficulty>>>,
 }
 
 pub const CHALLENGE_WORDS: usize = 3;
@@ -61,12 +61,14 @@ impl Game {
             .next()
             .unwrap();
 
-        let challenge_words = Self::create_challenge_words(solve_settings, &board);
+        //let challenge_words = Self::create_challenge_words(solve_settings, &board);
+        let difficulties = Self::get_difficulties(solve_settings, &board);
 
         Game {
             board,
             date: Some(date),
             solve_settings,
+            difficulties: difficulties.into()
         }
     }
 
@@ -88,24 +90,54 @@ impl Game {
 
         log::debug!("Board '{:?}' generated in {:?}", board, diff);
 
+        let difficulties = Self::get_difficulties(solve_settings, &board);
+
         Game {
             board,
             date: None,
             solve_settings,
+            difficulties: difficulties.into()
         }
     }
 
-    fn create_challenge_words(
+    fn get_difficulties(
         solve_settings: SolveSettings,
         board: &Board<GRID_COLUMNS, GRID_ROWS, 9>,
-    ) -> Vec<i32> {
-        solve_settings
-            .solve(board.clone())
-            .sorted_by(|a, b| b.path.len().cmp(&a.path.len()))
-            .take(CHALLENGE_WORDS)
-            .map(|f| f.result)
-            .collect_vec()
+    ) -> Vec<Option<Difficulty>> {
+        let mut difficulties: Vec<Option<Difficulty>> = vec![None; 100];
+
+        let solutions = solve_settings.solve(board.clone());
+
+        for s in solutions {
+            if s.result < 1 {
+                continue;
+            }
+            let diff = s.get_difficulty();
+
+            if let Some(current) = difficulties.get_mut((s.result - 1) as usize) {
+                if let Some(c) = current {
+                    if *c <= diff {
+                        continue;
+                    }
+                }
+                *current = Some(diff);
+            }
+        }
+
+        difficulties
     }
+
+    // fn create_challenge_words(
+    //     solve_settings: SolveSettings,
+    //     board: &Board<GRID_COLUMNS, GRID_ROWS, 9>,
+    // ) -> Vec<i32> {
+    //     solve_settings
+    //         .solve(board.clone())
+    //         .sorted_by(|a, b| b.path.len().cmp(&a.path.len()))
+    //         .take(CHALLENGE_WORDS)
+    //         .map(|f| f.result)
+    //         .collect_vec()
+    // }
 }
 
 impl Default for Game {

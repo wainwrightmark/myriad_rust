@@ -26,7 +26,7 @@ pub fn todays_game_button(properties: &GameButtonProperties) -> Html {
         false,
     );
 
-    html!(<FoundWordBox id={"today_game_button"} text={"Today's Game"} {x} {y} width_units={properties.width} color="white" {on_click} />)
+    html!(<ButtonBox id={"today_game_button"} text={"Today's Game"} {x} {y} width_units={properties.width} color="white" {on_click} />)
 }
 
 #[function_component(RandomGameButton)]
@@ -41,7 +41,7 @@ pub fn random_game_button(properties: &GameButtonProperties) -> Html {
         false,
     );
 
-    html!(<FoundWordBox id={"random_game_button"} text={"Random Game"} {x} {y} width_units={properties.width} color="white" {on_click} />)
+    html!(<ButtonBox id={"random_game_button"} text={"Random Game"} {x} {y} width_units={properties.width} color="white" {on_click} />)
 }
 
 #[derive(PartialEq, Properties)]
@@ -50,7 +50,7 @@ pub struct ScoreCounterProperties {
     pub selected_tab: usize,
 
     pub position_number: i32,
-    pub width: f32
+    pub width: f32,
 }
 
 #[function_component(ScoreCounter)]
@@ -96,7 +96,7 @@ pub fn rotate_button(properties: &GameButtonProperties) -> Html {
         false,
     );
 
-    html!(<FoundWordBox id={"rotate_button"} text={"⟳"} {x} {y} width_units={properties.width} color="white" {on_click} />)
+    html!(<ButtonBox id={"rotate_button"} text={"⟳"} {x} {y} width_units={properties.width} color="white" {on_click} />)
 }
 
 #[function_component(FlipButton)]
@@ -114,7 +114,7 @@ pub fn flip_button(properties: &GameButtonProperties) -> Html {
         false,
     );
 
-    html!(<FoundWordBox id={"flip_button"} text={"⬌"} {x} {y} width_units={properties.width} color="white" {on_click} />)
+    html!(<ButtonBox id={"flip_button"} text={"⬌"} {x} {y} width_units={properties.width} color="white" {on_click} />)
 }
 
 #[function_component(HistoryButton)]
@@ -131,7 +131,7 @@ pub fn history_button(properties: &GameButtonProperties) -> Html {
         false,
     );
 
-    html!(<FoundWordBox id={"history_button"} text={"H"} {x} {y} width_units={properties.width} color="white" {on_click} />)
+    html!(<ButtonBox id={"history_button"} text={"H"} {x} {y} width_units={properties.width} color="white" {on_click} />)
 }
 
 // #[function_component(WainwrongButton)]
@@ -191,3 +191,40 @@ pub fn history_button(properties: &GameButtonProperties) -> Html {
 //         </a>
 //         </g>)
 // }
+
+#[derive(PartialEq, Properties)]
+pub struct ButtonBoxProperties {
+    pub id: String,
+    pub text: AttrValue,
+    pub color: AttrValue,
+    pub x: f32,
+    pub y: f32,
+    pub width_units: f32,
+    pub on_click: Option<Callback<MouseEvent>>,
+}
+
+#[function_component(ButtonBox)]
+fn button_box(properties: &ButtonBoxProperties) -> Html {
+    let x = properties.x;
+    let y = properties.y;
+    let width = format!("{}", FOUND_WORD_WIDTH * properties.width_units);
+    let height = format!("{FOUND_WORD_HEIGHT}");
+    let color = &properties.color;
+    let style = format!("position:absolute; transform: translate({x}px, {y}px); height: {height}px; width: {width}px; border-radius:5px; background-color: {color};");
+
+    let class = classes!(
+        "found-word",
+        if properties.on_click.is_some() {
+            Some("found-word-button")
+        } else {
+            None
+        }
+    );
+    let key = properties.id.clone();
+
+    html!(
+        <button {key} {style} {class} onclick={properties.on_click.clone()}>
+            {properties.text.clone()}
+        </button>
+    )
+}

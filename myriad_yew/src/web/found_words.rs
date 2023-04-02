@@ -1,7 +1,9 @@
+use crate::state::info_bar_state::InfoBarSetMessage;
 use crate::state::selected_tab_state::SelectedTabState;
 
 use crate::state::prelude::*;
 use crate::web::prelude::*;
+use myriad::prelude::*;
 use yew::prelude::*;
 use yewdux::prelude::*;
 
@@ -12,17 +14,24 @@ pub struct AllFoundWordsProperties {
 
 #[function_component(AllFoundWords)]
 pub fn all_found_words(properties: &AllFoundWordsProperties) -> Html {
-    let found_words_state = use_selector(|state: &FullGameState| state.found_words.clone());
+    let found_words = use_selector(|state: &FullGameState| state.found_words.clone());
+    let difficulties = use_selector(|state: &FullGameState| state.game.difficulties.clone());
     let selected_tab_state = use_store_value::<SelectedTabState>();
     let selected_tab = selected_tab_state.index;
 
-    let total_found = found_words_state.words.len();
+    let total_found = found_words.words.len();
     let cheat = properties.cheat;
 
-    let words = (1..101)
-        .map(|number| {
-            let is_found = found_words_state.words.contains_key(&number);
-            html!(<FoundWordsWord {number}  {is_found} {selected_tab} {cheat}  />)
+    let words = (1i32..=100i32)
+        .filter_map(|number| {
+            difficulties
+                .get((number - 1) as usize)
+                .and_then(|&x| x)
+                .map(|x| (number, x))
+        })
+        .map(|(number, difficulty)| {
+            let is_found = found_words.words.contains_key(&number);
+            html!(<FoundWordsWord {number}  {is_found} {selected_tab} {cheat} {difficulty}  />)
         })
         .collect::<Html>();
 
@@ -46,6 +55,7 @@ pub fn all_found_words(properties: &AllFoundWordsProperties) -> Html {
 #[derive(PartialEq, Properties)]
 pub struct FoundWordProperties {
     pub number: i32,
+    pub difficulty: Difficulty,
     pub is_found: bool,
     pub selected_tab: usize,
     pub cheat: bool,
@@ -55,14 +65,15 @@ pub struct FoundWordProperties {
 pub fn found_words_word(properties: &FoundWordProperties) -> Html {
     //TODO allow swiping to change tabs
 
-    let id = format!("found_words_word{}", properties.number);
+    let key = format!("found_words_word{}", properties.number);
     let number = properties.number;
     let cheat = properties.cheat;
+    let difficulty = properties.difficulty;
 
     let on_click: Option<Callback<MouseEvent>> = if properties.is_found || cheat {
         Some(Dispatch::new().apply_callback(move |_| FindNumberMsg { number, cheat }))
     } else {
-        None
+        Some(Dispatch::new().apply_callback(move |_| InfoBarSetMessage(crate::state::info_bar_state::InfoBarState::Difficulty(difficulty))))
     };
 
     let color = if properties.is_found {
@@ -71,71 +82,17 @@ pub fn found_words_word(properties: &FoundWordProperties) -> Html {
         "white"
     };
 
-    // let rect_class = classes!(
-    //     "found-word-box",
-    //     if properties.is_found {
-    //         Some("found-word-box-success")
-    //     } else {
-    //         None
-    //     },
-    //     if properties.is_challenge {
-    //         Some("found-word-box-challenge")
-    //     } else {
-    //         None
-    //     },
-    // );
-    // let text_class = classes!(
-    //     "found-word-text",
-    //     if properties.is_found {
-    //         Some("found-word-text-success")
-    //     } else {
-    //         None
-    //     }
-    // );
-
     let text = format_number(number);
     let (game_size, _) = use_store::<GameSize>();
-    //todo calculate position
     let (x, y) = game_size.get_found_word_position(number, properties.selected_tab, false);
 
+    let style = format!(" transform: translate({x}px, {y}px); height: {FOUND_WORD_HEIGHT}px; width: {FOUND_WORD_WIDTH}px;  background-color: {color};");
+
+    let class = classes!("found-word", "found-word-button", "found-number");
     html!(
-        <FoundWordBox {id} {text} {x} {y} width_units={1.0} {color} {on_click} />
-    )
-}
+        <button {key} {style} {class} onclick={on_click}>
+            {text.clone()}
 
-#[derive(PartialEq, Properties)]
-pub struct FoundWordBoxProperties {
-    pub id: String,
-    pub text: AttrValue,
-    pub color: AttrValue,
-    pub x: f32,
-    pub y: f32,
-    pub width_units: f32,
-    pub on_click: Option<Callback<MouseEvent>>,
-}
-
-#[function_component(FoundWordBox)]
-pub fn found_word_box(properties: &FoundWordBoxProperties) -> Html {
-    let x = properties.x;
-    let y = properties.y;
-    let width = format!("{}", FOUND_WORD_WIDTH * properties.width_units);
-    let height = format!("{FOUND_WORD_HEIGHT}");
-    let color = &properties.color;
-    let style = format!("position:absolute; transform: translate({x}px, {y}px); height: {height}px; width: {width}px; border-radius:5px; background-color: {color};");
-
-    let class = classes!(
-        "found-word",
-        if properties.on_click.is_some() {
-            Some("found-word-button")
-        } else {
-            None
-        }
-    );
-    let key = properties.id.clone();
-
-    html!(
-        <button {key} {style} {class} onclick={properties.on_click.clone()}>
-            {properties.text.clone()}
         </button>
     )
 }
