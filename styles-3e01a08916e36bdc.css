@@ -21,7 +21,7 @@ body.dark {
   margin: auto;
   overflow-x: hidden;
   background-color: whitesmoke;
-  aspect-ratio: 2/3;
+  aspect-ratio: 1/2;
 }
 
 dialog{
@@ -251,4 +251,17 @@ Crosshairs
 
 .confetti-canvas{
   position: fixed; width: 100%; height: 100%; top: 0px; left: 0px; z-index: 1000; pointer-events: none;
+}
+
+.found-number{
+  position:absolute;
+  border-radius:5px;
+}
+
+.infobar-text{
+  text-align: center;
+  width: 100%;
+  display: block;
+  height: 60px;
+  font-family: 'Inconsolata', monospace;
 }
