@@ -25,7 +25,7 @@ pub fn more_tab_header(properties: &MoreTabHeaderProperties) -> Html {
     let index = properties.index;
     let selected_tab_state = use_store_value::<SelectedTabState>();
 
-    let found_count = use_selector(|x: &FullGameState | x.found_words.words.len());
+    let  (found, total)  = *use_selector(|x: &FullGameState | x.get_found_count());
 
     let onclick = Dispatch::new().apply_callback(move |_| TabSelectedMsg { index });
 
@@ -42,11 +42,11 @@ pub fn more_tab_header(properties: &MoreTabHeaderProperties) -> Html {
         + (index as f32 * (TAB_HEADER_WIDTH + TAB_HEADER_MARGIN));
     let y = (game_size.square_length() * 3.0) + TAB_HEADER_TOP_MARGIN + INFO_BAR_HEIGHT ;
 
-
+    let found_pc = found * 100 / total;
 
     let class = classes!("tab-header", selected);
     let style = format!(
-        "transform: translate({x}px, {y}px); background: linear-gradient(to right, green {found_count}%, lightgrey {found_count}%, lightgrey);",
+        "transform: translate({x}px, {y}px); background: linear-gradient(to right, green {found_pc}%, lightgrey {found_pc}%, lightgrey);",
     );
 
     html!(
@@ -68,7 +68,7 @@ pub fn found_words_tab_header(properties: &NumberTabHeaderProperties) -> Html {
     let onclick = Dispatch::new().apply_callback(move |_| TabSelectedMsg { index });
     let selected_tab_state = use_store_value::<SelectedTabState>();
     let is_complete =
-        use_selector(move |state: &FullGameState| state.found_words.is_goal_complete(index));
+        use_selector(move |state: &FullGameState| state.is_tab_complete(index as i32));
 
     let key = format!("found_words_tab_header{index}");
     let selected = if selected_tab_state.index == index {
@@ -91,7 +91,7 @@ pub fn found_words_tab_header(properties: &NumberTabHeaderProperties) -> Html {
     html!(
 
         <button {class}  {style} {onclick} {key}>
-        {format_number ((index as i32  + 1) * GOALSIZE)}
+        {format_number (((index as i32)  + 1) * GOALSIZE)}
      </button>
 
     )

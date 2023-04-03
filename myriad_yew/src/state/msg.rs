@@ -88,20 +88,6 @@ pub fn move_to_new_game(for_today: bool) -> bool {
     }
 }
 
-// pub struct NewGameMsg {
-//     pub today: bool,
-// }
-
-// impl Reducer<FullGameState> for NewGameMsg {
-//     fn apply(self, previous: Rc<FullGameState>) -> Rc<FullGameState> {
-
-//         FullGameState {
-//             game: game.into(),
-//             ..Default::default()
-//         }
-//         .into()
-//     }
-// }
 
 pub struct OnCoordinatesSetMsg {
     pub coordinates: ArrayVec<[Tile<GRID_COLUMNS, GRID_ROWS>; 9]>,
