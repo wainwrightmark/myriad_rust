@@ -1,4 +1,4 @@
-use crate::state::full_state::FullGameState;
+use crate::state::full_game_state::FullGameState;
 use crate::state::game_size::*;
 use crate::state::msg::*;
 use crate::state::prelude::*;

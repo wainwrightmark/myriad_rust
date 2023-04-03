@@ -102,7 +102,7 @@ pub struct FindNumberMsg {
 
 impl Reducer<ChosenPositionsState> for FindNumberMsg {
     fn apply(self, state: std::rc::Rc<ChosenPositionsState>) -> std::rc::Rc<ChosenPositionsState> {
-        log::debug!("Clicked");
+        //log::debug!("Clicked");
         let fs = Dispatch::<FullGameState>::new().get();
 
         if let Some(path) = fs.found_words.words.get(&self.number) {
@@ -123,7 +123,7 @@ impl Reducer<ChosenPositionsState> for FindNumberMsg {
                     .solve(fs.game.board.clone())
                     .find(|x| x.result == self.number)
                 {
-                    log::debug!("Cheating Path found");
+                    //log::debug!("Cheating Path found");
                     return ChosenPositionsState {
                         positions: solution.path,
                     }
@@ -228,7 +228,7 @@ impl Reducer<InputState> for InputMsg {
         if self == InputMsg::None {
             return state;
         }
-        log::debug!("{self:?}");
+        //log::debug!("{self:?}");
         match self {
             InputMsg::Down { coordinate } => {
                 //log::debug!("Input down {}", coordinate);

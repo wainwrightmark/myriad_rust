@@ -25,6 +25,8 @@ pub fn more_tab_header(properties: &MoreTabHeaderProperties) -> Html {
     let index = properties.index;
     let selected_tab_state = use_store_value::<SelectedTabState>();
 
+    let found_count = use_selector(|x: &FullGameState | x.found_words.words.len());
+
     let onclick = Dispatch::new().apply_callback(move |_| TabSelectedMsg { index });
 
     let key = format!("found_words_tab_header{index}");
@@ -40,10 +42,11 @@ pub fn more_tab_header(properties: &MoreTabHeaderProperties) -> Html {
         + (index as f32 * (TAB_HEADER_WIDTH + TAB_HEADER_MARGIN));
     let y = (game_size.square_length() * 3.0) + TAB_HEADER_TOP_MARGIN + INFO_BAR_HEIGHT ;
 
+
+
     let class = classes!("tab-header", selected);
     let style = format!(
-        "
-        transform: translate({x}px, {y}px);",
+        "transform: translate({x}px, {y}px); background: linear-gradient(to right, green {found_count}%, lightgrey {found_count}%, lightgrey);",
     );
 
     html!(
