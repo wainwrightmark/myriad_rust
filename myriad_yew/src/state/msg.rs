@@ -2,6 +2,7 @@ use crate::state::prelude::*;
 use crate::web::prelude::*;
 use myriad::{parser, prelude::*};
 use std::rc::Rc;
+use web_sys::window;
 use yewdux::prelude::*;
 
 pub struct LoadGameMessage {
@@ -10,8 +11,12 @@ pub struct LoadGameMessage {
 
 impl Reducer<FullGameState> for LoadGameMessage {
     fn apply(self, previous: Rc<FullGameState>) -> Rc<FullGameState> {
-
-        if previous.game.as_ref() == &self.game{
+        log::debug!(
+            "Loading game. New Game '{}'. Old Game '{}'",
+            self.game.board.to_single_string(),
+            previous.game.board.to_single_string()
+        );
+        if previous.game.board == self.game.board {
             return previous;
         }
 
@@ -34,8 +39,6 @@ impl Reducer<FullGameState> for LoadGameMessage {
             found_words: previous.found_words.words.clone(),
         });
 
-
-
         FullGameState {
             game: self.game.into(),
             found_words: Rc::new(FoundWordsTracker {
@@ -47,40 +50,61 @@ impl Reducer<FullGameState> for LoadGameMessage {
     }
 }
 
-pub struct NewGameMsg {
-    pub today: bool,
-}
+pub fn move_to_new_game(for_today: bool) -> bool {
+    let previous: Rc<FullGameState> = Dispatch::new().get();
+    if for_today && previous.game.date == Some(Game::get_today_date()) {
+        return false;
+    }
 
-impl Reducer<FullGameState> for NewGameMsg {
-    fn apply(self, previous: Rc<FullGameState>) -> Rc<FullGameState> {
-        if self.today && previous.game.date == Some(Game::get_today_date()) {
-            return previous;
-        }
+    Dispatch::<RecentWordState>::new().reduce_mut(|s| s.recent_words.clear());
+    Dispatch::<ChosenPositionsState>::new().reduce_mut(|s| s.positions.clear());
 
-        Dispatch::<RecentWordState>::new().reduce_mut(|s| s.recent_words.clear());
-        Dispatch::<ChosenPositionsState>::new().reduce_mut(|s| s.positions.clear());
+    Dispatch::<HistoryState>::new().apply(SaveGameMessage {
+        game: previous.game.as_ref().clone(),
+        found_words: previous.found_words.words.clone(),
+    });
 
-        Dispatch::<HistoryState>::new().apply(SaveGameMessage {
-            game: previous.game.as_ref().clone(),
-            found_words: previous.found_words.words.clone(),
-        });
+    let game = if for_today {
+        Game::create_for_today()
+    } else {
+        Game::create_random()
+    };
 
-        let game = if self.today {
-            Game::create_for_today()
+    if let Some(window) = window() {
+        let search = game.board.to_single_string();
+
+        if let Err(e) = window
+            .location()
+            .set_search(format!("game={search}").as_str())
+        {
+            log::error!("{e:?}");
+            return false;
         } else {
-            Game::create_random()
-        };
-
-        FullGameState {
-            game: game.into(),
-            ..Default::default()
+            return true;
         }
-        .into()
+    } else {
+        log::warn!("Could not get Window");
+        return false;
     }
 }
 
+// pub struct NewGameMsg {
+//     pub today: bool,
+// }
+
+// impl Reducer<FullGameState> for NewGameMsg {
+//     fn apply(self, previous: Rc<FullGameState>) -> Rc<FullGameState> {
+
+//         FullGameState {
+//             game: game.into(),
+//             ..Default::default()
+//         }
+//         .into()
+//     }
+// }
+
 pub struct OnCoordinatesSetMsg {
-    pub coordinates: ArrayVec<[Tile<GRID_COLUMNS, GRID_ROWS>;9]>,
+    pub coordinates: ArrayVec<[Tile<GRID_COLUMNS, GRID_ROWS>; 9]>,
 }
 
 fn get_emoji(i: i32) -> String {
@@ -141,7 +165,6 @@ impl Reducer<FullGameState> for OnCoordinatesSetMsg {
                         s.congratulations_dialog_type = Some(CongratsDialogType::OneHundred)
                     });
                 }
-
 
                 ns.into()
             } else {

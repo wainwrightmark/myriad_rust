@@ -1,6 +1,6 @@
 use crate::state::full_game_state::FullGameState;
 use crate::state::game_size::*;
-use crate::state::msg::*;
+use crate::state::msg;
 use crate::state::prelude::*;
 use crate::web::prelude::*;
 use yew::prelude::*;
@@ -17,8 +17,8 @@ pub struct GameButtonProperties {
 #[function_component(TodayGameButton)]
 pub fn todays_game_button(properties: &GameButtonProperties) -> Html {
     let (game_size, _) = use_store::<GameSize>();
-    let on_click: Option<Callback<MouseEvent>> =
-        Some(Dispatch::new().apply_callback(|_| NewGameMsg { today: true }));
+    let on_click: Option<Callback<MouseEvent>> = Some(Callback::<MouseEvent>::from(|_| {msg::move_to_new_game(true);}));
+        //Some(Dispatch::new().apply_callback(|_| NewGameMsg { today: true }));
 
     let (x, y) = game_size.get_found_word_position(
         properties.position_number,
@@ -32,8 +32,7 @@ pub fn todays_game_button(properties: &GameButtonProperties) -> Html {
 #[function_component(RandomGameButton)]
 pub fn random_game_button(properties: &GameButtonProperties) -> Html {
     let (game_size, _) = use_store::<GameSize>();
-    let on_click: Option<Callback<MouseEvent>> =
-        Some(Dispatch::new().apply_callback(|_| NewGameMsg { today: false }));
+    let on_click: Option<Callback<MouseEvent>> = Some(Callback::<MouseEvent>::from(|_| {msg::move_to_new_game(false);}));
 
     let (x, y) = game_size.get_found_word_position(
         properties.position_number,
