@@ -10,6 +10,11 @@ pub struct LoadGameMessage {
 
 impl Reducer<FullGameState> for LoadGameMessage {
     fn apply(self, previous: Rc<FullGameState>) -> Rc<FullGameState> {
+
+        if previous.game.as_ref() == &self.game{
+            return previous;
+        }
+
         let found_words = Dispatch::<HistoryState>::new()
             .get()
             .games
@@ -28,6 +33,8 @@ impl Reducer<FullGameState> for LoadGameMessage {
             game: previous.game.as_ref().clone(),
             found_words: previous.found_words.words.clone(),
         });
+
+
 
         FullGameState {
             game: self.game.into(),

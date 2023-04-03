@@ -68,8 +68,24 @@ impl Game {
             board,
             date: Some(date),
             solve_settings,
-            difficulties: difficulties.into()
+            difficulties: difficulties.into(),
         }
+    }
+
+    pub fn from_string(s: &str) -> Option<Self> {
+        let board = Board::<3, 3, 9>::try_create(s)?;
+        let solve_settings = SolveSettings::default();
+
+        let difficulties = Self::get_difficulties(solve_settings, &board);
+
+        let game = Self {
+            board,
+            date: None,
+            solve_settings,
+            difficulties: difficulties.into(),
+        };
+
+        Some(game)
     }
 
     pub fn create_random() -> Self {
@@ -96,7 +112,7 @@ impl Game {
             board,
             date: None,
             solve_settings,
-            difficulties: difficulties.into()
+            difficulties: difficulties.into(),
         }
     }
 
@@ -126,18 +142,6 @@ impl Game {
 
         difficulties
     }
-
-    // fn create_challenge_words(
-    //     solve_settings: SolveSettings,
-    //     board: &Board<GRID_COLUMNS, GRID_ROWS, 9>,
-    // ) -> Vec<i32> {
-    //     solve_settings
-    //         .solve(board.clone())
-    //         .sorted_by(|a, b| b.path.len().cmp(&a.path.len()))
-    //         .take(CHALLENGE_WORDS)
-    //         .map(|f| f.result)
-    //         .collect_vec()
-    // }
 }
 
 impl Default for Game {
