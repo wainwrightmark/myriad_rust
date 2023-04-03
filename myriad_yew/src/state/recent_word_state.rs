@@ -46,6 +46,11 @@ impl RecentWordState {
         word_type: FoundWordType,
         coordinate: Tile<GRID_COLUMNS, GRID_ROWS>,
     ) -> Self {
+
+        if word_type != FoundWordType::Found{
+            return self.clone();
+        }
+
         let now = instant::Instant::now();
         let linger = word_type.linger_duration_ms();
 

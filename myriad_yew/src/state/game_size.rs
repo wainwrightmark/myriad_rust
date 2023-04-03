@@ -56,7 +56,7 @@ impl CenterStyle for Center {
 
 impl GameSize {
     pub fn board_length(&self) -> f32 {
-        self.width.max(self.height / 2.0)
+        self.width.max(self.height * 8. / 13.0)
     }
 
     /// The length of one of the board squares

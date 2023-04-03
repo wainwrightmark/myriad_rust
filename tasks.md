@@ -16,8 +16,8 @@
 - [ ] Dark Mode
 - [ ] Landscape mode (device orientation)
 - [ ] Logging
-- [ ] Number box above FoundWords
-- [ ] Remove Challenge word
-- [ ] Word difficulty indicator
+- [x] Number box above FoundWords
+- [x] Remove Challenge word
+- [x] Word difficulty indicator
 
 - [ ] Multiplayer
