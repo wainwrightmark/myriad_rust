@@ -76,19 +76,14 @@ pub fn found_words_word(properties: &FoundWordProperties) -> Html {
         Some(Dispatch::new().apply_callback(move |_| InfoBarSetMessage(crate::state::info_bar_state::InfoBarState::Difficulty(difficulty))))
     };
 
-    let color = if properties.is_found {
-        "green"
-    } else {
-        "white"
-    };
 
     let text = format_number(number);
     let (game_size, _) = use_store::<GameSize>();
     let (x, y) = game_size.get_found_word_position(number, properties.selected_tab, false);
 
-    let style = format!(" transform: translate({x}px, {y}px); height: {FOUND_WORD_HEIGHT}px; width: {FOUND_WORD_WIDTH}px;  background-color: {color};");
+    let style = format!(" transform: translate({x}px, {y}px); height: {FOUND_WORD_HEIGHT}px; width: {FOUND_WORD_WIDTH}px;");
 
-    let class = classes!("found-word", "found-word-button", "found-number");
+    let class = classes!("found-word", "found-word-button", "found-number", properties.is_found.then(||Some("found-word-complete")));
     html!(
         <button {key} {style} {class} onclick={on_click}>
             {text.clone()}

@@ -115,9 +115,9 @@ impl RecentWord {
 
     pub fn get_color(&self) -> String {
         match self.word_type {
-            FoundWordType::Found => "Green".to_string(),
-            FoundWordType::PreviouslyFound => "Blue".to_string(),
-            FoundWordType::NotInRange => "Orange".to_string(),
+            FoundWordType::Found => "var(--recent-word-found)".to_string(),
+            FoundWordType::PreviouslyFound => "var(--recent-word-previous)".to_string(),
+            FoundWordType::NotInRange => "var(--recent-word-invalid)".to_string(),
         }
     }
 }

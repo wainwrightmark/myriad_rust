@@ -26,11 +26,11 @@ impl InfoBarState {
 
     pub fn text_color(&self)-> &'static str{
         match self{
-            InfoBarState::None => "black",
-            InfoBarState::ValidNumber(_) => "blue",
-            InfoBarState::InvalidNumber(_) => "orange",
-            InfoBarState::Equation(_) => "orange",
-            InfoBarState::Difficulty(_) => "black",
+            InfoBarState::None => "var(--infobar-none)",
+            InfoBarState::ValidNumber(_) => "var(--infobar-valid)",
+            InfoBarState::InvalidNumber(_) => "var(--infobar-invalid)",
+            InfoBarState::Equation(_) => "var(--infobar-equation)",
+            InfoBarState::Difficulty(_) => "var(--infobar-difficulty)",
         }
     }
 

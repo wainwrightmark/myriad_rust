@@ -24,10 +24,10 @@ impl CircleType {
 
     pub fn get_color(&self) -> &str {
         match self {
-            CircleType::Disabled => "grey",
-            CircleType::LastPosition => "blue",
-            CircleType::IntermediatePosition { next: _ } => "green",
-            CircleType::LegalMove => "black",
+            CircleType::Disabled => "var(--circle-disabled)",
+            CircleType::LastPosition => "var(--circle-last)",
+            CircleType::IntermediatePosition { next: _ } => "var(--circle-intermediate)",
+            CircleType::LegalMove => "var(--circle-legal-move)",
         }
     }
 }

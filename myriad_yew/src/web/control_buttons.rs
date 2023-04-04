@@ -63,7 +63,7 @@ pub fn score_counter(properties: &ScoreCounterProperties) -> Html {
 
     let (found,total) = *use_selector(|state: &FullGameState| state.get_found_count());
     let found_pc = found * 100 / total;
-    let gradient = format!("background: linear-gradient(to right, green {found_pc}%, lightgrey {found_pc}%, lightgrey);");
+    let gradient = format!("background: linear-gradient(to right, var(--progress) {found_pc}%, var(--progress-blank) {found_pc}%, var(--progress-blank));");
 
     let width = format!("{}", FOUND_WORD_WIDTH * properties.width);
     let height = format!("{FOUND_WORD_HEIGHT}");

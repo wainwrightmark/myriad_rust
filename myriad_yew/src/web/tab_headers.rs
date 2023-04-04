@@ -25,7 +25,7 @@ pub fn more_tab_header(properties: &MoreTabHeaderProperties) -> Html {
     let index = properties.index;
     let selected_tab_state = use_store_value::<SelectedTabState>();
 
-    let  (found, total)  = *use_selector(|x: &FullGameState | x.get_found_count());
+    let (found, total) = *use_selector(|x: &FullGameState| x.get_found_count());
 
     let onclick = Dispatch::new().apply_callback(move |_| TabSelectedMsg { index });
 
@@ -38,15 +38,25 @@ pub fn more_tab_header(properties: &MoreTabHeaderProperties) -> Html {
         None
     };
 
+    let background_color = if selected_tab_state.index == index {
+        "var(--inner-background)"
+    } else {
+        if selected_tab_state.locked {
+            "var(--tab-background-locked-out)"
+        } else {
+            "var(--inner-background)"
+        }
+    };
+
     let x = game_size.get_tab_header_padding()
         + (index as f32 * (TAB_HEADER_WIDTH + TAB_HEADER_MARGIN));
-    let y = (game_size.square_length() * 3.0) + TAB_HEADER_TOP_MARGIN + INFO_BAR_HEIGHT ;
+    let y = (game_size.square_length() * 3.0) + TAB_HEADER_TOP_MARGIN + INFO_BAR_HEIGHT;
 
     let found_pc = found * 100 / total;
 
     let class = classes!("tab-header", selected);
     let style = format!(
-        "transform: translate({x}px, {y}px); background: linear-gradient(to right, green {found_pc}%, lightgrey {found_pc}%, lightgrey);",
+        "transform: translate({x}px, {y}px); background: linear-gradient(to right, var(--progress) {found_pc}%, {background_color} {found_pc}%, {background_color});",
     );
 
     html!(
