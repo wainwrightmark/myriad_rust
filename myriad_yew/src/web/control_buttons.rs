@@ -17,8 +17,10 @@ pub struct GameButtonProperties {
 #[function_component(TodayGameButton)]
 pub fn todays_game_button(properties: &GameButtonProperties) -> Html {
     let (game_size, _) = use_store::<GameSize>();
-    let on_click: Option<Callback<MouseEvent>> = Some(Callback::<MouseEvent>::from(|_| {msg::move_to_new_game(true);}));
-        //Some(Dispatch::new().apply_callback(|_| NewGameMsg { today: true }));
+    let on_click: Option<Callback<MouseEvent>> = Some(Callback::<MouseEvent>::from(|_| {
+        msg::move_to_new_game(true);
+    }));
+    //Some(Dispatch::new().apply_callback(|_| NewGameMsg { today: true }));
 
     let (x, y) = game_size.get_found_word_position(
         properties.position_number,
@@ -26,13 +28,15 @@ pub fn todays_game_button(properties: &GameButtonProperties) -> Html {
         false,
     );
 
-    html!(<ButtonBox id={"today_game_button"} text={"Today's Game"} {x} {y} width_units={properties.width} color="white" {on_click} />)
+    html!(<ButtonBox id={"today_game_button"} text={"Today's Game"} {x} {y} width_units={properties.width}  {on_click} />)
 }
 
 #[function_component(RandomGameButton)]
 pub fn random_game_button(properties: &GameButtonProperties) -> Html {
     let (game_size, _) = use_store::<GameSize>();
-    let on_click: Option<Callback<MouseEvent>> = Some(Callback::<MouseEvent>::from(|_| {msg::move_to_new_game(false);}));
+    let on_click: Option<Callback<MouseEvent>> = Some(Callback::<MouseEvent>::from(|_| {
+        msg::move_to_new_game(false);
+    }));
 
     let (x, y) = game_size.get_found_word_position(
         properties.position_number,
@@ -40,7 +44,7 @@ pub fn random_game_button(properties: &GameButtonProperties) -> Html {
         false,
     );
 
-    html!(<ButtonBox id={"random_game_button"} text={"Random Game"} {x} {y} width_units={properties.width} color="white" {on_click} />)
+    html!(<ButtonBox id={"random_game_button"} text={"Random Game"} {x} {y} width_units={properties.width}  {on_click} />)
 }
 
 #[derive(PartialEq, Properties)]
@@ -61,7 +65,7 @@ pub fn score_counter(properties: &ScoreCounterProperties) -> Html {
         false,
     );
 
-    let (found,total) = *use_selector(|state: &FullGameState| state.get_found_count());
+    let (found, total) = *use_selector(|state: &FullGameState| state.get_found_count());
     let found_pc = found * 100 / total;
     let gradient = format!("background: linear-gradient(to right, var(--progress) {found_pc}%, var(--progress-blank) {found_pc}%, var(--progress-blank));");
 
@@ -96,7 +100,7 @@ pub fn rotate_button(properties: &GameButtonProperties) -> Html {
         false,
     );
 
-    html!(<ButtonBox id={"rotate_button"} text={"⟳"} {x} {y} width_units={properties.width} color="white" {on_click} />)
+    html!(<ButtonBox id={"rotate_button"} text={"⟳"} {x} {y} width_units={properties.width}  {on_click} />)
 }
 
 #[function_component(FlipButton)]
@@ -114,7 +118,7 @@ pub fn flip_button(properties: &GameButtonProperties) -> Html {
         false,
     );
 
-    html!(<ButtonBox id={"flip_button"} text={"⬌"} {x} {y} width_units={properties.width} color="white" {on_click} />)
+    html!(<ButtonBox id={"flip_button"} text={"⬌"} {x} {y} width_units={properties.width}  {on_click} />)
 }
 
 #[function_component(HistoryButton)]
@@ -131,7 +135,7 @@ pub fn history_button(properties: &GameButtonProperties) -> Html {
         false,
     );
 
-    html!(<ButtonBox id={"history_button"} text={"H"} {x} {y} width_units={properties.width} color="white" {on_click} />)
+    html!(<ButtonBox id={"history_button"} text={"H"} {x} {y} width_units={properties.width}  {on_click} />)
 }
 
 // #[function_component(WainwrongButton)]
@@ -196,7 +200,6 @@ pub fn history_button(properties: &GameButtonProperties) -> Html {
 pub struct ButtonBoxProperties {
     pub id: String,
     pub text: AttrValue,
-    pub color: AttrValue,
     pub x: f32,
     pub y: f32,
     pub width_units: f32,
@@ -209,8 +212,7 @@ fn button_box(properties: &ButtonBoxProperties) -> Html {
     let y = properties.y;
     let width = format!("{}", FOUND_WORD_WIDTH * properties.width_units);
     let height = format!("{FOUND_WORD_HEIGHT}");
-    let color = &properties.color;
-    let style = format!("position:absolute; transform: translate({x}px, {y}px); height: {height}px; width: {width}px; border-radius:5px; background-color: {color};");
+    let style = format!("position:absolute; transform: translate({x}px, {y}px); height: {height}px; width: {width}px; border-radius:5px;");
 
     let class = classes!(
         "found-word",
