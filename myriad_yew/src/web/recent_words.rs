@@ -21,7 +21,7 @@ pub fn recent_words() -> Html {
             let mut start_location = rot_flip
                 .get_location(&word.coordinate, game_size.as_ref());
 
-            if word.coordinate.col() == 2{
+            if word.coordinate.x() == 2{
                 start_location.x *= 0.8; //little hack to prevent large numbers from being offscreen
             }
 

@@ -216,8 +216,8 @@ fn get_line_position(
     let straight_scale_x: f32 = square_size / 4.5 / CROSSHAIR_LENGTH;
     let diagonal_scale_x: f32 = straight_scale_x * 1.43;
 
-    let x_dir: f32 = f32::from(c2a.col()) - f32::from(c1a.col());
-    let y_dir: f32 = f32::from(c2a.row()) - f32::from(c1a.row());
+    let x_dir: f32 = f32::from(c2a.x()) - f32::from(c1a.x());
+    let y_dir: f32 = f32::from(c2a.y()) - f32::from(c1a.y());
 
     let x = (x_dir * HALF_CROSSHAIR_LENGTH * diagonal_scale_x) - (x_dir * HALF_STOKE_WIDTH)
         + (x_dir / 4.0 * f32::from(index) * square_size)
