@@ -1,26 +1,78 @@
+:root{
+
+  --outer-background: #a1a9b0;
+  --inner-background: #f7f5f0;
+
+  --white: #f7f5f0;
+  --green: #27c650;
+  --black: #1f1b20;
+  --blue: #787ff6;
+  --orange: #e46e0f;
+  --grey: #a1a9b0;
+  --red: #e2102b;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root{
+    --inner-background:#250687;
+    --outer-background:  #1f1b20;
+    --white: #1f1b20;
+    --black: #f7f5f0;
+
+  }
+
+}
+
+:root{
+  --circle-border: var(--black);
+  --circle-text: var(--black);
+  --tab-border-color: var(--black);
+  --circle-disabled-border: var(--red);
+  --tab-background-locked-out: var(--grey);
+  --tab-background-complete: var(--green);
+  --progress: var(--green);
+  --progress-blank: var(--inner-background);
+
+  --button-text: var(--black);
+  --history-border: var(--black);
+
+  --circle-disabled: var(--grey);
+  --circle-last: var(--blue);
+  --circle-intermediate: var(--green);
+  --circle-legal-move:var(--black);
+
+  --recent-word-found: var(--green);
+  --recent-word-previous: var(--blue);
+  --recent-word-invalid: var(--orange);
+
+  --found-word-found: var(--green);
+  --found-word-not-found: var(--white);
+
+  --infobar-none: var(--black);
+  --infobar-valid: var(--blue);
+  --infobar-invalid: var(--orange);
+  --infobar-equation: var(--orange);
+  --infobar-difficulty: var(--black);
+}
+
+
+
 body {
   touch-action: manipulation;
   overscroll-behavior-x: none;
   overscroll-behavior-y: none;
   padding: 0;
   margin: 0;
-  background-color: lightgray;
+  background-color: var(--outer-background);
 }
 
-body.dark {
-  --bg-color: #000;
-  --bg-secondary-color: #131316;
-  --font-color: #f5f5f5;
-  --color-grey: #ccc;
-  --color-darkGrey: #777;
-}
 
 .container {
   position: relative;
   max-width: 400px;
   margin: auto;
   overflow-x: hidden;
-  background-color: whitesmoke;
+  background-color: var(--inner-background);
   aspect-ratio: 8/13;
 }
 
@@ -58,7 +110,7 @@ dialog{
 
 .circle {
   transition: 3s cubic-bezier(0, 1.45, 0.72, 1.33);
-  border-color: black;
+  border-color: var(--circle-border);
   border-style: solid;
   border-width: 8px;
   border-radius: 50%;
@@ -80,7 +132,7 @@ dialog{
 
 .circle-disabled:hover {
   transform: scale(0.9);
-  background-color: rgba(255, 0, 0, 0.2);
+  background-color: var(--circle-disabled-border);
 
 }
 
@@ -90,7 +142,7 @@ dialog{
   pointer-events: none;
   margin: 0;
   text-align: center;
-  color: black;
+  color: var(--circle-text);
   font-family: 'Inconsolata', monospace;
   font-weight: 1000;
   height: 100%;
@@ -140,15 +192,9 @@ dialog{
   }
 }
 
-
-
-
-
 /*
 Tab Header
 */
-
-
 .tab-header{
   height: 50px;
   width: 50px;
@@ -163,7 +209,7 @@ Tab Header
   font-size: 2.5em;
   user-select: none;
   border-width: 1px;
-  border-color: black;
+  border-color: var(--tab-border-color);
   border-style: solid;
 }
 
@@ -173,12 +219,12 @@ Tab Header
 }
 
 .locked-out-tab{
-  background-color: gray;
+  background-color: var(--tab-background-locked-out);
   opacity: 50%;
 }
 
 .complete-tab{
-  background-color: green;
+  background-color: var(--tab-background-complete);
 }
 
 
@@ -194,8 +240,13 @@ Found Word
   font-family: 'Inconsolata', monospace;
   width: 30px;
   height: 30px;
+  background-color: var(--found-word-not-found);
+  color: var(--button-text);
 }
 
+.found-word-complete{
+  background-color: var(--found-word-found);
+}
 
 .button-text{
   line-height: 1.5;
@@ -203,20 +254,21 @@ Found Word
   font-weight: bold;
   text-anchor: middle;
   box-sizing: inherit;
-  color: black;
+  color: var(--button-text);
   background-color: transparent;
 }
 
 
 .history-progress{
-  background: green;
+  background: var(--progress);
   height: 100%;
 }
 
 .history-progress-box{
   height: 100%;
   width: 100%;
-  border: black solid;
+  border-color: var(--history-border);
+  border: solid;
 }
 
 /*
