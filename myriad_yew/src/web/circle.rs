@@ -25,9 +25,9 @@ pub fn circles() -> Html {
     let onpointerup = Dispatch::new().apply_callback(move |_: PointerEvent| InputMsg::Up {});
 
     html! {
-          <div id="circles" class="circles" {onpointerup} {ontouchmove}>
-    {circles}
-    </div>
+        <div id="circles" class="circles" {onpointerup} {ontouchmove}>
+            {circles}
+        </div>
 
       }
 }
@@ -90,9 +90,6 @@ fn circle(properties: &CircleProperties) -> Html {
     )
     .deref();
 
-    //let color = circle_type.get_color().to_string();
-    let cursor = circle_type.get_cursor().to_string();
-
     let onpointerdown = Dispatch::new().apply_callback(move |ev: PointerEvent| {
         ev.target()
             .unwrap()
@@ -121,7 +118,6 @@ fn circle(properties: &CircleProperties) -> Html {
     let key = format!("{coordinate}_key");
     let circle_id = format!("{coordinate}_bigCircle");
     let text_id = format!("{coordinate}_text");
-    let diameter = format!("{:2}", square_radius * 2.0 * CIRCLE_RATIO);
 
     let g_style = format!("left: {left}px; top: {top}px;");
 
@@ -135,35 +131,11 @@ fn circle(properties: &CircleProperties) -> Html {
     let circle_classes = classes!("circle", circle_type_class);
 
     html! {
+        <div class="square" {key} style={g_style}>
 
-        <div class="square"
-        {key}
-       style={g_style}
-       cursor={cursor}
-
-        >
-
-        <div
-        id={circle_id}
-        class={circle_classes}
-        {onpointerdown}
-        {onpointerup}
-        {onpointerenter}
-
-        style={
-            format!("width: {diameter}px;
-            height: {diameter}px;")
-        }
-        >
-        <p
-        id={text_id}
-        class="circle-text">
-        {text}
-      </p>
-      </div>
-
-
-
+            <div id={circle_id} class={circle_classes} {onpointerdown} {onpointerup} {onpointerenter}>
+                <p id={text_id} class="circle-text"> {text} </p>
+            </div>
         </div>
     }
 }

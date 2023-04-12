@@ -107,6 +107,9 @@ dialog{
   border-style: solid;
   border-width: 8px;
   border-radius: 50%;
+  width: var(--circle-diameter);
+  height: var(--circle-diameter);
+
 }
 
 .circle-legal{
@@ -140,7 +143,7 @@ dialog{
 }
 
 .circle-text {
-  font-size: 3em;
+  font-size: var(--circle-radius);
   user-select: none;
   pointer-events: none;
   margin: 0;
@@ -149,7 +152,7 @@ dialog{
   font-family: 'Inconsolata', monospace;
   font-weight: 1000;
   height: 100%;
-  line-height: 210%;
+  line-height: 200%;
   position: relative;
 
   z-index: 500;

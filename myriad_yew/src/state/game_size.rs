@@ -69,6 +69,16 @@ impl GameSize {
         self.board_length() / 6.
     }
 
+    fn circle_diameter(&self)-> f32{
+        self.square_length() * crate::web::prelude::CIRCLE_RATIO
+    }
+
+    pub fn style_string(&self)-> String{
+        let circle_diameter = self.circle_diameter();
+        let circle_radius = circle_diameter * 0.5;
+        format!("--circle-diameter: {circle_diameter}px; --circle-radius: {circle_radius}px")
+    }
+
     pub fn get_info_bar_position(&self) -> (f32, f32) {
         let y = self.board_length();
 

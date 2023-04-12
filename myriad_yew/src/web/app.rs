@@ -30,12 +30,14 @@ pub fn myriad_app() -> Html {
         );
     }
 
+    let size = GameSize{width: width as f32, height: height as f32};
+
     html! {
         <>
         <CongratsDialog/>
         <HistoryDialog/>
         <div class="outer-container">
-            <div class="container" ref={node}>
+            <div class="container" ref={node} style={size.style_string()}>
                 <Circles  />
                 <Crosshairs />
                 <InfoBar/>

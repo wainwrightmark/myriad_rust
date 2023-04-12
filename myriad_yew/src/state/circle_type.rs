@@ -10,16 +10,16 @@ pub enum CircleType {
     IntermediatePosition { next: Tile<GRID_COLUMNS, GRID_ROWS> },
 }
 
-impl CircleType {
-    pub fn get_cursor(&self) -> &str {
-        match self {
-            CircleType::Disabled => "not-allowed",
-            CircleType::LastPosition => "crosshair",
-            CircleType::IntermediatePosition { next: _ } => "pointer",
-            CircleType::LegalMove => "pointer",
-        }
-    }
-}
+// impl CircleType {
+//     pub fn get_cursor(&self) -> &str {
+//         match self {
+//             CircleType::Disabled => "not-allowed",
+//             CircleType::LastPosition => "crosshair",
+//             CircleType::IntermediatePosition { next: _ } => "pointer",
+//             CircleType::LegalMove => "pointer",
+//         }
+//     }
+// }
 
 impl ChosenPositionsState {
     pub fn get_circle_type(
