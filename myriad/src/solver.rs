@@ -3,8 +3,11 @@ use crate::prelude::*;
 use geometrid::prelude::Tile;
 use itertools::Itertools;
 use serde::{Deserialize, Serialize};
+use std::{
+    collections::{HashSet, VecDeque},
+    num::NonZeroU8,
+};
 use tinyvec::ArrayVec;
-use std::{collections::{HashSet, VecDeque}, num::NonZeroU8};
 
 #[derive(PartialEq, Eq, Debug, Copy, Clone, Serialize, Deserialize)]
 pub struct SolveSettings {
@@ -39,15 +42,15 @@ impl Default for SolveSettings {
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct Path<const C: u8, const R: u8, const SIZE: usize>{
-    tiles: ArrayVec<[Tile<C, R>;SIZE]>,
-    used: TileSet16<C, R, SIZE>
+pub struct Path<const C: u8, const R: u8, const SIZE: usize> {
+    tiles: ArrayVec<[Tile<C, R>; SIZE]>,
+    used: TileSet16<C, R, SIZE>,
 }
 
 #[derive(PartialEq, Eq, Debug, Clone, Serialize, Deserialize)]
 pub struct FoundWord<const C: u8, const R: u8, const SIZE: usize> {
     pub result: i32,
-    pub path: ArrayVec<[Tile<C, R>;SIZE]>,
+    pub path: ArrayVec<[Tile<C, R>; SIZE]>,
 }
 
 impl<const C: u8, const R: u8, const SIZE: usize> std::fmt::Display for FoundWord<C, R, SIZE> {
@@ -56,14 +59,12 @@ impl<const C: u8, const R: u8, const SIZE: usize> std::fmt::Display for FoundWor
     }
 }
 
-impl FoundWord<3,3,9>{
-    pub fn get_difficulty(&self)-> Difficulty{
-        if self.path.len() >0 && self.path.len() <= 9{
+impl FoundWord<3, 3, 9> {
+    pub fn get_difficulty(&self) -> Difficulty {
+        if self.path.len() > 0 && self.path.len() <= 9 {
             Difficulty(NonZeroU8::new(self.path.len() as u8).unwrap())
-        }
-        else{
+        } else {
             panic!("Word has wrong path length to have difficulty");
-
         }
     }
 }
@@ -87,10 +88,7 @@ impl<const C: u8, const R: u8, const SIZE: usize> SolutionIter<C, R, SIZE> {
 
     fn add_to_queue(&mut self, path: Path<C, R, SIZE>) {
         if let Some(last) = path.tiles.last() {
-            for adjacent in last
-                .iter_adjacent()
-                .filter(|x| !path.used.get_bit(x))
-            {
+            for adjacent in last.iter_adjacent().filter(|x| !path.used.get_bit(x)) {
                 let mut new_path = path.clone();
                 new_path.tiles.push(adjacent);
                 new_path.used.set_bit(&adjacent, true);
@@ -98,8 +96,8 @@ impl<const C: u8, const R: u8, const SIZE: usize> SolutionIter<C, R, SIZE> {
             }
         } else {
             for tile in Tile::iter_by_row() {
-                let mut tiles: ArrayVec<[Tile<C, R>;SIZE]> = Default::default();
-                let mut used : TileSet16::<C, R, SIZE>= Default::default();
+                let mut tiles: ArrayVec<[Tile<C, R>; SIZE]> = Default::default();
+                let mut used: TileSet16<C, R, SIZE> = Default::default();
                 tiles.push(tile);
                 used.set_bit(&tile, true);
 

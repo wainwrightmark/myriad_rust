@@ -5,7 +5,7 @@ use web_sys::window;
 use yewdux::storage;
 use yewdux::{
     prelude::{init_listener, Listener},
-    store::{Store, Reducer},
+    store::{Reducer, Store},
 };
 
 fn update_window_dark_state(state: DarkModeState) -> Option<()> {
@@ -84,13 +84,14 @@ impl Listener for DarkModeListener {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct DarkModeNextMessage;
 
-impl Reducer<DarkModeState> for DarkModeNextMessage{
+impl Reducer<DarkModeState> for DarkModeNextMessage {
     fn apply(self, state: Rc<DarkModeState>) -> Rc<DarkModeState> {
         use DarkModeState::*;
-        match *state{
+        match *state {
             Auto => Light,
             Light => Dark,
             Dark => Auto,
-        }.into()
+        }
+        .into()
     }
 }

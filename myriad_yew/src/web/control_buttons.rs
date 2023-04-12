@@ -88,16 +88,15 @@ pub fn score_counter(properties: &ScoreCounterProperties) -> Html {
 }
 
 #[function_component(DarkModeButton)]
-pub fn dark_mode_button(properties: &GameButtonProperties)-> Html{
+pub fn dark_mode_button(properties: &GameButtonProperties) -> Html {
     use DarkModeState::*;
     let game_size = use_store_value::<GameSize>();
     let dark_mode_state = use_store_value::<DarkModeState>();
 
-    let text = match *dark_mode_state{
-        Auto=> "🌒",
-        Light=> "☀️",
-        Dark=> "🌑",
-
+    let text = match *dark_mode_state {
+        Auto => "🌒",
+        Light => "☀️",
+        Dark => "🌑",
     };
 
     let on_click: Option<Callback<MouseEvent>> =

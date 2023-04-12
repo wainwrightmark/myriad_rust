@@ -42,7 +42,7 @@ impl Listener for CPSListener {
 
         match parse_result {
             Ok(number) => {
-                if number >= 1 && number <= 100 {
+                if (1..=100).contains(&number) {
                     infobar_state = InfoBarState::ValidNumber(number);
                 } else {
                     infobar_state = InfoBarState::InvalidNumber(number);
@@ -88,7 +88,7 @@ impl ChosenPositionsState {
                 word: _,
                 coordinates,
             } => Self {
-                positions: coordinates.clone(),
+                positions: *coordinates,
             },
             MoveResult::IllegalMove => self,
         }
@@ -110,7 +110,7 @@ impl Reducer<ChosenPositionsState> for FindNumberMsg {
                 ChosenPositionsState::default().into()
             } else {
                 ChosenPositionsState {
-                    positions: path.path.clone(),
+                    positions: path.path,
                 }
                 .into()
             }
@@ -175,7 +175,7 @@ impl ChosenPositionsState {
 
         if state.positions.is_empty() || state.positions.last().unwrap().is_adjacent_to(&coordinate)
         {
-            let mut new_chosen_positions = state.positions.clone();
+            let mut new_chosen_positions = state.positions;
             new_chosen_positions.push(coordinate);
 
             let board = Dispatch::<FullGameState>::new().get().game.board.clone();
@@ -194,7 +194,7 @@ impl ChosenPositionsState {
             //log::debug!("Found word");
 
             Dispatch::new().apply(OnCoordinatesSetMsg {
-                coordinates: new_chosen_positions.clone(),
+                coordinates: new_chosen_positions,
             });
 
             return ChosenPositionsState {

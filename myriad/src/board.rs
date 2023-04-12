@@ -13,9 +13,7 @@ pub struct Board<const C: u8, const R: u8, const SIZE: usize>(pub TileMap<Rune, 
 
 static_assertions::assert_eq_size!(Board<3,3, 9>, [u8;9]);
 
-impl<const C: u8, const R: u8, const SIZE: usize> Index<Tile<C, R>>
-    for Board<C, R, SIZE>
-{
+impl<const C: u8, const R: u8, const SIZE: usize> Index<Tile<C, R>> for Board<C, R, SIZE> {
     type Output = Rune;
 
     fn index(&self, index: Tile<C, R>) -> &Self::Output {
@@ -23,9 +21,7 @@ impl<const C: u8, const R: u8, const SIZE: usize> Index<Tile<C, R>>
     }
 }
 
-impl<const C: u8, const R: u8, const SIZE: usize> IndexMut<Tile<C, R>>
-    for Board<C, R, SIZE>
-{
+impl<const C: u8, const R: u8, const SIZE: usize> IndexMut<Tile<C, R>> for Board<C, R, SIZE> {
     fn index_mut(&mut self, index: Tile<C, R>) -> &mut Self::Output {
         &mut self.0[index]
     }
@@ -144,7 +140,9 @@ impl<const L: u8, const SIZE: usize> Board<L, L, SIZE> {
 
     pub fn get_unique_string(&self) -> String {
         let mut options = QuarterTurns::iter()
-            .cartesian_product([FlipAxes::None, FlipAxes::Horizontal, FlipAxes::Horizontal].into_iter())
+            .cartesian_product(
+                [FlipAxes::None, FlipAxes::Horizontal, FlipAxes::Horizontal].into_iter(),
+            )
             .map(|(quarter_turns, axes)| {
                 Tile::<L, L>::iter_by_row()
                     .map(|c| c.rotate(quarter_turns))

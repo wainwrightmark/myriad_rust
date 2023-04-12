@@ -7,9 +7,7 @@ pub enum CircleType {
     Disabled,
     LegalMove,
     LastPosition,
-    IntermediatePosition {
-        next: Tile<GRID_COLUMNS, GRID_ROWS>,
-    },
+    IntermediatePosition { next: Tile<GRID_COLUMNS, GRID_ROWS> },
 }
 
 impl CircleType {

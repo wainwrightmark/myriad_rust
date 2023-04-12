@@ -15,33 +15,29 @@ pub struct FullGameState {
 }
 
 impl FullGameState {
-
-    pub fn get_found_count(&self)->(usize, usize){
+    pub fn get_found_count(&self) -> (usize, usize) {
         let found = self.found_words.words.len();
         let total = self.game.total_solutions;
         (found, total)
     }
 
-    pub fn is_tab_complete(&self, index: i32)-> bool{
-
+    pub fn is_tab_complete(&self, index: i32) -> bool {
         let range = ((index * GOALSIZE) + 1)..(((index + 1) * GOALSIZE) + 1);
 
-        for i in range{
-            if i <= 0{
+        for i in range {
+            if i <= 0 {
                 //log::info!("Tab {index} is complete (index < 0)");
                 return false;
             }
             let Some(diff) = self.game.difficulties.get((i as usize) - 1 ) else{continue;};
-            if diff.is_some(){
-                if !self.found_words.words.contains_key(&i){
-                    //log::info!("Tab {index} is not complete (word {i} not found)");
-                    return false;
-                }
+            if diff.is_some() && !self.found_words.words.contains_key(&i) {
+                //log::info!("Tab {index} is not complete (word {i} not found)");
+                return false;
             }
         }
 
         //log::info!("Tab {index} is complete");
-        return true;
+        true
     }
 }
 
@@ -59,7 +55,6 @@ pub struct Game {
 pub const CHALLENGE_WORDS: usize = 3;
 
 impl Game {
-
     pub fn get_today_date() -> NaiveDate {
         let js_today = js_sys::Date::new_0();
 
@@ -94,14 +89,14 @@ impl Game {
 
         //let challenge_words = Self::create_challenge_words(solve_settings, &board);
         let difficulties = Self::get_difficulties(solve_settings, &board);
-        let total_solutions = difficulties.iter().filter(|x|x.is_some()).count();
+        let total_solutions = difficulties.iter().filter(|x| x.is_some()).count();
 
         Game {
             board,
             date: Some(date),
             solve_settings,
             difficulties: difficulties.into(),
-            total_solutions
+            total_solutions,
         }
     }
 
@@ -110,7 +105,7 @@ impl Game {
         let solve_settings = SolveSettings::default();
 
         let difficulties = Self::get_difficulties(solve_settings, &board);
-        let total_solutions = difficulties.iter().filter(|x|x.is_some()).count();
+        let total_solutions = difficulties.iter().filter(|x| x.is_some()).count();
 
         let game = Self {
             board,
@@ -142,7 +137,7 @@ impl Game {
         log::debug!("Board '{:?}' generated in {:?}", board, diff);
 
         let difficulties = Self::get_difficulties(solve_settings, &board);
-        let total_solutions = difficulties.iter().filter(|x|x.is_some()).count();
+        let total_solutions = difficulties.iter().filter(|x| x.is_some()).count();
 
         Game {
             board,

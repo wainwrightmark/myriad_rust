@@ -6,9 +6,9 @@ mod crosshair;
 mod dialog;
 mod found_words;
 mod icons;
+mod info_bar;
 mod recent_words;
 mod tab_headers;
-mod info_bar;
 pub mod prelude {
 
     pub use crate::web::app::*;
@@ -19,9 +19,9 @@ pub mod prelude {
     pub use crate::web::dialog::*;
     pub use crate::web::found_words::*;
     pub use crate::web::icons::*;
+    pub use crate::web::info_bar::*;
     pub use crate::web::recent_words::*;
     pub use crate::web::tab_headers::*;
-    pub use crate::web::info_bar::*;
 
     pub fn format_number(num: i32) -> String {
         if num == 100 {

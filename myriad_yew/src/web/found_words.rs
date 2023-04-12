@@ -74,9 +74,12 @@ pub fn found_words_word(properties: &FoundWordProperties) -> Html {
     let on_click: Option<Callback<MouseEvent>> = if properties.is_found || cheat {
         Some(Dispatch::new().apply_callback(move |_| FindNumberMsg { number, cheat }))
     } else {
-        Some(Dispatch::new().apply_callback(move |_| InfoBarSetMessage(crate::state::info_bar_state::InfoBarState::Difficulty(difficulty))))
+        Some(Dispatch::new().apply_callback(move |_| {
+            InfoBarSetMessage(crate::state::info_bar_state::InfoBarState::Difficulty(
+                difficulty,
+            ))
+        }))
     };
-
 
     let text = format_number(number);
     let (game_size, _) = use_store::<GameSize>();
@@ -84,7 +87,12 @@ pub fn found_words_word(properties: &FoundWordProperties) -> Html {
 
     let style = format!(" transform: translate({x}px, {y}px); height: {FOUND_WORD_HEIGHT}px; width: {FOUND_WORD_WIDTH}px;");
 
-    let class = classes!("found-word", "found-word-button", "found-number", properties.is_found.then(||Some("found-word-complete")));
+    let class = classes!(
+        "found-word",
+        "found-word-button",
+        "found-number",
+        properties.is_found.then_some(Some("found-word-complete"))
+    );
     html!(
         <button {key} {style} {class} onclick={on_click}>
             {text.clone()}

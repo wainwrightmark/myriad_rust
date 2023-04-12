@@ -14,7 +14,6 @@ pub fn info_bar() -> Html {
     let line_height = state.line_height();
     let (x, y) = size.get_info_bar_position();
 
-
     html! {
         <div class="infobar" style={format!("transform: translate({x}px, {y}px); color: {color}; font-size: {font_size}; line-height: {line_height};")}>
         <span class="infobar-text">

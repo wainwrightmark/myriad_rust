@@ -106,11 +106,11 @@ pub fn crosshair(properties: &CrossHairProperties) -> Html {
     html!(
         <div key="crosshair" class={"crosshair-group"} >
 
-        <hr key="line1" class={line_classes} style={format!("{}", (l1 + top_left).get_transform(scale) )} />
-        <hr key="line2" class={line_classes} style={format!("{}", (l2 + top_left).get_transform(scale) ) }/>
+        <hr key="line1" class={line_classes} style={(l1 + top_left).get_transform(scale).to_string()} />
+        <hr key="line2" class={line_classes} style={(l2 + top_left).get_transform(scale).to_string() }/>
 
-        <hr key="line3" class={line_classes} style={format!("{}", (l3 + top_left).get_transform(scale) )} />
-        <hr key="line4" class={line_classes} style={format!("{}", (l4 + top_left).get_transform(scale) )} />
+        <hr key="line3" class={line_classes} style={(l3 + top_left).get_transform(scale).to_string()} />
+        <hr key="line4" class={line_classes} style={(l4 + top_left).get_transform(scale).to_string()} />
         </div>
     )
 }

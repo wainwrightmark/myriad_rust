@@ -8,7 +8,10 @@ use yewdux::prelude::*;
 #[derive(PartialEq, Eq, Store, Clone, Default, Serialize, Deserialize)]
 #[store(storage = "local")] // can also be "session"
 pub struct HistoryState {
-    pub games: Vec<(Game, BTreeMap<i32, FoundWord<GRID_COLUMNS, GRID_ROWS, GRID_SIZE>>)>,
+    pub games: Vec<(
+        Game,
+        BTreeMap<i32, FoundWord<GRID_COLUMNS, GRID_ROWS, GRID_SIZE>>,
+    )>,
 }
 
 pub struct SaveGameMessage {

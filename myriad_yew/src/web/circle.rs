@@ -70,7 +70,7 @@ pub struct CircleProperties {
 fn circle(properties: &CircleProperties) -> Html {
     let coordinate = properties.coordinate;
 
-    let game_size = use_store::<GameSize>().0.as_ref().clone();
+    let game_size = *use_store::<GameSize>().0.as_ref();
     let location = use_selector_with_deps(
         |state: &RotFlipState, (co, size)| state.get_location(co, size),
         (coordinate, game_size),
@@ -79,7 +79,7 @@ fn circle(properties: &CircleProperties) -> Html {
     let board = use_selector(|state: &FullGameState| state.game.board.clone());
 
     let circle_type = *use_selector_with_deps(
-        |state: &ChosenPositionsState, (co, board)| state.get_circle_type(co, &board),
+        |state: &ChosenPositionsState, (co, board)| state.get_circle_type(co, board),
         (coordinate, board),
     )
     .deref();

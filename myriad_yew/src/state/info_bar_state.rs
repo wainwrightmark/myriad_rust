@@ -24,8 +24,8 @@ impl InfoBarState {
         }
     }
 
-    pub fn text_color(&self)-> &'static str{
-        match self{
+    pub fn text_color(&self) -> &'static str {
+        match self {
             InfoBarState::None => "var(--infobar-none)",
             InfoBarState::ValidNumber(_) => "var(--infobar-valid)",
             InfoBarState::InvalidNumber(_) => "var(--infobar-invalid)",
@@ -34,31 +34,29 @@ impl InfoBarState {
         }
     }
 
-    pub fn font_size(&self)-> &'static str{
-        match self{
-
+    pub fn font_size(&self) -> &'static str {
+        match self {
             InfoBarState::Difficulty(d) => {
-                if d.0.get() <= 4{
+                if d.0.get() <= 4 {
                     "xxx-large"
-                }else{
+                } else {
                     "x-large"
                 }
-            },
-            _=> "xxx-large",
+            }
+            _ => "xxx-large",
         }
     }
 
-    pub fn line_height(&self)-> &'static str{
-        match self{
-
+    pub fn line_height(&self) -> &'static str {
+        match self {
             InfoBarState::Difficulty(d) => {
-                if d.0.get() <= 4{
+                if d.0.get() <= 4 {
                     "2"
-                }else{
+                } else {
                     "4"
                 }
-            },
-            _=> "2",
+            }
+            _ => "2",
         }
     }
 }
@@ -73,4 +71,3 @@ impl Reducer<InfoBarState> for InfoBarSetMessage {
         state
     }
 }
-

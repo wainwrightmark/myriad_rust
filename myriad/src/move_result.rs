@@ -13,12 +13,12 @@ pub enum MoveResult<const C: u8, const R: u8, const SIZE: usize> {
     },
     WordIncomplete {
         word: String,
-        coordinates: ArrayVec<[Tile<C, R>;9]>,
+        coordinates: ArrayVec<[Tile<C, R>; 9]>,
     },
     WordAbandoned,
     MoveRetraced {
         word: String,
-        coordinates: ArrayVec<[Tile<C, R>;9]>,
+        coordinates: ArrayVec<[Tile<C, R>; 9]>,
     },
     IllegalMove,
 }

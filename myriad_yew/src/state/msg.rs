@@ -78,16 +78,15 @@ pub fn move_to_new_game(for_today: bool) -> bool {
             .set_search(format!("game={search}").as_str())
         {
             log::error!("{e:?}");
-            return false;
+            false
         } else {
-            return true;
+            true
         }
     } else {
         log::warn!("Could not get Window");
-        return false;
+        false
     }
 }
-
 
 pub struct OnCoordinatesSetMsg {
     pub coordinates: ArrayVec<[Tile<GRID_COLUMNS, GRID_ROWS>; 9]>,
@@ -123,7 +122,7 @@ impl Reducer<FullGameState> for OnCoordinatesSetMsg {
         if let Ok(num) = parse_result {
             let found_word = FoundWord {
                 result: num,
-                path: coordinates.clone(),
+                path: coordinates,
             };
             let word_type = if state.game.solve_settings.allow(num) {
                 if state.found_words.has_word(&found_word) {
