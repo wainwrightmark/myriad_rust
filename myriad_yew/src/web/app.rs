@@ -22,7 +22,9 @@ pub fn myriad_app() -> Html {
 
     if width == 0 && height == 0 {
         return html!(
+            <div class="outer-container">
             <div class="container" ref={node}/>
+            </div>
         );
     }
 
@@ -30,17 +32,19 @@ pub fn myriad_app() -> Html {
         <>
         <CongratsDialog/>
         <HistoryDialog/>
-        <div class="container" ref={node}>
-        <Circles  />
-        <Crosshairs />
-        <InfoBar/>
-        <TabHeaders />
-        <AllFoundWords {cheat} />
+        <div class="outer-container">
+            <div class="container" ref={node}>
+                <Circles  />
+                <Crosshairs />
+                <InfoBar/>
+                <TabHeaders />
+                <AllFoundWords {cheat} />
 
-        <RecentWords />
+                <RecentWords />
 
-        <canvas id="confetti-canvas" class="confetti-canvas"></canvas>
+                <canvas id="confetti-canvas" class="confetti-canvas"></canvas>
 
+            </div>
         </div>
         </>
     }

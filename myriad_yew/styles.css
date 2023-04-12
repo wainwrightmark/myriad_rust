@@ -48,14 +48,22 @@ body {
   background-color: var(--outer-background);
 }
 
+.outer-container{
+  position: relative;
+  max-width: 600px;
+  height: 100vh;
+  margin: auto;
+  overflow-x: hidden;
+  background-color: var(--inner-background);
+}
 
 .container {
   position: relative;
   max-width: 400px;
+  height: 100vh;
   margin: auto;
-  overflow-x: hidden;
   background-color: var(--inner-background);
-  aspect-ratio: 8/13;
+
 }
 
 dialog{

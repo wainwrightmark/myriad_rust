@@ -13,11 +13,13 @@
 - [ ] Idle animations
 - [x] Share on facebook
 - [x] Animations on IOS
-- [ ] Dark Mode
+- [x] Dark Mode
 - [ ] Landscape mode (device orientation)
 - [ ] Logging
 - [x] Number box above FoundWords
 - [x] Remove Challenge word
 - [x] Word difficulty indicator
+- [ ] Share button
+- [ ] Found word count dependent on height of screen
 
 - [ ] Multiplayer
