@@ -39,12 +39,12 @@ pub fn more_tab_header(properties: &MoreTabHeaderProperties) -> Html {
     };
 
     let background_color = if selected_tab_state.index == index {
-        "var(--inner-background)"
+        "var(--tab-background-selected)"
     } else {
         if selected_tab_state.locked {
             "var(--tab-background-locked-out)"
         } else {
-            "var(--inner-background)"
+            "var(--tab-background-default)"
         }
     };
 

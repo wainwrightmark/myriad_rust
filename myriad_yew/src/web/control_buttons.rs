@@ -1,6 +1,8 @@
 use crate::state::full_game_state::FullGameState;
 use crate::state::game_size::*;
 use crate::state::msg;
+use crate::state::preferences_state::DarkModeNextMessage;
+use crate::state::preferences_state::DarkModeState;
 use crate::state::prelude::*;
 use crate::web::prelude::*;
 use yew::prelude::*;
@@ -16,7 +18,7 @@ pub struct GameButtonProperties {
 
 #[function_component(TodayGameButton)]
 pub fn todays_game_button(properties: &GameButtonProperties) -> Html {
-    let (game_size, _) = use_store::<GameSize>();
+    let game_size = use_store_value::<GameSize>();
     let on_click: Option<Callback<MouseEvent>> = Some(Callback::<MouseEvent>::from(|_| {
         msg::move_to_new_game(true);
     }));
@@ -33,7 +35,7 @@ pub fn todays_game_button(properties: &GameButtonProperties) -> Html {
 
 #[function_component(RandomGameButton)]
 pub fn random_game_button(properties: &GameButtonProperties) -> Html {
-    let (game_size, _) = use_store::<GameSize>();
+    let game_size = use_store_value::<GameSize>();
     let on_click: Option<Callback<MouseEvent>> = Some(Callback::<MouseEvent>::from(|_| {
         msg::move_to_new_game(false);
     }));
@@ -58,7 +60,7 @@ pub struct ScoreCounterProperties {
 
 #[function_component(ScoreCounter)]
 pub fn score_counter(properties: &ScoreCounterProperties) -> Html {
-    let (game_size, _) = use_store::<GameSize>();
+    let game_size = use_store_value::<GameSize>();
     let (x, y) = game_size.get_found_word_position(
         properties.position_number,
         properties.selected_tab,
@@ -85,9 +87,34 @@ pub fn score_counter(properties: &ScoreCounterProperties) -> Html {
     )
 }
 
+#[function_component(DarkModeButton)]
+pub fn dark_mode_button(properties: &GameButtonProperties)-> Html{
+    use DarkModeState::*;
+    let game_size = use_store_value::<GameSize>();
+    let dark_mode_state = use_store_value::<DarkModeState>();
+
+    let text = match *dark_mode_state{
+        Auto=> "🌒",
+        Light=> "☀️",
+        Dark=> "🌑",
+
+    };
+
+    let on_click: Option<Callback<MouseEvent>> =
+        Some(Dispatch::new().apply_callback(|_| DarkModeNextMessage));
+
+    let (x, y) = game_size.get_found_word_position(
+        properties.position_number,
+        properties.selected_tab,
+        false,
+    );
+
+    html!(<ButtonBox id={"dark_mode_button"} {text} {x} {y} width_units={properties.width}  {on_click} />)
+}
+
 #[function_component(RotateButton)]
 pub fn rotate_button(properties: &GameButtonProperties) -> Html {
-    let (game_size, _) = use_store::<GameSize>();
+    let game_size = use_store_value::<GameSize>();
     let on_click: Option<Callback<MouseEvent>> =
         Some(Dispatch::new().apply_callback(|_| RotFlipMsg {
             rotate: myriad::prelude::QuarterTurns::One,
@@ -105,7 +132,7 @@ pub fn rotate_button(properties: &GameButtonProperties) -> Html {
 
 #[function_component(FlipButton)]
 pub fn flip_button(properties: &GameButtonProperties) -> Html {
-    let (game_size, _) = use_store::<GameSize>();
+    let game_size = use_store_value::<GameSize>();
     let on_click: Option<Callback<MouseEvent>> =
         Some(Dispatch::new().apply_callback(|_| RotFlipMsg {
             rotate: myriad::prelude::QuarterTurns::Zero,
@@ -123,7 +150,7 @@ pub fn flip_button(properties: &GameButtonProperties) -> Html {
 
 #[function_component(HistoryButton)]
 pub fn history_button(properties: &GameButtonProperties) -> Html {
-    let (game_size, _) = use_store::<GameSize>();
+    let game_size = use_store_value::<GameSize>();
     let on_click: Option<Callback<MouseEvent>> = Some(
         Dispatch::<DialogState>::new()
             .reduce_mut_callback(|s| s.history_dialog_type = Some(Default::default())),

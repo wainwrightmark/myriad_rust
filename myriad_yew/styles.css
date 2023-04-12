@@ -1,35 +1,10 @@
 :root{
-
-  --outer-background: #a1a9b0;
-  --inner-background: #f7f5f0;
-
-  --white: #f7f5f0;
-  --green: #27c650;
-  --black: #1f1b20;
-  --blue: #787ff6;
-  --orange: #e46e0f;
-  --grey: #a1a9b0;
-  --red: #e2102b;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root{
-    --inner-background:#250687;
-    --outer-background:  #1f1b20;
-    --white: #1f1b20;
-    --black: #f7f5f0;
-
-  }
-
-}
-
-:root{
   --circle-border: var(--black);
   --circle-text: var(--black);
-  --tab-border-color: var(--black);
+
   --circle-disabled-border: var(--red);
-  --tab-background-locked-out: var(--grey);
-  --tab-background-complete: var(--green);
+
+
   --progress: var(--green);
   --progress-blank: var(--inner-background);
 
@@ -53,6 +28,13 @@
   --infobar-invalid: var(--orange);
   --infobar-equation: var(--orange);
   --infobar-difficulty: var(--black);
+
+  --tab-border-color: var(--black);
+  --tab-background-locked-out: var(--grey);
+  --tab-background-complete: var(--green);
+  --tab-background-default: var(--outer-background);
+  --tab-background-selected: var(--blue);
+
 }
 
 
@@ -211,11 +193,13 @@ Tab Header
   border-width: 1px;
   border-color: var(--tab-border-color);
   border-style: solid;
+  background-color: var(--tab-background-default);
 }
 
 .selected-tab{
   border-width: 3px;
   margin:0;
+  background-color: var(--tab-background-selected);
 }
 
 .locked-out-tab{

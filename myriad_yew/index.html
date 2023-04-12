@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="utf-8" />
+    <meta name="color-scheme" content="light dark">
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no target-densitydpi=device-dpi"
@@ -64,16 +65,8 @@
     />
     <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/picnic"> -->
     <link data-trunk href="styles.css" rel="css" />
+    <link data-trunk href="dark.scss" rel="scss" />
   </head>
 
   <body></body>
 </html>
-
-<script>
-  if (
-    window.matchMedia &&
-    window.matchMedia("(prefers-color-scheme: dark)").matches
-  ) {
-    document.body.classList.add("dark");
-  }
-</script>

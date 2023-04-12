@@ -44,6 +44,7 @@ pub fn all_found_words(properties: &AllFoundWordsProperties) -> Html {
             <ScoreCounter {total_found} {selected_tab}  width={3.0} position_number={117}/>
             <FlipButton  {selected_tab}  width={1.0} position_number={109}/>
             <RotateButton  {selected_tab} width={1.0} position_number={108}/>
+            <DarkModeButton  {selected_tab} width={1.0} position_number={107}/>
             // <HistoryButton {selected_tab} {game_size} width={1.0} position_number={118}/>
             // <WainwrongButton {selected_tab} width={1.0} position_number={119}/>
             // <FacebookButton {selected_tab} width={1.0} position_number={116}/>
