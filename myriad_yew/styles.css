@@ -35,6 +35,9 @@
   --tab-background-default: var(--outer-background);
   --tab-background-selected: var(--blue);
 
+  --crosshair-width: 20.0px;
+  --crosshair-height: 7.2px;
+
 }
 
 
@@ -108,10 +111,20 @@ dialog{
 
 .circle-legal{
   cursor: pointer;
+  border-color: var(--circle-legal-move);
 }
 
 .circle-disabled{
   cursor: not-allowed;
+  border-color: var(--circle-disabled);
+}
+
+.circle-final{
+  border-color: var(--circle-last);
+}
+
+.circle-intermediate{
+  border-color: var(--circle-intermediate);
 }
 
 
@@ -281,15 +294,22 @@ Crosshairs
   position: absolute;
   z-index: 100;
   border-radius: 10%;
+  background-color: var(--circle-last);
+
+  width: var(--crosshair-width);
+  height: var(--crosshair-height);
+
 }
 
 .crosshair-extended {
   z-index: 200;
+  background-color: var(--circle-intermediate);
   /* border-radius: 0; */
 }
 
 .invisible{
   opacity: 0.0;
+  background-color: var(--circle-disabled);
 }
 
 

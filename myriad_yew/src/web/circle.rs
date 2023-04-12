@@ -90,7 +90,7 @@ fn circle(properties: &CircleProperties) -> Html {
     )
     .deref();
 
-    let color = circle_type.get_color().to_string();
+    //let color = circle_type.get_color().to_string();
     let cursor = circle_type.get_cursor().to_string();
 
     let onpointerdown = Dispatch::new().apply_callback(move |ev: PointerEvent| {
@@ -152,8 +152,7 @@ fn circle(properties: &CircleProperties) -> Html {
 
         style={
             format!("width: {diameter}px;
-            height: {diameter}px;
-            border-color: {color};")
+            height: {diameter}px;")
         }
         >
         <p

@@ -21,15 +21,6 @@ impl CircleType {
             CircleType::LegalMove => "pointer",
         }
     }
-
-    pub fn get_color(&self) -> &str {
-        match self {
-            CircleType::Disabled => "var(--circle-disabled)",
-            CircleType::LastPosition => "var(--circle-last)",
-            CircleType::IntermediatePosition { next: _ } => "var(--circle-intermediate)",
-            CircleType::LegalMove => "var(--circle-legal-move)",
-        }
-    }
 }
 
 impl ChosenPositionsState {

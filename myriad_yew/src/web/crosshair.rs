@@ -21,7 +21,7 @@ pub struct CrossHairProperties {
 const CROSSHAIR_LENGTH: f32 = 20.0;
 const HALF_CROSSHAIR_LENGTH: f32 = CROSSHAIR_LENGTH / 2.0;
 // const CROSSHAIR_INSET: f32 = 12.5;
-const STROKE_WIDTH: f32 = 7.2;
+//const STROKE_WIDTH: f32 = 7.2;
 const HALF_STOKE_WIDTH: f32 = 3.6;
 
 #[function_component(Crosshair)]
@@ -41,9 +41,6 @@ pub fn crosshair(properties: &CrossHairProperties) -> Html {
     let rot_flip = *use_store_value::<RotFlipState>().deref();
 
     let location = rot_flip.get_location(&coordinate, game_size.as_ref());
-    //let radius = properties.game_size.square_radius();
-
-    let color = circle_type.get_color();
 
     let line_classes = match circle_type {
         CircleType::Disabled => "crosshair invisible",
@@ -109,11 +106,11 @@ pub fn crosshair(properties: &CrossHairProperties) -> Html {
     html!(
         <div key="crosshair" class={"crosshair-group"} >
 
-        <hr key="line1" class={line_classes} style={format!("background-color: {color};  width: {CROSSHAIR_LENGTH}px; height:{STROKE_WIDTH}px; {}", (l1 + top_left).get_transform(scale) )} />
-        <hr key="line2" class={line_classes} style={format!("background-color: {color};  width: {CROSSHAIR_LENGTH}px; height:{STROKE_WIDTH}px; {}", (l2 + top_left).get_transform(scale) ) }/>
+        <hr key="line1" class={line_classes} style={format!("{}", (l1 + top_left).get_transform(scale) )} />
+        <hr key="line2" class={line_classes} style={format!("{}", (l2 + top_left).get_transform(scale) ) }/>
 
-        <hr key="line3" class={line_classes} style={format!("background-color: {color};  width: {CROSSHAIR_LENGTH}px; height:{STROKE_WIDTH}px; {}", (l3 + top_left).get_transform(scale) )} />
-        <hr key="line4" class={line_classes} style={format!("background-color: {color};  width: {CROSSHAIR_LENGTH}px; height:{STROKE_WIDTH}px; {}", (l4 + top_left).get_transform(scale) )} />
+        <hr key="line3" class={line_classes} style={format!("{}", (l3 + top_left).get_transform(scale) )} />
+        <hr key="line4" class={line_classes} style={format!("{}", (l4 + top_left).get_transform(scale) )} />
         </div>
     )
 }
