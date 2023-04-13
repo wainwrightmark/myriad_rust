@@ -1,5 +1,4 @@
 use crate::state::prelude::*;
-use crate::web::prelude::*;
 use yew::prelude::*;
 use yewdux::prelude::*;
 
@@ -70,34 +69,24 @@ pub fn history_row(properties: &HistoryRowProperties) -> Html {
 pub fn congrats_dialog() -> Html {
     let (state, dispatch) = use_store::<DialogState>();
 
-    let onclick = dispatch.reduce_mut_callback(|state| state.congratulations_dialog_type = None);
+    let on_ok = dispatch.reduce_mut_callback(|state| state.congratulations_dialog_type = None);
+    let on_share = dispatch.reduce_mut_callback(|state| {
+        state.congratulations_dialog_type = None;
+        crate::web::sharing::share();
+    });
 
     if let Some(dialog_type) = state.congratulations_dialog_type {
         let message: &str = match dialog_type {
             CongratsDialogType::OneHundred => {
                 "Well done, you got 💯!"
-                //quote = "I%20got%20%F0%9F%92%AF%20in%20myriad%21"
             }
         };
-
-        let link =
-            "https://www.facebook.com/sharer/sharer.php?u=wainwrightmark.github.io%2Fmyriad_rust";
-        html!(<dialog style="top: 25%" open={true}>
-        <p>{message}</p>
+        html!(
+            <dialog style="top: 25%" open={true}>
+                <p>{message}</p>
         <form>
-      <button formaction={link}>
-      
-      <svg data-license="From https://github.com/twbs/icons - Licensed under MIT" 
-        fill="currentColor" 
-        height="24" 
-        style="margin: 0.1em; display: initial;" 
-        viewBox="0 0 16 16" 
-        width="24" 
-        xmlns="http://www.w3.org/2000/svg">
-        <title>{"BootstrapFacebook"}</title>
-        <path d={FACEBOOK_ICON_PATH}></path></svg>
-      </button>
-      <button {onclick}>{"Ok"}</button>
+      <button onclick={on_ok}>{"Ok"}</button>
+      <button onclick={on_share}>{"Share"}</button>
     
     </form>
       </dialog>)

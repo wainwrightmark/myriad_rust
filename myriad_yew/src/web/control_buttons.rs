@@ -5,6 +5,7 @@ use crate::state::preferences_state::DarkModeNextMessage;
 use crate::state::preferences_state::DarkModeState;
 use crate::state::prelude::*;
 use crate::web::prelude::*;
+
 use yew::prelude::*;
 use yewdux::prelude::*;
 
@@ -145,6 +146,23 @@ pub fn flip_button(properties: &GameButtonProperties) -> Html {
     );
 
     html!(<ButtonBox id={"flip_button"} text={"⬌"} {x} {y} width_units={properties.width}  {on_click} />)
+}
+
+#[function_component(ShareButton)]
+pub fn share_button(properties: &GameButtonProperties) -> Html {
+    let game_size = use_store_value::<GameSize>();
+    let on_click: Callback<MouseEvent> = (|_: MouseEvent| {
+        crate::web::sharing::share();
+    })
+    .into();
+
+    let (x, y) = game_size.get_found_word_position(
+        properties.position_number,
+        properties.selected_tab,
+        false,
+    );
+
+    html!(<ButtonBox id={"share_button"} text={"⠪"} {x} {y} width_units={properties.width}  {on_click} />)
 }
 
 #[function_component(HistoryButton)]

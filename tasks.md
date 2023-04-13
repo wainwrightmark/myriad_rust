@@ -20,7 +20,7 @@
 - [x] Remove Challenge word
 - [x] Word difficulty indicator
 - [ ] Share button
-- [ ] Found word count dependent on height of screen
+- [ ] Found word group size dependent on height of screen
 - [ ] Improved difficulty indicator
 
 - [ ] Multiplayer

@@ -37,7 +37,9 @@ phf = { version = "0.11.1", features = ["macros"] }
 version = "0.3"
 features = [
     "HtmlInputElement",
-    "Document"
+    "Document",
+    "Navigator",
+    "ShareData"
 ]
 
 
@@ -48,8 +50,5 @@ codegen-units = 1
 lto = true
 opt-level = 3
 
-
-
 [dev-dependencies]
 ntest = "0.9"
-

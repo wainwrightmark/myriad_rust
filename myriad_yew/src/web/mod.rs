@@ -9,6 +9,7 @@ mod icons;
 mod info_bar;
 mod recent_words;
 mod tab_headers;
+pub mod sharing;
 pub mod prelude {
 
     pub use crate::web::app::*;

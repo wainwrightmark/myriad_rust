@@ -40,11 +40,18 @@ pub fn all_found_words(properties: &AllFoundWordsProperties) -> Html {
             {words}
 
             <TodayGameButton {selected_tab}  width={6.0} position_number={101}/>
+
+            <DarkModeButton  {selected_tab} width={1.0} position_number={107}/>
+            <RotateButton  {selected_tab} width={1.0} position_number={108}/>
+            <FlipButton  {selected_tab}  width={1.0} position_number={109}/>
+            <ShareButton {selected_tab} width={1.0} position_number={110} />
+
             <RandomGameButton {selected_tab}  width={6.0} position_number={111}/>
             <ScoreCounter {total_found} {selected_tab}  width={3.0} position_number={117}/>
-            <FlipButton  {selected_tab}  width={1.0} position_number={109}/>
-            <RotateButton  {selected_tab} width={1.0} position_number={108}/>
-            <DarkModeButton  {selected_tab} width={1.0} position_number={107}/>
+
+
+
+
             // <HistoryButton {selected_tab} {game_size} width={1.0} position_number={118}/>
             // <WainwrongButton {selected_tab} width={1.0} position_number={119}/>
             // <FacebookButton {selected_tab} width={1.0} position_number={116}/>
