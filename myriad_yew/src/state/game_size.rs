@@ -69,14 +69,22 @@ impl GameSize {
         self.board_length() / 6.
     }
 
-    fn circle_diameter(&self)-> f32{
+    fn circle_diameter(&self) -> f32 {
         self.square_length() * crate::web::prelude::CIRCLE_RATIO
     }
 
-    pub fn style_string(&self)-> String{
+    pub fn tab_header_diameter(&self) -> f32 {
+        self.board_length() / 8.0
+    }
+
+    pub fn style_string(&self) -> String {
         let circle_diameter = self.circle_diameter();
         let circle_radius = circle_diameter * 0.5;
-        format!("--circle-diameter: {circle_diameter}px; --circle-radius: {circle_radius}px")
+
+        let tab_header_diameter = self.tab_header_diameter();
+        let tab_header_font_size = tab_header_diameter / 1.5;
+
+        format!("--circle-diameter: {circle_diameter}px; --circle-radius: {circle_radius}px; --tab-header-diameter: {tab_header_diameter}px; --tab-header-font-size: {tab_header_font_size}px;")
     }
 
     pub fn get_info_bar_position(&self) -> (f32, f32) {
@@ -96,7 +104,7 @@ impl GameSize {
         let row_number = ((number - 1) % GOALSIZE) / 10;
         let y = self.board_length()
             + FOUND_WORD_TOP_PADDING
-            + TAB_HEADER_HEIGHT
+            + self.tab_header_diameter()
             + TAB_HEADER_TOP_MARGIN
             + FOUND_WORD_MARGIN
             + INFO_BAR_HEIGHT
@@ -123,7 +131,7 @@ impl GameSize {
     }
 
     pub fn get_tab_header_padding(&self) -> f32 {
-        (self.width - ((TAB_HEADER_WIDTH + 3.0) * 6.0 + TAB_HEADER_MARGIN * 5.0)) / 2.0
+        (self.width - ((self.tab_header_diameter() + 3.0) * 6.0 + TAB_HEADER_MARGIN * 5.0)) / 2.0
     }
 }
 
@@ -132,8 +140,8 @@ pub const TAB_HEADER_TOP_MARGIN: f32 = 40.0;
 pub const INFO_BAR_HEIGHT: f32 = 60.0;
 
 pub const TAB_HEADER_MARGIN: f32 = 6.0;
-pub const TAB_HEADER_WIDTH: f32 = 50.0;
-pub const TAB_HEADER_HEIGHT: f32 = 50.0;
+//pub const TAB_HEADER_WIDTH: f32 = 50.0;
+//pub const TAB_HEADER_HEIGHT: f32 = 50.0;
 pub const FOUND_WORD_WIDTH: f32 = 30.0;
 pub const FOUND_WORD_HEIGHT: f32 = 30.0;
 pub const FOUND_WORD_MARGIN: f32 = 5.0;

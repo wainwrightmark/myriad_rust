@@ -38,12 +38,12 @@ impl InfoBarState {
         match self {
             InfoBarState::Difficulty(d) => {
                 if d.0.get() <= 4 {
-                    "xxx-large"
+                    "60px"
                 } else {
-                    "x-large"
+                    "30px"
                 }
             }
-            _ => "xxx-large",
+            _ => "60px",
         }
     }
 

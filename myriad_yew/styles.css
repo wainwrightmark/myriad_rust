@@ -202,17 +202,20 @@ dialog{
 Tab Header
 */
 .tab-header{
-  height: 50px;
-  width: 50px;
+  height: var(--tab-header-diameter);
+  width: var(--tab-header-diameter);
+  font-size: var(--tab-header-font-size);
+  line-height: 1.5;
+
   position:absolute;
   border-radius: 5px;
   padding: 0;
   margin:2px;
-  line-height: 1.5;
+
   font-family: monospace;
   font-weight: bold;
   box-sizing: inherit;
-  font-size: 2.5em;
+
   user-select: none;
   border-width: 1px;
   border-color: var(--tab-border-color);
@@ -329,6 +332,6 @@ Crosshairs
   text-align: center;
   width: 100%;
   display: block;
-  height: 60px;
+  height: 100px;
   font-family: 'Inconsolata', monospace;
 }
