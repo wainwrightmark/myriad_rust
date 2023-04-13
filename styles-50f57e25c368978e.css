@@ -1,35 +1,10 @@
 :root{
-
-  --outer-background: #a1a9b0;
-  --inner-background: #f7f5f0;
-
-  --white: #f7f5f0;
-  --green: #27c650;
-  --black: #1f1b20;
-  --blue: #787ff6;
-  --orange: #e46e0f;
-  --grey: #a1a9b0;
-  --red: #e2102b;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root{
-    --inner-background:#250687;
-    --outer-background:  #1f1b20;
-    --white: #1f1b20;
-    --black: #f7f5f0;
-
-  }
-
-}
-
-:root{
   --circle-border: var(--black);
   --circle-text: var(--black);
-  --tab-border-color: var(--black);
+
   --circle-disabled-border: var(--red);
-  --tab-background-locked-out: var(--grey);
-  --tab-background-complete: var(--green);
+
+
   --progress: var(--green);
   --progress-blank: var(--inner-background);
 
@@ -53,6 +28,16 @@
   --infobar-invalid: var(--orange);
   --infobar-equation: var(--orange);
   --infobar-difficulty: var(--black);
+
+  --tab-border-color: var(--black);
+  --tab-background-locked-out: var(--grey);
+  --tab-background-complete: var(--green);
+  --tab-background-default: var(--outer-background);
+  --tab-background-selected: var(--blue);
+
+  --crosshair-width: 20.0px;
+  --crosshair-height: 7.2px;
+
 }
 
 
@@ -66,14 +51,22 @@ body {
   background-color: var(--outer-background);
 }
 
+.outer-container{
+  position: relative;
+  max-width: 600px;
+  height: 100vh;
+  margin: auto;
+  overflow-x: hidden;
+  background-color: var(--inner-background);
+}
 
 .container {
   position: relative;
   max-width: 400px;
+  height: 100vh;
   margin: auto;
-  overflow-x: hidden;
   background-color: var(--inner-background);
-  aspect-ratio: 8/13;
+
 }
 
 dialog{
@@ -114,14 +107,27 @@ dialog{
   border-style: solid;
   border-width: 8px;
   border-radius: 50%;
+  width: var(--circle-diameter);
+  height: var(--circle-diameter);
+
 }
 
 .circle-legal{
   cursor: pointer;
+  border-color: var(--circle-legal-move);
 }
 
 .circle-disabled{
   cursor: not-allowed;
+  border-color: var(--circle-disabled);
+}
+
+.circle-final{
+  border-color: var(--circle-last);
+}
+
+.circle-intermediate{
+  border-color: var(--circle-intermediate);
 }
 
 
@@ -137,7 +143,7 @@ dialog{
 }
 
 .circle-text {
-  font-size: 3em;
+  font-size: var(--circle-radius);
   user-select: none;
   pointer-events: none;
   margin: 0;
@@ -146,7 +152,7 @@ dialog{
   font-family: 'Inconsolata', monospace;
   font-weight: 1000;
   height: 100%;
-  line-height: 210%;
+  line-height: 200%;
   position: relative;
 
   z-index: 500;
@@ -196,26 +202,31 @@ dialog{
 Tab Header
 */
 .tab-header{
-  height: 50px;
-  width: 50px;
+  height: var(--tab-header-diameter);
+  width: var(--tab-header-diameter);
+  font-size: var(--tab-header-font-size);
+  line-height: 1.5;
+
   position:absolute;
   border-radius: 5px;
   padding: 0;
   margin:2px;
-  line-height: 1.5;
+
   font-family: monospace;
   font-weight: bold;
   box-sizing: inherit;
-  font-size: 2.5em;
+
   user-select: none;
   border-width: 1px;
   border-color: var(--tab-border-color);
   border-style: solid;
+  background-color: var(--tab-background-default);
 }
 
 .selected-tab{
   border-width: 3px;
   margin:0;
+  background-color: var(--tab-background-selected);
 }
 
 .locked-out-tab{
@@ -289,15 +300,22 @@ Crosshairs
   position: absolute;
   z-index: 100;
   border-radius: 10%;
+  background-color: var(--circle-last);
+
+  width: var(--crosshair-width);
+  height: var(--crosshair-height);
+
 }
 
 .crosshair-extended {
   z-index: 200;
+  background-color: var(--circle-intermediate);
   /* border-radius: 0; */
 }
 
 .invisible{
   opacity: 0.0;
+  background-color: var(--circle-disabled);
 }
 
 
@@ -314,6 +332,6 @@ Crosshairs
   text-align: center;
   width: 100%;
   display: block;
-  height: 60px;
+  height: 100px;
   font-family: 'Inconsolata', monospace;
 }
