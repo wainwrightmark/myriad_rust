@@ -32,6 +32,7 @@ wee_alloc = "0.4"
 
 static_assertions = "1.1.0"
 phf = { version = "0.11.1", features = ["macros"] }
+capacitor_bindings = { version = "0.5.1", features = ["web"] }
 
 [dependencies.web-sys]
 version = "0.3"

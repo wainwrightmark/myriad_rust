@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "@capacitor/app": "^4.1.1",
+    "@capacitor/core": "^4.7.3",
+    "@capacitor/device": "^4.1.0",
+    "@capacitor/haptics": "^4.1.0",
+    "@capacitor/share": "^4.1.1",
+    "pika": "^0.0.1-security"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^4.7.3"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "appId": "com.myriad.app",
+  "appName": "Myriad",
+  "webDir": "myriad_yew/dist",
+  "bundledWebRuntime": false
+}
