@@ -7,6 +7,7 @@ use crate::state::prelude::*;
 use crate::web::prelude::*;
 
 use yew::prelude::*;
+use yew_router::prelude::use_navigator;
 use yewdux::prelude::*;
 
 #[derive(PartialEq, Properties)]
@@ -20,9 +21,12 @@ pub struct GameButtonProperties {
 #[function_component(TodayGameButton)]
 pub fn todays_game_button(properties: &GameButtonProperties) -> Html {
     let game_size = use_store_value::<GameSize>();
-    let on_click: Option<Callback<MouseEvent>> = Some(Callback::<MouseEvent>::from(|_| {
-        msg::move_to_new_game(true);
-    }));
+    let navigator = use_navigator().unwrap();
+
+    let func = move |_| {
+        msg::move_to_new_game(true, &navigator);
+    };
+    let on_click: Option<Callback<MouseEvent>> = Some(Callback::<MouseEvent>::from(func));
     //Some(Dispatch::new().apply_callback(|_| NewGameMsg { today: true }));
 
     let (x, y) = game_size.get_found_word_position(
@@ -37,8 +41,9 @@ pub fn todays_game_button(properties: &GameButtonProperties) -> Html {
 #[function_component(RandomGameButton)]
 pub fn random_game_button(properties: &GameButtonProperties) -> Html {
     let game_size = use_store_value::<GameSize>();
-    let on_click: Option<Callback<MouseEvent>> = Some(Callback::<MouseEvent>::from(|_| {
-        msg::move_to_new_game(false);
+    let navigator = use_navigator().unwrap();
+    let on_click: Option<Callback<MouseEvent>> = Some(Callback::<MouseEvent>::from(move |_| {
+        msg::move_to_new_game(false, &navigator);
     }));
 
     let (x, y) = game_size.get_found_word_position(

@@ -25,11 +25,11 @@ pub fn circles() -> Html {
     let onpointerup = Dispatch::new().apply_callback(move |_: PointerEvent| InputMsg::Up {});
 
     html! {
-        <div id="circles" class="circles" {onpointerup} {ontouchmove}>
-            {circles}
-        </div>
+      <div id="circles" class="circles" {onpointerup} {ontouchmove}>
+          {circles}
+      </div>
 
-      }
+    }
 }
 
 fn get_tile_from_touch_event(ev: TouchEvent) -> Option<Tile<GRID_COLUMNS, GRID_ROWS>> {

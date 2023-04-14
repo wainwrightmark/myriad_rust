@@ -77,9 +77,7 @@ pub fn congrats_dialog() -> Html {
 
     if let Some(dialog_type) = state.congratulations_dialog_type {
         let message: &str = match dialog_type {
-            CongratsDialogType::OneHundred => {
-                "Well done, you got 💯!"
-            }
+            CongratsDialogType::OneHundred => "Well done, you got 💯!",
         };
         html!(
             <dialog style="top: 25%" open={true}>

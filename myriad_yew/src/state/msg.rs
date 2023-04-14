@@ -2,7 +2,7 @@ use crate::state::prelude::*;
 use crate::web::prelude::*;
 use myriad::{parser, prelude::*};
 use std::rc::Rc;
-use web_sys::window;
+use yew_router::prelude::*;
 use yewdux::prelude::*;
 
 pub struct LoadGameMessage {
@@ -50,10 +50,10 @@ impl Reducer<FullGameState> for LoadGameMessage {
     }
 }
 
-pub fn move_to_new_game(for_today: bool) -> bool {
+pub fn move_to_new_game(for_today: bool, navigator: &Navigator) {
     let previous: Rc<FullGameState> = Dispatch::new().get();
     if for_today && previous.game.date == Some(Game::get_today_date()) {
-        return false;
+        return; //Do nothing
     }
 
     Dispatch::<RecentWordState>::new().reduce_mut(|s| s.recent_words.clear());
@@ -69,23 +69,9 @@ pub fn move_to_new_game(for_today: bool) -> bool {
     } else {
         Game::create_random()
     };
+    let game = game.board.to_single_string();
 
-    if let Some(window) = window() {
-        let search = game.board.to_single_string();
-
-        if let Err(e) = window
-            .location()
-            .set_search(format!("game={search}").as_str())
-        {
-            log::error!("{e:?}");
-            false
-        } else {
-            true
-        }
-    } else {
-        log::warn!("Could not get Window");
-        false
-    }
+    navigator.push(&Route::Game { game })
 }
 
 pub struct OnCoordinatesSetMsg {
