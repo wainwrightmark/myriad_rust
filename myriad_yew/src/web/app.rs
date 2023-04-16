@@ -1,8 +1,12 @@
+use crate::state::preferences_state::DarkModeState;
 use crate::state::prelude::*;
 use crate::web::found_words::*;
 use crate::web::prelude::*;
+use wasm_bindgen_futures::spawn_local;
 use yew::prelude::*;
+use yew_hooks::use_effect_once;
 use yew_router::prelude::*;
+use yewdux::prelude::use_store;
 use yewdux::prelude::Dispatch;
 
 #[derive(Clone, Routable, PartialEq)]
@@ -11,10 +15,21 @@ pub enum Route {
     Home,
     #[at("/game/:game")]
     Game { game: String },
+
+    #[at("/cheat/:game")]
+    Cheat { game: String },
 }
 
 #[function_component(App)]
 pub fn app() -> Html {
+    //Load the dark mode state here to make sure dark mode is set correctly
+    let _dms = use_store::<DarkModeState>();
+
+    use_effect_once(|| {
+        spawn_local(crate::web::startup::setup());
+        || ()
+    });
+
     html! {
         <BrowserRouter>
             <Switch<Route> render={switch} />
@@ -34,6 +49,11 @@ fn switch(route: Route) -> Html {
         }
         Route::Game { game } => {
             let cheat = false;
+            html! { <MyriadApp {game} {cheat} />}
+        }
+
+        Route::Cheat { game } => {
+            let cheat = true;
             html! { <MyriadApp {game} {cheat} />}
         }
     }

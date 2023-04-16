@@ -5,6 +5,8 @@ use std::rc::Rc;
 use yew_router::prelude::*;
 use yewdux::prelude::*;
 
+use super::logging;
+
 pub struct LoadGameMessage {
     pub game: Game,
 }
@@ -71,6 +73,9 @@ pub fn move_to_new_game(for_today: bool, navigator: &Navigator) {
     };
     let game = game.board.to_single_string();
 
+    let event = logging::LoggableEvent::NewGame { today: for_today, board: game.clone()};
+    LoggableEvent::try_log(event);
+
     navigator.push(&Route::Game { game })
 }
 
@@ -132,6 +137,10 @@ impl Reducer<FullGameState> for OnCoordinatesSetMsg {
                 }
 
                 if len == 100 {
+
+                    let event = LoggableEvent::GameComplete { board: state.game.board.to_single_string() };
+                    LoggableEvent::try_log(event);
+
                     Dispatch::<DialogState>::new().reduce_mut(|s| {
                         s.congratulations_dialog_type = Some(CongratsDialogType::OneHundred)
                     });

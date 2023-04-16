@@ -8,8 +8,11 @@ mod found_words;
 mod icons;
 mod info_bar;
 mod recent_words;
-pub mod sharing;
+mod sharing;
 mod tab_headers;
+mod startup;
+pub mod app_redirect;
+pub mod capacitor;
 pub mod prelude {
 
     pub use crate::web::app::*;
@@ -23,6 +26,7 @@ pub mod prelude {
     pub use crate::web::info_bar::*;
     pub use crate::web::recent_words::*;
     pub use crate::web::tab_headers::*;
+    pub use crate::web::startup::*;
 
     pub fn format_number(num: i32) -> String {
         if num == 100 {

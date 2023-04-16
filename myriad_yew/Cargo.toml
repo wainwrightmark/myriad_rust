@@ -29,10 +29,12 @@ wasm-bindgen= { version = "0.2", features = ["serde"] }
 instant = { version = "0.1", features = [ "wasm-bindgen", "inaccurate" ] }
 js-sys = "0.3"
 wee_alloc = "0.4"
+reqwest = { version = "0.11",default-features = false, features = ["json"] }
 
 static_assertions = "1.1.0"
 phf = { version = "0.11.1", features = ["macros"] }
 capacitor_bindings = { version = "0.5.1", features = ["web"] }
+anyhow = "1.0.70"
 
 [dependencies.web-sys]
 version = "0.3"
@@ -53,3 +55,9 @@ opt-level = 3
 
 [dev-dependencies]
 ntest = "0.9"
+
+
+[features]
+web =["capacitor_bindings/web"]
+android = ["capacitor_bindings/android"]
+ios = ["capacitor_bindings/ios"]
