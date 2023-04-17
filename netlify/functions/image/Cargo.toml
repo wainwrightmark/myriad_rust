@@ -1,6 +1,6 @@
 [package]
-edition = "2018"
-name = "hello"
+edition = "2021"
+name = "image"
 version = "0.1.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -11,4 +11,5 @@ http = "*"
 lambda_runtime = "*"
 log = "*"
 simple_logger = "*"
+tiny-skia = "0.8.3"
 tokio = "*"
