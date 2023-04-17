@@ -7,3 +7,7 @@
 [build]
   publish = "myriad_yew/dist"
   command = "cargo install trunk && trunk build myriad_yew/index.html --release"
+
+
+[context.production]
+environment = { NETLIFY_EXPERIMENTAL_BUILD_RUST_SOURCE = "true" }
