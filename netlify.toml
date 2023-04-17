@@ -6,4 +6,4 @@
 
 [build]
   publish = "myriad_yew/dist"
-  command = "cargo install trunk && trunk build --release myriad_yew"
+  command = "cargo install trunk && trunk build --release"
