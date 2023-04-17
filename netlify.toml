@@ -1,0 +1,9 @@
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+
+[build]
+  publish = "myriad_yew/dist"
+  command = "cargo install trunk && trunk build --release"
