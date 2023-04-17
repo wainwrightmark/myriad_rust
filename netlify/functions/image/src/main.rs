@@ -36,7 +36,7 @@ pub(crate) async fn my_handler(
         headers,
         multi_value_headers: HeaderMap::new(),
         body: Some(Body::Binary(data)),
-        is_base64_encoded: Some(false),
+        is_base64_encoded: Some(true),
     };
 
     Ok(resp)
