@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="900" viewBox="0 0 238.1 238.1">
+    <path d="M0 0h238.1v238.1H0z" style="fill:#fff;" />
+    <g transform="translate(13.2 13.2)">
+        <circle cx="33.7" cy="33.7" r="31.8"
+            style="fill:none;stroke:#000;stroke-width:4;" />
+        <text xml:space="preserve" x="16.4" y="52.3"
+            style="font-size:50px;line-height:1.25;font-family:sans-serif;stroke-width:.25">
+            <tspan x="16.4" y="52.3" style="font-size:50px;stroke-width:.25">A</tspan>
+        </text>
+    </g>
+    <g transform="translate(85.3 13.2)">
+        <circle cx="33.7" cy="33.7" r="31.8"
+            style="fill:none;stroke:#000;stroke-width:3.96875;stroke-miterlimit:4;stroke-dasharray:none;paint-order:markers stroke fill" />
+        <text xml:space="preserve" x="16.4" y="52.3"
+            style="font-size:50px;line-height:1.25;font-family:sans-serif;stroke-width:.25">
+            <tspan x="16.4" y="52.3" style="font-size:50px;stroke-width:.25">A</tspan>
+        </text>
+    </g>
+    <g transform="translate(157.4 13.2)">
+        <circle cx="33.7" cy="33.7" r="31.8"
+            style="fill:none;stroke:#000;stroke-width:3.96875;stroke-miterlimit:4;stroke-dasharray:none;paint-order:markers stroke fill" />
+        <text xml:space="preserve" x="16.4" y="52.3"
+            style="font-size:50px;line-height:1.25;font-family:sans-serif;stroke-width:.25">
+            <tspan x="16.4" y="52.3" style="font-size:50px;stroke-width:.25">A</tspan>
+        </text>
+    </g>
+    <g transform="translate(13.2 85.3)">
+        <circle cx="33.7" cy="33.7" r="31.8"
+            style="fill:none;stroke:#000;stroke-width:3.96875;stroke-miterlimit:4;stroke-dasharray:none;paint-order:markers stroke fill" />
+        <text xml:space="preserve" x="16.4" y="52.3"
+            style="font-size:50px;line-height:1.25;font-family:sans-serif;stroke-width:.25">
+            <tspan x="16.4" y="52.3" style="font-size:50px;stroke-width:.25">A</tspan>
+        </text>
+    </g>
+    <g transform="translate(85.3 85.3)">
+        <circle cx="33.7" cy="33.7" r="31.8"
+            style="fill:none;stroke:#000;stroke-width:3.96875;stroke-miterlimit:4;stroke-dasharray:none;paint-order:markers stroke fill" />
+        <text xml:space="preserve" x="16.4" y="52.3"
+            style="font-size:50px;line-height:1.25;font-family:sans-serif;stroke-width:.25">
+            <tspan x="16.4" y="52.3" style="font-size:50px;stroke-width:.25">A</tspan>
+        </text>
+    </g>
+    <g transform="translate(157.4 80.7)">
+        <circle cx="33.7" cy="38.4" r="31.8"
+            style="fill:none;stroke:#000;stroke-width:3.96875;stroke-miterlimit:4;stroke-dasharray:none;paint-order:markers stroke fill" />
+        <text xml:space="preserve" x="16.4" y="56.9"
+            style="font-size:50px;line-height:1.25;font-family:sans-serif;stroke-width:.25">
+            <tspan x="16.4" y="56.9" style="font-size:50px;stroke-width:.25">A</tspan>
+        </text>
+    </g>
+    <g transform="translate(157.4 157.4)">
+        <circle cx="33.7" cy="33.7" r="31.8"
+            style="fill:none;stroke:#000;stroke-width:3.96875;stroke-miterlimit:4;stroke-dasharray:none;paint-order:markers stroke fill" />
+        <text xml:space="preserve" x="16.4" y="52.3"
+            style="font-size:50px;line-height:1.25;font-family:sans-serif;stroke-width:.25">
+            <tspan x="16.4" y="52.3" style="font-size:50px;stroke-width:.25">A</tspan>
+        </text>
+    </g>
+    <g transform="translate(13.2 157.4)">
+        <circle cx="33.7" cy="33.7" r="31.8"
+            style="fill:none;stroke:#000;stroke-width:3.96875;stroke-miterlimit:4;stroke-dasharray:none;paint-order:markers stroke fill" />
+        <text xml:space="preserve" x="16.4" y="52.3"
+            style="font-size:50px;line-height:1.25;font-family:sans-serif;stroke-width:.25">
+            <tspan x="16.4" y="52.3" style="font-size:50px;stroke-width:.25">A</tspan>
+        </text>
+    </g>
+    <g transform="translate(85.3 157.4)">
+        <circle cx="33.7" cy="33.7" r="31.8"
+            style="fill:none;stroke:#000;stroke-width:3.96875;stroke-miterlimit:4;stroke-dasharray:none;paint-order:markers stroke fill" />
+        <text xml:space="preserve" x="16.4" y="52.3"
+            style="font-size:50px;line-height:1.25;font-family:sans-serif;stroke-width:.25">
+            <tspan x="16.4" y="52.3" style="font-size:50px;stroke-width:.25">A</tspan>
+        </text>
+    </g>
+</svg>

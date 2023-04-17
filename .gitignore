@@ -21,3 +21,4 @@ android/.idea/deploymentTargetDropDown.xml
 
 # Local Netlify folder
 .netlify
+netlify/functions/image/test.png

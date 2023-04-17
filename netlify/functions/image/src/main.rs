@@ -2,10 +2,10 @@ use aws_lambda_events::encodings::Body;
 use aws_lambda_events::event::apigw::{ApiGatewayProxyRequest, ApiGatewayProxyResponse};
 use http::header::HeaderMap;
 use http::HeaderValue;
-use lambda_runtime::{handler_fn, Context, Error};
+use lambda_runtime::{service_fn, Error, LambdaEvent};
 use log::LevelFilter;
+use resvg::usvg::{Tree, Options, TreeParsing, fontdb, TreeTextToPath};
 use simple_logger::SimpleLogger;
-use tiny_skia::*;
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
@@ -14,22 +14,20 @@ async fn main() -> Result<(), Error> {
         .init()
         .unwrap();
 
-    let func = handler_fn(my_handler);
+    let func = service_fn(my_handler);
     lambda_runtime::run(func).await?;
     Ok(())
 }
 
 pub(crate) async fn my_handler(
-    _event: ApiGatewayProxyRequest,
-    _ctx: Context,
+    e: LambdaEvent<ApiGatewayProxyRequest>,
 ) -> Result<ApiGatewayProxyResponse, Error> {
-    //let path = event.path.unwrap();
-    //_event.
-
     let mut headers = HeaderMap::new();
     headers.insert("Content-Type", HeaderValue::from_static("image/png"));
 
-    let data = draw_image();
+    let game = e.payload.path_parameters.get("game").map(|x|x.as_str()).unwrap_or_else(||"unknown game");
+
+    let data = draw_image(game);
 
     let resp = ApiGatewayProxyResponse {
         status_code: 200,
@@ -42,36 +40,106 @@ pub(crate) async fn my_handler(
     Ok(resp)
 }
 
-fn draw_image() -> Vec<u8> {
-    let mut paint = Paint::default();
-    paint.shader = LinearGradient::new(
-        Point::from_xy(100.0, 100.0),
-        Point::from_xy(900.0, 900.0),
-        vec![
-            GradientStop::new(0.0, Color::from_rgba8(50, 127, 150, 200)),
-            GradientStop::new(1.0, Color::from_rgba8(220, 140, 75, 180)),
-        ],
-        SpreadMode::Pad,
-        Transform::identity(),
+fn get_options() -> Options {
+    let opt = resvg::usvg::Options::default();
+    opt
+}
+
+ const WIDTH: u32 = 900;
+ const HEIGHT: u32 = 900;
+
+ fn make_text(chars: &str)-> String{
+
+    let mut text: String = "".to_string();
+    text.push_str(format!(r#"<svg xmlns="http://www.w3.org/2000/svg" width="{WIDTH}" height="{HEIGHT}" viewBox="0 0 238.1 238.1">"#).as_str());
+    text.push('\n');
+
+    text.push_str(r#"<path d="M0 0h238.1v238.1H0z" style="fill:#fff;" />"#);
+    text.push('\n');
+
+    for (i, c) in chars.chars().enumerate().take(9){
+        let x = match i % 3{
+            0=> 13.2,
+            1=> 85.3,
+            _=>157.4
+        };
+        let y = match i / 3{
+            0=> 13.2,
+            1=> 85.3,
+            _=>157.4
+        };
+
+        text.push_str(format!(
+            r#"
+        <g transform="translate({x} {y})">
+            <circle cx="33.7" cy="33.7" r="31.8"
+                style="fill:none;stroke:#000;stroke-width:4;" />
+            <text xml:space="preserve" x="21" y="50"
+                style="font-size:50px;line-height:1.25;font-family:Inconsolata;font-weight:1000;stroke-width:.25">
+                <tspan x="21" y="50" style="font-size:50px;stroke-width:.25">{c}</tspan>
+            </text>
+        </g>
+
+        "#
+        ).as_str());
+        text.push('\n');
+    }
+
+
+    text.push_str("</svg>");
+
+    return text;
+ }
+
+fn draw_image(game: &str) -> Vec<u8> {
+
+    let opt: resvg::usvg::Options = get_options();
+    let svg_data = make_text(game);
+
+    //println!("{svg_data}");
+
+    let mut tree = match Tree::from_data(&svg_data.as_bytes(), &opt){
+        Ok(tree) => tree,
+        Err(e) => panic!("{e}"),
+    };
+
+    let data: Vec<u8> = include_bytes!("Inconsolata-Regular.ttf").into_iter().cloned().collect();
+
+    let mut font_database: fontdb::Database = fontdb::Database::new();
+    //font_database.load_system_fonts();
+    font_database.load_font_data(data);
+
+    // println!("Fonts:");
+    // for x in font_database.faces(){
+    //     println!("{} {}: {}", x.id, x.post_script_name,x.families.iter().map(|x|x.0.clone()).next().unwrap())
+    // }
+
+    tree.convert_text(&font_database);
+
+
+    let mut pixmap = resvg::tiny_skia::Pixmap::new(WIDTH, HEIGHT).unwrap();
+
+    use resvg::FitTo;
+    resvg::render(
+        &tree,
+        FitTo::Size(WIDTH, HEIGHT),
+        resvg::tiny_skia::Transform::default(),
+        pixmap.as_mut(),
     )
     .unwrap();
 
-    let mut pb = PathBuilder::new();
-    pb.move_to(60.0, 60.0);
-    pb.line_to(160.0, 940.0);
-    pb.cubic_to(380.0, 840.0, 660.0, 800.0, 940.0, 800.0);
-    pb.cubic_to(740.0, 460.0, 440.0, 160.0, 60.0, 60.0);
-    pb.close();
-    let path = pb.finish().unwrap();
-
-    let mut pixmap = Pixmap::new(1000, 1000).unwrap();
-    pixmap.fill_path(
-        &path,
-        &paint,
-        FillRule::Winding,
-        Transform::identity(),
-        None,
-    );
-
     pixmap.encode_png().unwrap()
+}
+
+
+#[cfg(test)]
+mod tests {
+    use crate::draw_image;
+
+    #[test]
+    fn it_works() {
+
+        let data = draw_image("-184578+5");
+        std::fs::write("test.png", data).unwrap();
+    }
 }
