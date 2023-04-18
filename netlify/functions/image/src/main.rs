@@ -3,17 +3,10 @@ use aws_lambda_events::event::apigw::{ApiGatewayProxyRequest, ApiGatewayProxyRes
 use http::header::HeaderMap;
 use http::HeaderValue;
 use lambda_runtime::{service_fn, Error, LambdaEvent};
-use log::LevelFilter;
 use resvg::usvg::{fontdb, Tree, TreeParsing, TreeTextToPath};
-use simple_logger::SimpleLogger;
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
-    SimpleLogger::new()
-        .with_level(LevelFilter::Info)
-        .init()
-        .unwrap();
-
     let func = service_fn(my_handler);
     lambda_runtime::run(func).await?;
     Ok(())
@@ -54,7 +47,7 @@ const BLACK: &str = "#1f1b20";
 const GRAY: &str = "#a1a9b0";
 
 fn try_map_char(c: &char) -> Option<char> {
-    if c.is_ascii_digit(){
+    if c.is_ascii_digit() {
         return Some(*c);
     }
 
@@ -78,11 +71,11 @@ fn try_map_char(c: &char) -> Option<char> {
     })
 }
 
-fn try_map_chars(input: &str)-> Option<[char; 9]>{
-    let mut arr : [char; 9] = [' '; 9];
+fn try_map_chars(input: &str) -> Option<[char; 9]> {
+    let mut arr: [char; 9] = [' '; 9];
 
-    for (index,char) in input.chars().enumerate(){
-        let c= try_map_char(&char)?;
+    for (index, char) in input.chars().enumerate() {
+        let c = try_map_char(&char)?;
         arr[index] = c;
     }
 
@@ -94,7 +87,12 @@ fn make_svg_text(chars: &[char; 9]) -> String {
     svg_text.push_str(format!(r#"<svg xmlns="http://www.w3.org/2000/svg" width="{WIDTH}" height="{HEIGHT}" viewBox="0 0 238.1 238.1">"#).as_str());
     svg_text.push('\n');
 
-    svg_text.push_str(format!(r#"<path d="M0 0h238.1v238.1H0z" style="fill:{WHITE};stroke:{GRAY};stroke-width:4;" />"#).as_str());
+    svg_text.push_str(
+        format!(
+            r#"<path d="M0 0h238.1v238.1H0z" style="fill:{WHITE};stroke:{GRAY};stroke-width:4;" />"#
+        )
+        .as_str(),
+    );
     svg_text.push('\n');
 
     for (i, c) in chars.iter().enumerate().take(9) {
@@ -108,8 +106,6 @@ fn make_svg_text(chars: &[char; 9]) -> String {
             1 => 85.3,
             _ => 157.4,
         };
-
-
 
         svg_text.push_str(format!(
             r#"
@@ -132,9 +128,8 @@ fn make_svg_text(chars: &[char; 9]) -> String {
     return svg_text;
 }
 
-fn make_svg(game: &str)-> String{
-
-    let chars = try_map_chars(game).unwrap_or([' ',' ',' ',' ','?',' ',' ',' ',' ',]);
+fn make_svg(game: &str) -> String {
+    let chars = try_map_chars(game).unwrap_or([' ', ' ', ' ', ' ', '?', ' ', ' ', ' ', ' ']);
     let svg_data = make_svg_text(&chars);
     svg_data
 }
@@ -185,7 +180,7 @@ mod tests {
     use crate::{draw_image, make_svg};
 
     #[test]
-    fn test_svg(){
+    fn test_svg() {
         let svg: String = make_svg("-1+4/78 5");
         std::fs::write("og_example.svg", svg).unwrap();
     }

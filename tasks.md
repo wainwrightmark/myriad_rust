@@ -1,4 +1,4 @@
-- [ ] Use routing
+- [x] Use routing
 - [x] Store history of all games
 - [ ] Roman Numerals (Century)
 - [ ] Tutorial
@@ -8,19 +8,20 @@
 - [x] Flip and rotate
 - [x] Recent words move to found words
 - [x] Select Found word to see solution
-- [ ] Cheat mode
+- [x] Cheat mode
 - [ ] Accessibility
 - [ ] Idle animations
 - [x] Share on facebook
 - [x] Animations on IOS
 - [x] Dark Mode
 - [ ] Landscape mode (device orientation)
-- [ ] Logging
+- [x] Logging
 - [x] Number box above FoundWords
 - [x] Remove Challenge word
 - [x] Word difficulty indicator
 - [ ] Share button
 - [ ] Found word group size dependent on height of screen
 - [ ] Improved difficulty indicator
+- [ ] Speedrun mode
 
 - [ ] Multiplayer
