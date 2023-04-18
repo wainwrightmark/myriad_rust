@@ -7,28 +7,20 @@ use yewdux::prelude::*;
 
 use chrono::{Datelike, NaiveDate};
 
-#[derive(PartialEq, Eq, Store, Clone, Default, Serialize, Deserialize)]
+#[derive(PartialEq, Eq, Store, Clone, Serialize, Deserialize)]
 #[store(storage = "local", storage_tab_sync)] // can also be "session"
 pub struct FullGameState {
     pub game: Game,
     pub found_words: Rc<FoundWordsTracker>,
-    pub timing: GameTiming
+    pub timing: GameTiming,
 }
 
-#[derive(PartialEq, Eq, Clone, Copy, Serialize, Deserialize)]
-pub enum GameTiming {
-    Started { utc_time_milliseconds: i64 },
-    Finished { total_milliseconds: u64 },
-    Unknown
-}
-
-impl Default for GameTiming {
+impl Default for FullGameState {
     fn default() -> Self {
-        let js_today = js_sys::Date::new_0();
-        let utc_time = js_today.get_time();
-        let utc_time_milliseconds = utc_time.floor() as i64;
-        Self::Started {
-            utc_time_milliseconds,
+        Self {
+            game: Game::create_for_today(),
+            found_words: Default::default(),
+            timing: Default::default(),
         }
     }
 }
@@ -61,7 +53,7 @@ impl FullGameState {
 }
 
 #[serde_as]
-#[derive(PartialEq, Eq, Store, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Eq, Clone, Serialize, Deserialize)]
 pub struct Game {
     #[serde_as(as = "_")]
     pub board: Board<3, 3, 9>,
@@ -195,8 +187,8 @@ impl Game {
     }
 }
 
-impl Default for Game {
-    fn default() -> Self {
-        Game::create_for_today()
-    }
-}
+// impl Default for Game {
+//     fn default() -> Self {
+//         Game::create_for_today()
+//     }
+// }

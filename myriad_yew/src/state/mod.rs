@@ -15,6 +15,7 @@ pub mod rot_flip_state;
 pub mod selected_tab_state;
 pub mod user_state;
 pub mod util;
+pub mod game_timing;
 
 pub mod prelude {
 
@@ -29,6 +30,7 @@ pub mod prelude {
     pub use crate::state::recent_word_state::*;
     pub use crate::state::rot_flip_state::*;
     pub use crate::state::selected_tab_state::*;
+    pub use crate::state::game_timing::*;
     pub use crate::state::util::*;
 
     pub use crate::state::failed_logs_state::*;

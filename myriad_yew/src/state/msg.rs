@@ -36,7 +36,7 @@ impl Reducer<FullGameState> for LoadGameMessage {
 
         match loaded {
             Some(state) => Rc::new(state.clone()),
-            None => Rc::new(FullGameState { game: self.game, ..Default::default() }),
+            None => Rc::new(FullGameState { game: self.game, timing: Default::default(), found_words: Default::default() }),
         }
     }
 }
