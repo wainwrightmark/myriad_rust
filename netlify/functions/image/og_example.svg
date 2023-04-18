@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 238.1 238.1">
+<path d="M0 0h238.1v238.1H0z" style="fill:#f7f5f0;stroke:#a1a9b0;stroke-width:4;" />
+
+        <g transform="translate(13.2 13.2)">
+            <circle cx="33.7" cy="33.7" r="31.8"
+                style="fill:none;stroke:#a1a9b0;stroke-width:4;" />
+            <text  x="18.5" y="50"
+                style="stroke:#1f1b20;font-size:50px;line-height:1.25;font-family:Inconsolata;font-weight:1000;stroke-width:.25">
+                <tspan x="18.5" y="50" style="font-size:50px;stroke-width:.25">-</tspan>
+            </text>
+        </g>
+
+        
+
+        <g transform="translate(85.3 13.2)">
+            <circle cx="33.7" cy="33.7" r="31.8"
+                style="fill:none;stroke:#a1a9b0;stroke-width:4;" />
+            <text  x="18.5" y="50"
+                style="stroke:#1f1b20;font-size:50px;line-height:1.25;font-family:Inconsolata;font-weight:1000;stroke-width:.25">
+                <tspan x="18.5" y="50" style="font-size:50px;stroke-width:.25">1</tspan>
+            </text>
+        </g>
+
+        
+
+        <g transform="translate(157.4 13.2)">
+            <circle cx="33.7" cy="33.7" r="31.8"
+                style="fill:none;stroke:#a1a9b0;stroke-width:4;" />
+            <text  x="18.5" y="50"
+                style="stroke:#1f1b20;font-size:50px;line-height:1.25;font-family:Inconsolata;font-weight:1000;stroke-width:.25">
+                <tspan x="18.5" y="50" style="font-size:50px;stroke-width:.25">+</tspan>
+            </text>
+        </g>
+
+        
+
+        <g transform="translate(13.2 85.3)">
+            <circle cx="33.7" cy="33.7" r="31.8"
+                style="fill:none;stroke:#a1a9b0;stroke-width:4;" />
+            <text  x="18.5" y="50"
+                style="stroke:#1f1b20;font-size:50px;line-height:1.25;font-family:Inconsolata;font-weight:1000;stroke-width:.25">
+                <tspan x="18.5" y="50" style="font-size:50px;stroke-width:.25">4</tspan>
+            </text>
+        </g>
+
+        
+
+        <g transform="translate(85.3 85.3)">
+            <circle cx="33.7" cy="33.7" r="31.8"
+                style="fill:none;stroke:#a1a9b0;stroke-width:4;" />
+            <text  x="18.5" y="50"
+                style="stroke:#1f1b20;font-size:50px;line-height:1.25;font-family:Inconsolata;font-weight:1000;stroke-width:.25">
+                <tspan x="18.5" y="50" style="font-size:50px;stroke-width:.25">÷</tspan>
+            </text>
+        </g>
+
+        
+
+        <g transform="translate(157.4 85.3)">
+            <circle cx="33.7" cy="33.7" r="31.8"
+                style="fill:none;stroke:#a1a9b0;stroke-width:4;" />
+            <text  x="18.5" y="50"
+                style="stroke:#1f1b20;font-size:50px;line-height:1.25;font-family:Inconsolata;font-weight:1000;stroke-width:.25">
+                <tspan x="18.5" y="50" style="font-size:50px;stroke-width:.25">7</tspan>
+            </text>
+        </g>
+
+        
+
+        <g transform="translate(13.2 157.4)">
+            <circle cx="33.7" cy="33.7" r="31.8"
+                style="fill:none;stroke:#a1a9b0;stroke-width:4;" />
+            <text  x="18.5" y="50"
+                style="stroke:#1f1b20;font-size:50px;line-height:1.25;font-family:Inconsolata;font-weight:1000;stroke-width:.25">
+                <tspan x="18.5" y="50" style="font-size:50px;stroke-width:.25">8</tspan>
+            </text>
+        </g>
+
+        
+
+        <g transform="translate(85.3 157.4)">
+            <circle cx="33.7" cy="33.7" r="31.8"
+                style="fill:none;stroke:#a1a9b0;stroke-width:4;" />
+            <text  x="18.5" y="50"
+                style="stroke:#1f1b20;font-size:50px;line-height:1.25;font-family:Inconsolata;font-weight:1000;stroke-width:.25">
+                <tspan x="18.5" y="50" style="font-size:50px;stroke-width:.25">+</tspan>
+            </text>
+        </g>
+
+        
+
+        <g transform="translate(157.4 157.4)">
+            <circle cx="33.7" cy="33.7" r="31.8"
+                style="fill:none;stroke:#a1a9b0;stroke-width:4;" />
+            <text  x="18.5" y="50"
+                style="stroke:#1f1b20;font-size:50px;line-height:1.25;font-family:Inconsolata;font-weight:1000;stroke-width:.25">
+                <tspan x="18.5" y="50" style="font-size:50px;stroke-width:.25">5</tspan>
+            </text>
+        </g>
+
+        
+</svg>

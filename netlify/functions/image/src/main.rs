@@ -4,7 +4,7 @@ use http::header::HeaderMap;
 use http::HeaderValue;
 use lambda_runtime::{service_fn, Error, LambdaEvent};
 use log::LevelFilter;
-use resvg::usvg::{fontdb, Options, Tree, TreeParsing, TreeTextToPath};
+use resvg::usvg::{fontdb, Tree, TreeParsing, TreeTextToPath};
 use simple_logger::SimpleLogger;
 
 #[tokio::main]
@@ -45,11 +45,6 @@ pub(crate) async fn my_handler(
     };
 
     Ok(resp)
-}
-
-fn get_options() -> Options {
-    let opt = resvg::usvg::Options::default();
-    opt
 }
 
 const WIDTH: u32 = 1024;
@@ -121,9 +116,9 @@ fn make_svg_text(chars: &[char; 9]) -> String {
         <g transform="translate({x} {y})">
             <circle cx="33.7" cy="33.7" r="31.8"
                 style="fill:none;stroke:{GRAY};stroke-width:4;" />
-            <text xml:space="preserve" x="21" y="50"
+            <text  x="18.5" y="50"
                 style="stroke:{BLACK};font-size:50px;line-height:1.25;font-family:Inconsolata;font-weight:1000;stroke-width:.25">
-                <tspan x="21" y="50" style="font-size:50px;stroke-width:.25">{c}</tspan>
+                <tspan x="18.5" y="50" style="font-size:50px;stroke-width:.25">{c}</tspan>
             </text>
         </g>
 
@@ -137,10 +132,16 @@ fn make_svg_text(chars: &[char; 9]) -> String {
     return svg_text;
 }
 
-fn draw_image(game: &str) -> Vec<u8> {
-    let opt: resvg::usvg::Options = get_options();
+fn make_svg(game: &str)-> String{
+
     let chars = try_map_chars(game).unwrap_or([' ',' ',' ',' ','?',' ',' ',' ',' ',]);
     let svg_data = make_svg_text(&chars);
+    svg_data
+}
+
+fn draw_image(game: &str) -> Vec<u8> {
+    let opt: resvg::usvg::Options = Default::default();
+    let svg_data = make_svg(game);
 
     //println!("{svg_data}");
 
@@ -181,7 +182,13 @@ fn draw_image(game: &str) -> Vec<u8> {
 
 #[cfg(test)]
 mod tests {
-    use crate::draw_image;
+    use crate::{draw_image, make_svg};
+
+    #[test]
+    fn test_svg(){
+        let svg: String = make_svg("-1+4/78 5");
+        std::fs::write("og_example.svg", svg).unwrap();
+    }
 
     #[test]
     fn parse_test() {
