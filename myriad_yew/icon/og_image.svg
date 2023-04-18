@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="1024"
+   height="1024"
+   viewBox="0 0 270.93334 270.93334"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04, custom)"
+   sodipodi:docname="og_image.svg"
+   inkscape:export-filename="C:\Source\rust\myriad\myriad_yew\icon\og_image.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <title
+     id="title15285">Myriad Icon</title>
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="true"
+     inkscape:document-units="px"
+     showgrid="false"
+     units="px"
+     inkscape:snap-bbox="true"
+     inkscape:snap-object-midpoints="true"
+     inkscape:snap-midpoints="true"
+     inkscape:zoom="0.37816708"
+     inkscape:cx="-337.15256"
+     inkscape:cy="754.95731"
+     inkscape:window-width="2400"
+     inkscape:window-height="1261"
+     inkscape:window-x="-9"
+     inkscape:window-y="-1359"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1"
+     inkscape:snap-page="true" />
+  <defs
+     id="defs2">
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter1247"
+       x="-0.21138391"
+       y="-0.30640437"
+       width="1.4510767"
+       height="1.6560026">
+      <feFlood
+         flood-opacity="0.498039"
+         flood-color="rgb(0,0,0)"
+         result="flood"
+         id="feFlood1237" />
+      <feComposite
+         in="flood"
+         in2="SourceGraphic"
+         operator="in"
+         result="composite1"
+         id="feComposite1239" />
+      <feGaussianBlur
+         in="composite1"
+         stdDeviation="15.8055"
+         result="blur"
+         id="feGaussianBlur1241" />
+      <feOffset
+         dx="5.7"
+         dy="6"
+         result="offset"
+         id="feOffset1243" />
+      <feComposite
+         in="SourceGraphic"
+         in2="offset"
+         operator="over"
+         result="composite2"
+         id="feComposite1245" />
+    </filter>
+  </defs>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Layer 2">
+    <rect
+       style="fill:#ffffff;stroke-width:5.29167;paint-order:markers stroke fill;stroke:#cccccc"
+       id="rect1002"
+       width="270.93335"
+       height="270.93335"
+       x="0"
+       y="0" />
+  </g>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <a
+       id="a11669">
+      <g
+         id="g8912" />
+    </a>
+    <path
+       id="path14765"
+       style="fill:none;stroke:#000000;stroke-width:9.25803;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter1247)"
+       d="m 135.46665,204.92099 v -138.908642 0 M 100.22174,180.27212 c -16.403576,0 -29.701296,-20.06008 -29.701296,-44.80546 0,-24.74538 13.29772,-44.805449 29.701296,-44.805449 h 70.48983 c 16.40359,0 29.70133,20.060069 29.70133,44.805449 v 0 c 0,24.74538 -13.29774,44.80547 -29.70133,44.80546 z m -19.389306,24.64887 c -25.42769,0 -46.040916,-31.09578 -46.040918,-69.45433 0,-38.358559 20.613228,-69.454312 46.040918,-69.454312 H 190.1009 c 25.4277,-9e-6 46.04092,31.095753 46.04092,69.454312 v 0 c 0,38.35857 -20.61322,69.45435 -46.04092,69.45433 z" />
+  </g>
+  <metadata
+     id="metadata15283">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>Myriad Icon</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+</svg>

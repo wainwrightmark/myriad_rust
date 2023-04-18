@@ -99,7 +99,7 @@ fn make_svg_text(chars: &[char; 9]) -> String {
     svg_text.push_str(format!(r#"<svg xmlns="http://www.w3.org/2000/svg" width="{WIDTH}" height="{HEIGHT}" viewBox="0 0 238.1 238.1">"#).as_str());
     svg_text.push('\n');
 
-    svg_text.push_str(format!(r#"<path d="M0 0h238.1v238.1H0z" style="fill:{WHITE};" />"#).as_str());
+    svg_text.push_str(format!(r#"<path d="M0 0h238.1v238.1H0z" style="fill:{WHITE};stroke:{GRAY};stroke-width:4;" />"#).as_str());
     svg_text.push('\n');
 
     for (i, c) in chars.iter().enumerate().take(9) {
