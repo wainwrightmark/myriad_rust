@@ -15,8 +15,8 @@ impl Reducer<FullGameState> for LoadGameMessage {
     fn apply(self, previous: Rc<FullGameState>) -> Rc<FullGameState> {
         log::debug!(
             "Loading game. New Game '{}'. Old Game '{}'",
-            self.game.board.to_single_string(),
-            previous.game.board.to_single_string()
+            self.game.board.canonical_string(),
+            previous.game.board.canonical_string()
         );
         if previous.game.board == self.game.board {
             return previous;
@@ -71,7 +71,7 @@ pub fn move_to_new_game(for_today: bool, navigator: &Navigator) {
     } else {
         Game::create_random()
     };
-    let game = game.board.to_single_string();
+    let game = game.board.canonical_string();
 
     let event = logging::LoggableEvent::NewGame { today: for_today, board: game.clone()};
     LoggableEvent::try_log(event);
@@ -138,7 +138,7 @@ impl Reducer<FullGameState> for OnCoordinatesSetMsg {
 
                 if len == 100 {
 
-                    let event = LoggableEvent::GameComplete { board: state.game.board.to_single_string() };
+                    let event = LoggableEvent::GameComplete { board: state.game.board.canonical_string() };
                     LoggableEvent::try_log(event);
 
                     Dispatch::<DialogState>::new().reduce_mut(|s| {

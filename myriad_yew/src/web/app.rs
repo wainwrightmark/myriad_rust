@@ -12,6 +12,7 @@ use yewdux::prelude::Dispatch;
 #[derive(Clone, Routable, PartialEq)]
 pub enum Route {
     #[at("/")]
+    #[not_found]
     Home,
     #[at("/game/:game")]
     Game { game: String },
@@ -44,7 +45,7 @@ fn switch(route: Route) -> Html {
                 .get()
                 .game
                 .board
-                .to_single_string();
+                .canonical_string();
             html! { <Redirect<Route> to={Route::Game { game  }} /> }
         }
         Route::Game { game } => {

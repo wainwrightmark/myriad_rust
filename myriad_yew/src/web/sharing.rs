@@ -19,7 +19,7 @@ pub fn share() {
 pub async fn share_async() {
 
     let state = Dispatch::<FullGameState>::new().get();
-    let game_text = state.game.board.to_single_string();
+    let game_text = state.game.board.canonical_string();
     let url = format!("https://myriad-game.com/?game={game_text}");
 
     let result = capacitor_bindings::share::Share::share(ShareOptions{

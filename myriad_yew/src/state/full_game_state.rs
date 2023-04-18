@@ -101,7 +101,7 @@ impl Game {
     }
 
     pub fn from_string(s: &str) -> Option<Self> {
-        let board = Board::<3, 3, 9>::try_create(s)?;
+        let board = Board::<3, 3, 9>::try_create_canonical(s)?;
         let solve_settings = SolveSettings::default();
 
         let difficulties = Self::get_difficulties(solve_settings, &board);

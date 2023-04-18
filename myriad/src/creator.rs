@@ -136,7 +136,7 @@ fn mutate_board<const L: u8, const SIZE: usize>(
     let mut new_board = board.board.clone();
     new_board[Tile::try_from_usize(index).unwrap()] = letter;
 
-    let unique_string = new_board.get_unique_string();
+    let unique_string = new_board.canonical_string();
     if created_boards.insert(unique_string) {
         let solutions = solve_settings.solve(new_board.clone());
         let solution_count = solutions.count();
