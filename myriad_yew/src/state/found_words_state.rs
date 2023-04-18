@@ -6,7 +6,6 @@ use std::collections::*;
 #[derive(PartialEq, Eq, Clone, Serialize, Deserialize, Default)]
 pub struct FoundWordsTracker {
     pub words: BTreeMap<i32, FoundWord<GRID_COLUMNS, GRID_ROWS, GRID_SIZE>>,
-    pub most_recent: Option<i32>,
 }
 
 impl FoundWordsTracker {
@@ -18,7 +17,6 @@ impl FoundWordsTracker {
 
         FoundWordsTracker {
             words: new_map,
-            most_recent: Some(i),
         }
     }
 

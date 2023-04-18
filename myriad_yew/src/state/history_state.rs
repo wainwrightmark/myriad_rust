@@ -1,27 +1,20 @@
 use crate::state::prelude::*;
 use itertools::Itertools;
-use myriad::prelude::*;
 use serde::*;
-use std::{collections::BTreeMap, rc::Rc};
+use std::rc::Rc;
 use yewdux::prelude::*;
 
 #[derive(PartialEq, Eq, Store, Clone, Default, Serialize, Deserialize)]
-#[store(storage = "local")] // can also be "session"
+#[store(storage = "local", storage_tab_sync)] // can also be "session"
 pub struct HistoryState {
-    pub games: Vec<(
-        Game,
-        BTreeMap<i32, FoundWord<GRID_COLUMNS, GRID_ROWS, GRID_SIZE>>,
-    )>,
+    pub games: Vec<FullGameState>,
 }
 
-pub struct SaveGameMessage {
-    pub game: Game,
-    pub found_words: BTreeMap<i32, FoundWord<GRID_COLUMNS, GRID_ROWS, GRID_SIZE>>,
-}
+pub struct SaveGameMessage(pub Rc<FullGameState>);
 
 impl Reducer<HistoryState> for SaveGameMessage {
     fn apply(self, state: std::rc::Rc<HistoryState>) -> std::rc::Rc<HistoryState> {
-        if self.found_words.is_empty() {
+        if self.0.found_words.words.is_empty() {
             return state; //no need to save
         }
 
@@ -29,13 +22,11 @@ impl Reducer<HistoryState> for SaveGameMessage {
         if let Some((index, _)) = state
             .games
             .iter()
-            .find_position(|x| x.0.board == self.game.board)
+            .find_position(|x| x.game.board == self.0.game.board)
         {
-            new_state.games[index].1 = self.found_words.clone();
+            new_state.games[index].found_words = self.0.found_words.clone();
         } else {
-            new_state
-                .games
-                .push((self.game.clone(), self.found_words.clone()));
+            new_state.games.push(self.0.as_ref().clone());
         }
 
         Rc::new(new_state)

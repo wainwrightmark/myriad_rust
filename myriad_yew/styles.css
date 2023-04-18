@@ -70,7 +70,30 @@ body {
 }
 
 dialog{
+  background-color: var(--inner-background);
   z-index: 2000;
+}
+
+.time-display{
+  font-size: xx-large;
+  text-align: center;
+  font-family: 'Inconsolata', monospace;
+}
+
+.dialog-button{
+  width: 5em;
+  max-width: 100%;
+  position: relative;
+  margin: 0 auto;
+  text-align: center;
+  font-family: 'Inconsolata', monospace;
+  font-size: large;
+  font-weight: bold;
+}
+
+.dialog-message{
+  font-family: 'Inconsolata', monospace;
+  font-size: large;
 }
 
 

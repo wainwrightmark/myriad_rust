@@ -1,4 +1,5 @@
 use crate::state::prelude::*;
+use chrono::Duration;
 use yew::prelude::*;
 use yewdux::prelude::*;
 
@@ -14,7 +15,7 @@ pub fn history_dialog() -> Html {
         let rows: Vec<Html> = history
             .games
             .iter()
-            .map(|(game, words)| html!(<HistoryRow game={game.clone()} words={words.len()} />))
+            .map(|state| html!(<HistoryRow game={(state.game).clone()} words={state.found_words.words.len()} />))
             .collect();
 
         html!(<dialog style="top: 10%" open={true}>
@@ -67,7 +68,7 @@ pub fn history_row(properties: &HistoryRowProperties) -> Html {
 
 #[function_component(CongratsDialog)]
 pub fn congrats_dialog() -> Html {
-    let (state, dispatch) = use_store::<DialogState>();
+    let (dialog_state, dispatch) = use_store::<DialogState>();
 
     let on_ok = dispatch.reduce_mut_callback(|state| state.congratulations_dialog_type = None);
     let on_share = dispatch.reduce_mut_callback(|state| {
@@ -75,19 +76,42 @@ pub fn congrats_dialog() -> Html {
         crate::web::sharing::share();
     });
 
-    if let Some(dialog_type) = state.congratulations_dialog_type {
+    let timing = use_selector(|state: &FullGameState| state.timing.clone());
+
+    if let Some(dialog_type) = dialog_state.congratulations_dialog_type {
         let message: &str = match dialog_type {
             CongratsDialogType::OneHundred => "Well done, you got 💯!",
         };
+
+        let time_box = match *timing {
+            GameTiming::Started { .. } | GameTiming::Unknown => html!(<></>),
+            GameTiming::Finished { total_milliseconds } => {
+                let total = Duration::milliseconds(total_milliseconds as i64);
+                if total.num_minutes() >= 100 {
+                    html!(<></>)
+                } else {
+                    let minutes = total.num_minutes();
+                    let seconds = total.num_seconds() - (60 * minutes);
+                    let time_string = format!("{minutes:02}:{seconds:02}");
+                    html!(<>
+                        <br/>
+                        <p class="time-display">{time_string}</p>
+                         </>)
+                }
+            }
+        };
+
         html!(
             <dialog style="top: 25%" open={true}>
-                <p>{message}</p>
-        <form>
-      <button onclick={on_ok}>{"Ok"}</button>
-      <button onclick={on_share}>{"Share"}</button>
-    
-    </form>
-      </dialog>)
+                    <p class="dialog-message">{message}</p>
+                    {time_box}
+                <div class="dialog-buttons">
+                    <button class="dialog-button" onclick={on_ok}>{"Ok"}</button>
+                    <button class="dialog-button" onclick={on_share}>{"Share"}</button>
+
+                </div>
+          </dialog>
+        )
     } else {
         html!(<></>)
     }

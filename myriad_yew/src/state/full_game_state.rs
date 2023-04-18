@@ -10,8 +10,27 @@ use chrono::{Datelike, NaiveDate};
 #[derive(PartialEq, Eq, Store, Clone, Default, Serialize, Deserialize)]
 #[store(storage = "local", storage_tab_sync)] // can also be "session"
 pub struct FullGameState {
-    pub game: Rc<Game>,
+    pub game: Game,
     pub found_words: Rc<FoundWordsTracker>,
+    pub timing: GameTiming
+}
+
+#[derive(PartialEq, Eq, Clone, Copy, Serialize, Deserialize)]
+pub enum GameTiming {
+    Started { utc_time_milliseconds: i64 },
+    Finished { total_milliseconds: u64 },
+    Unknown
+}
+
+impl Default for GameTiming {
+    fn default() -> Self {
+        let js_today = js_sys::Date::new_0();
+        let utc_time = js_today.get_time();
+        let utc_time_milliseconds = utc_time.floor() as i64;
+        Self::Started {
+            utc_time_milliseconds,
+        }
+    }
 }
 
 impl FullGameState {

@@ -19,9 +19,9 @@
 - [x] Number box above FoundWords
 - [x] Remove Challenge word
 - [x] Word difficulty indicator
-- [ ] Share button
+- [x] Share button
 - [ ] Found word group size dependent on height of screen
 - [ ] Improved difficulty indicator
-- [ ] Speedrun mode
+- [x] Speedrun mode
 
 - [ ] Multiplayer

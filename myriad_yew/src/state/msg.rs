@@ -1,4 +1,4 @@
-use crate::state::prelude::*;
+use crate::{state::prelude::*};
 use crate::web::prelude::*;
 use myriad::{parser, prelude::*};
 use std::rc::Rc;
@@ -22,33 +22,22 @@ impl Reducer<FullGameState> for LoadGameMessage {
             return previous;
         }
 
-        let found_words = Dispatch::<HistoryState>::new()
-            .get()
-            .games
-            .iter()
-            .filter(|x| x.0 == self.game)
-            .map(|x| x.1.clone())
-            .next()
-            .unwrap_or_default();
+        let history = Dispatch::<HistoryState>::new().get();
+
+        let loaded = history.games.iter().filter(|x| x.game == self.game).next();
 
         Dispatch::<RecentWordState>::new().reduce_mut(|s| s.recent_words.clear());
         Dispatch::<ChosenPositionsState>::new().reduce_mut(|s| s.positions.clear());
+        Dispatch::<RotFlipState>::new().reduce_mut(|x| x.clear());
 
         Dispatch::<DialogState>::new().reduce_mut(|x| x.history_dialog_type = None);
 
-        Dispatch::<HistoryState>::new().apply(SaveGameMessage {
-            game: previous.game.as_ref().clone(),
-            found_words: previous.found_words.words.clone(),
-        });
+        Dispatch::<HistoryState>::new().apply(SaveGameMessage(previous.into()));
 
-        FullGameState {
-            game: self.game.into(),
-            found_words: Rc::new(FoundWordsTracker {
-                words: found_words,
-                most_recent: None,
-            }),
+        match loaded {
+            Some(state) => Rc::new(state.clone()),
+            None => Rc::new(FullGameState { game: self.game, ..Default::default() }),
         }
-        .into()
     }
 }
 
@@ -61,10 +50,7 @@ pub fn move_to_new_game(for_today: bool, navigator: &Navigator) {
     Dispatch::<RecentWordState>::new().reduce_mut(|s| s.recent_words.clear());
     Dispatch::<ChosenPositionsState>::new().reduce_mut(|s| s.positions.clear());
 
-    Dispatch::<HistoryState>::new().apply(SaveGameMessage {
-        game: previous.game.as_ref().clone(),
-        found_words: previous.found_words.words.clone(),
-    });
+    Dispatch::<HistoryState>::new().apply(SaveGameMessage(previous));
 
     let game = if for_today {
         Game::create_for_today()
@@ -128,18 +114,20 @@ impl Reducer<FullGameState> for OnCoordinatesSetMsg {
                 FoundWordType::NotInRange
             };
 
-            let new_found_words: Rc<FoundWordsTracker> = if word_type == FoundWordType::Found {
+            let timing: GameTiming;
+            let new_found_words: Rc<FoundWordsTracker>;
+            if word_type == FoundWordType::Found {
                 let number = found_word.result;
                 Dispatch::new().apply(NumberFoundMsg { number });
                 let ns = state.found_words.with_word(found_word);
 
-                let len = ns.words.len() as i32;
+                let len = ns.words.len();
 
                 if len % 10 == 0 {
-                    make_confetti(get_emoji(len / 10), 10 + len);
+                    make_confetti(get_emoji(len as i32 / 10), (10 + len) as i32);
                 }
 
-                if len == 100 {
+                if len == state.game.total_solutions {
                     let event = LoggableEvent::GameComplete {
                         board: state.game.board.canonical_string(),
                     };
@@ -148,11 +136,38 @@ impl Reducer<FullGameState> for OnCoordinatesSetMsg {
                     Dispatch::<DialogState>::new().reduce_mut(|s| {
                         s.congratulations_dialog_type = Some(CongratsDialogType::OneHundred)
                     });
+
+                    timing = match state.timing {
+                        GameTiming::Started {
+                            utc_time_milliseconds,
+                        } => {
+                            let js_today = js_sys::Date::new_0();
+                            let utc_time = js_today.get_time();
+                            let now_time_milliseconds = utc_time.floor() as i64;
+
+                            let difference =
+                                now_time_milliseconds.saturating_sub(utc_time_milliseconds);
+
+                            if difference.is_positive() {
+                                let total_milliseconds = difference.unsigned_abs();
+                                GameTiming::Finished { total_milliseconds }
+                            } else {
+                                GameTiming::Unknown
+                            }
+                        }
+                        GameTiming::Finished { total_milliseconds } => {
+                            GameTiming::Finished { total_milliseconds }
+                        }
+                        GameTiming::Unknown => GameTiming::Unknown,
+                    }
+                } else {
+                    timing = state.timing;
                 }
 
-                ns.into()
+                new_found_words = ns.into();
             } else {
-                state.found_words.clone()
+                new_found_words = state.found_words.clone();
+                timing = state.timing;
             };
 
             Dispatch::new().apply(WordFoundMsg {
@@ -164,6 +179,7 @@ impl Reducer<FullGameState> for OnCoordinatesSetMsg {
             FullGameState {
                 game: state.game.clone(),
                 found_words: new_found_words,
+                timing,
             }
             .into()
         } else {

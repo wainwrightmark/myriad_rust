@@ -44,9 +44,9 @@ impl RotFlipState {
         (GRID_COLUMNS * GRID_ROWS) as usize
     }
 
-    pub fn new_game(&mut self) {
-        self.rotate = self.rotate + QuarterTurns::One;
-        self.flip = !self.flip;
+    pub fn clear(&mut self){
+        self.flip = false;
+        self.rotate = QuarterTurns::Zero;
     }
 }
 

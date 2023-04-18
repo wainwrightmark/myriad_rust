@@ -19,7 +19,6 @@ pub fn all_found_words(properties: &AllFoundWordsProperties) -> Html {
     let selected_tab_state = use_store_value::<SelectedTabState>();
     let selected_tab = selected_tab_state.index;
 
-    let total_found = found_words.words.len();
     let cheat = properties.cheat;
 
     let words = (1i32..=100i32)
@@ -47,14 +46,12 @@ pub fn all_found_words(properties: &AllFoundWordsProperties) -> Html {
             <ShareButton {selected_tab} width={1.0} position_number={110} />
 
             <RandomGameButton {selected_tab}  width={6.0} position_number={111}/>
-            <ScoreCounter {total_found} {selected_tab}  width={3.0} position_number={117}/>
+            <ScoreCounter {selected_tab}  width={3.0} position_number={117}/>
 
 
 
 
             // <HistoryButton {selected_tab} {game_size} width={1.0} position_number={118}/>
-            // <WainwrongButton {selected_tab} width={1.0} position_number={119}/>
-            // <FacebookButton {selected_tab} width={1.0} position_number={116}/>
 
         </div>
     )

@@ -57,9 +57,7 @@ pub fn random_game_button(properties: &GameButtonProperties) -> Html {
 
 #[derive(PartialEq, Properties)]
 pub struct ScoreCounterProperties {
-    pub total_found: usize,
     pub selected_tab: usize,
-
     pub position_number: i32,
     pub width: f32,
 }
@@ -84,7 +82,11 @@ pub fn score_counter(properties: &ScoreCounterProperties) -> Html {
     let class = classes!("found-word",);
     let key = "score_counter";
 
-    let text = format_number(properties.total_found as i32);
+
+    let text = match total{
+        100=> format_number(found as i32),
+        _=> format!("{} / {}", found, total)
+    } ;
 
     html!(
         <button {key} {style} {class} >
@@ -187,63 +189,6 @@ pub fn history_button(properties: &GameButtonProperties) -> Html {
     html!(<ButtonBox id={"history_button"} text={"H"} {x} {y} width_units={properties.width}  {on_click} />)
 }
 
-// #[function_component(WainwrongButton)]
-// pub fn wainwrong_button(properties: &GameButtonProperties) -> Html {
-//     let (x, y) =properties.game_size.
-//         get_found_word_position(properties.position_number, properties.selected_tab, false);
-
-//     let rect_class = classes!("found-word-box", "found-word-box-button");
-//     let text_class = classes!("button-text");
-//     let class = classes!("found-word", "found-word-button");
-
-//     let style = format!("transform: translate({x}px, {y}px);");
-
-//     html!(
-//      <g key={"wainwrong_link"} {style} {class} >
-
-//      <a href="https://wainwrong.com/">
-//      <rect class={rect_class} height={format!("{FOUND_WORD_HEIGHT}")} rx="5" width={format!("{}", FOUND_WORD_WIDTH * properties.width)}>
-
-//      </rect>
-//      <text class={text_class}>
-//      {"𝕨"}
-//      </text>
-
-//      </a>
-//      </g>)
-// }
-
-// #[function_component(FacebookButton)]
-// pub fn facebook_button(properties: &GameButtonProperties) -> Html {
-//     let (x, y) =properties.game_size.
-//         get_found_word_position(properties.position_number, properties.selected_tab, false);
-
-//     let rect_class = classes!("found-word-box", "found-word-box-button");
-//     let class = classes!("found-word", "found-word-button");
-
-//     let style = format!("transform: translate({x}px, {y}px);");
-
-//     html!(
-//         <g key={"share_link"} {style} {class} >
-
-//         <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwainwrightmark.github.io%2Fmyriad_rust">
-//         <rect class={rect_class} height={format!("{FOUND_WORD_HEIGHT}")} rx="5" width={format!("{}", FOUND_WORD_WIDTH * properties.width)}>
-
-//         </rect>
-
-//         <svg data-license="From https://github.com/twbs/icons - Licensed under MIT"
-//         fill="currentColor"
-//         height="24"
-//         style="margin: 0.1em; display: initial;"
-//         viewBox="0 0 16 16"
-//         width="24"
-//         xmlns="http://www.w3.org/2000/svg">
-//         <title>{"BootstrapFacebook"}</title>
-//         <path d={FACEBOOK_ICON_PATH}></path></svg>
-
-//         </a>
-//         </g>)
-// }
 
 #[derive(PartialEq, Properties)]
 pub struct ButtonBoxProperties {
