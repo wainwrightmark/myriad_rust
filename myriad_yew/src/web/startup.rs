@@ -1,6 +1,6 @@
 use crate::state::failed_logs_state::FailedLogsState;
 use crate::state::prelude::*;
-use crate::state::user_state::{UserState, UpdateParamsIfNewMessage};
+use crate::state::user_state::{UpdateParamsIfNewMessage, UserState};
 
 use web_sys::UrlSearchParams;
 use yewdux::prelude::Dispatch;
@@ -42,7 +42,6 @@ pub async fn setup() {
     let ref_param = url_search_params.clone().and_then(|u| u.get("ref"));
     let gclid_param = url_search_params.clone().and_then(|u| u.get("gclid"));
 
-
     Dispatch::<UserState>::new()
         .apply_future(UpdateParamsIfNewMessage {
             ref_param,
@@ -77,8 +76,6 @@ pub async fn setup() {
         use capacitor_bindings::status_bar::*;
         crate::web::capacitor::do_or_report_error_async(|| async { StatusBar::hide().await }).await;
     }
-
-
 }
 
 #[cfg(feature = "android")]

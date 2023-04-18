@@ -5,11 +5,11 @@ pub async fn subscribe_to_app_url_events() {
     // LoggableEvent::try_log(LoggableEvent::Internal { message: format!("Subscribing to url open events") });
     if let Ok(handle) = App::add_app_url_open_listener(|x| redirect_to_url(x.url)).await {
         handle.leak();
-    }    
+    }
 }
 
 #[cfg(any(feature = "android", feature = "ios"))]
-fn redirect_to_url(url: String) {    
+fn redirect_to_url(url: String) {
     use web_sys::window;
 
     //use crate::state::logging::LoggableEvent;

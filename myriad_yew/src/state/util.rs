@@ -7,5 +7,5 @@ pub fn get_referrer() -> Option<String> {
     if referrer.is_empty() {
         return None;
     }
-    return Some(referrer);
+    Some(referrer)
 }

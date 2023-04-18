@@ -48,8 +48,6 @@ impl AsyncReducer<UserState> for UpdateParamsIfNewMessage {
     }
 }
 
-
-
 impl UpdateParamsIfNewMessage {
     async fn try_send_log(state: Rc<UserState>) {
         log::info!("User state has changed");

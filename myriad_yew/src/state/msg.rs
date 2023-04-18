@@ -73,7 +73,10 @@ pub fn move_to_new_game(for_today: bool, navigator: &Navigator) {
     };
     let game = game.board.canonical_string();
 
-    let event = logging::LoggableEvent::NewGame { today: for_today, board: game.clone()};
+    let event = logging::LoggableEvent::NewGame {
+        today: for_today,
+        board: game.clone(),
+    };
     LoggableEvent::try_log(event);
 
     navigator.push(&Route::Game { game })
@@ -137,8 +140,9 @@ impl Reducer<FullGameState> for OnCoordinatesSetMsg {
                 }
 
                 if len == 100 {
-
-                    let event = LoggableEvent::GameComplete { board: state.game.board.canonical_string() };
+                    let event = LoggableEvent::GameComplete {
+                        board: state.game.board.canonical_string(),
+                    };
                     LoggableEvent::try_log(event);
 
                     Dispatch::<DialogState>::new().reduce_mut(|s| {

@@ -1,5 +1,3 @@
-use std::ops::Not;
-
 use capacitor_bindings::{
     app::AppInfo,
     device::{Device, DeviceInfo, OperatingSystem, Platform},
@@ -10,10 +8,7 @@ use strum::EnumDiscriminants;
 use wasm_bindgen_futures::spawn_local;
 use yewdux::prelude::Dispatch;
 
-use crate::{
-    state::prelude::*,
-    web::{capacitor, prelude::*},
-};
+use crate::{state::prelude::*, web::capacitor};
 
 use super::user_state::UserState;
 
@@ -186,7 +181,7 @@ impl LoggableEvent {
     }
 
     pub fn should_ignore_error(error: &str) -> bool {
-        const ERRORS_TO_IGNORE: &[&'static str] = &[
+        const ERRORS_TO_IGNORE: &[&str] = &[
             "Js Exception: Notifications not supported in this browser.",
             "Js Exception: Browser does not support the vibrate API",
             "Js Exception: Abort due to cancellation of share.",
@@ -238,7 +233,6 @@ impl LoggableEvent {
             _ => Severity::Info,
         }
     }
-
 
     pub fn new_share(
         ref_param: Option<String>,

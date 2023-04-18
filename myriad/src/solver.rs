@@ -61,7 +61,9 @@ impl<const C: u8, const R: u8, const SIZE: usize> std::fmt::Display for FoundWor
 
 impl FoundWord<3, 3, 9> {
     pub fn get_difficulty(&self) -> Difficulty {
-        if self.path.len() > 0 && self.path.len() <= 9 {
+        if self.path.is_empty() {
+            panic!("Empty word cannot have difficulty")
+        } else if self.path.len() <= 9 {
             Difficulty(NonZeroU8::new(self.path.len() as u8).unwrap())
         } else {
             panic!("Word has wrong path length to have difficulty");

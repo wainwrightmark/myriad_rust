@@ -140,18 +140,22 @@ impl<const L: u8, const SIZE: usize> Board<L, L, SIZE> {
         true
     }
 
-    pub fn try_create_canonical(letters: &str)-> Option<Self>{
+    pub fn try_create_canonical(letters: &str) -> Option<Self> {
         let mut board = Self::try_create(letters)?;
 
         let (quarter_turns, flip_axes) = QuarterTurns::iter()
             .cartesian_product(
                 [FlipAxes::None, FlipAxes::Horizontal, FlipAxes::Horizontal].into_iter(),
             )
-            .sorted_by_cached_key(|(quarter_turns, axes)|Tile::<L, L>::iter_by_row()
-            .map(|c| c.rotate(*quarter_turns))
-            .map(|c| c.flip(*axes))
-            .map(|c| board[c])
-            .join("") ).next().unwrap();
+            .sorted_by_cached_key(|(quarter_turns, axes)| {
+                Tile::<L, L>::iter_by_row()
+                    .map(|c| c.rotate(*quarter_turns))
+                    .map(|c| c.flip(*axes))
+                    .map(|c| board[c])
+                    .join("")
+            })
+            .next()
+            .unwrap();
 
         board.0.rotate(quarter_turns);
         board.0.flip(flip_axes);
