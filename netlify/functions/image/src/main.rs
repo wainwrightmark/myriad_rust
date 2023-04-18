@@ -58,15 +58,51 @@ const WHITE: &str = "#f7f5f0";
 const BLACK: &str = "#1f1b20";
 const GRAY: &str = "#a1a9b0";
 
-fn make_text(chars: &str) -> String {
-    let mut text: String = "".to_string();
-    text.push_str(format!(r#"<svg xmlns="http://www.w3.org/2000/svg" width="{WIDTH}" height="{HEIGHT}" viewBox="0 0 238.1 238.1">"#).as_str());
-    text.push('\n');
+fn try_map_char(c: &char) -> Option<char> {
+    if c.is_ascii_digit(){
+        return Some(*c);
+    }
 
-    text.push_str(format!(r#"<path d="M0 0h238.1v238.1H0z" style="fill:{WHITE};" />"#).as_str());
-    text.push('\n');
+    Some(match c.to_ascii_lowercase() {
+        'i' => 'Ⅰ',
+        'v' => 'Ⅴ',
+        'x' => 'Ⅹ',
+        'l' => 'Ⅼ',
+        'c' => 'Ⅽ',
 
-    for (i, c) in chars.chars().enumerate().take(9) {
+        '-' => '-',
+        '⨉' => '×',
+        '×' => '×',
+        '+' => '+',
+        '*' => '×',
+        '/' => '÷',
+        '÷' => '÷',
+        '_' => ' ',
+        ' ' => '+', //this is an artifact of how urls work
+        _ => return None,
+    })
+}
+
+fn try_map_chars(input: &str)-> Option<[char; 9]>{
+    let mut arr : [char; 9] = [' '; 9];
+
+    for (index,char) in input.chars().enumerate(){
+        let c= try_map_char(&char)?;
+        arr[index] = c;
+    }
+
+    return Some(arr);
+}
+
+fn make_svg_text(chars: &[char; 9]) -> String {
+    let mut svg_text: String = "".to_string();
+    svg_text.push_str(format!(r#"<svg xmlns="http://www.w3.org/2000/svg" width="{WIDTH}" height="{HEIGHT}" viewBox="0 0 238.1 238.1">"#).as_str());
+    svg_text.push('\n');
+
+    svg_text.push_str(format!(r#"<path d="M0 0h238.1v238.1H0z" style="fill:{WHITE};" />"#).as_str());
+    svg_text.push('\n');
+
+    for (i, c) in chars.iter().enumerate().take(9) {
         let x = match i % 3 {
             0 => 13.2,
             1 => 85.3,
@@ -78,7 +114,9 @@ fn make_text(chars: &str) -> String {
             _ => 157.4,
         };
 
-        text.push_str(format!(
+
+
+        svg_text.push_str(format!(
             r#"
         <g transform="translate({x} {y})">
             <circle cx="33.7" cy="33.7" r="31.8"
@@ -91,17 +129,18 @@ fn make_text(chars: &str) -> String {
 
         "#
         ).as_str());
-        text.push('\n');
+        svg_text.push('\n');
     }
 
-    text.push_str("</svg>");
+    svg_text.push_str("</svg>");
 
-    return text;
+    return svg_text;
 }
 
 fn draw_image(game: &str) -> Vec<u8> {
     let opt: resvg::usvg::Options = get_options();
-    let svg_data = make_text(game);
+    let chars = try_map_chars(game).unwrap_or([' ',' ',' ',' ','?',' ',' ',' ',' ',]);
+    let svg_data = make_svg_text(&chars);
 
     //println!("{svg_data}");
 
@@ -145,8 +184,14 @@ mod tests {
     use crate::draw_image;
 
     #[test]
-    fn it_works() {
-        let data = draw_image("-184578+5");
-        std::fs::write("test.png", data).unwrap();
+    fn parse_test() {
+        let data = draw_image("-1+4/78 5");
+        std::fs::write("parse_test.png", data).unwrap();
+    }
+
+    #[test]
+    fn unknown_test() {
+        let data = draw_image("null");
+        std::fs::write("unknown.png", data).unwrap();
     }
 }
