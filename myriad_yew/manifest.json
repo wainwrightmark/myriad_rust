@@ -18,7 +18,7 @@
       }
     ],
     "id": "/manifest.json",
-    "start_url": "/advanced",
+    "start_url": "",
     "background_color": "#ffffff",
     "display": "standalone",
     "scope": "/",

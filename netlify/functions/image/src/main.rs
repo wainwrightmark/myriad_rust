@@ -25,7 +25,8 @@ pub(crate) async fn my_handler(
     let mut headers = HeaderMap::new();
     headers.insert("Content-Type", HeaderValue::from_static("image/png"));
 
-    let game = e.payload.path_parameters.get("game").map(|x|x.as_str()).unwrap_or_else(||"unknown game");
+    let game = e.payload.query_string_parameters.iter().filter(|x|x.0.eq_ignore_ascii_case("game"))
+    .map(|x|x.1).next().unwrap_or_else(||"myriad123");
 
     let data = draw_image(game);
 
