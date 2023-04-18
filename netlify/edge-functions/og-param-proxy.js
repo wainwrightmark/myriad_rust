@@ -6,9 +6,9 @@ export default async (request, context) => {
     const page = await response.text()
 
     try{
-        const id = url.searchParams.get("id");
+        const game = url.pathname.substring(6);
         const search = 'https://myriad-game.com/icon/og_image.png'
-        const replace = `https://myriad-game.com/.netlify/functions/image?game=${id}`
+        const replace = `https://myriad-game.com/.netlify/functions/image?game=${game}`
 
         return new Response(page .replaceAll(search, replace), response);
     }
