@@ -6,6 +6,8 @@ use super::prelude::*;
 #[derive(Copy, Clone, PartialEq, Debug, Store)]
 pub struct GameSize {
     pub board_length: f32,
+
+    pub outer_length: f32,
     // pub width: f32,
     // pub height: f32,
     pub orientation: Orientation,
@@ -43,6 +45,8 @@ impl Default for GameSize {
     fn default() -> Self {
         Self {
             board_length: 400.,
+            outer_length: 650.,
+
             orientation: Orientation::default(),
         }
     }
@@ -72,9 +76,16 @@ impl GameSize {
         }
         .min(400.);
 
+        let outer_length = match orientation{
+            Orientation::Vertical=> width.min(board_length * 1.5),
+            Orientation::Horizontal => height.min(board_length * 1.2)
+        };
+
+
         Self {
             orientation,
             board_length,
+            outer_length
         }
     }
 
@@ -96,10 +107,14 @@ impl GameSize {
         self.board_length / 8.0
     }
 
-    pub fn outer_container_style(&self) -> &'static str {
+    pub fn outer_container_style(&self) -> String {
+
+        let board_other_length = self.board_length * 13./ 8.;
+        let board_length = self.outer_length;
+
         match self.orientation {
-            Orientation::Vertical => "max-width: 600px",
-            Orientation::Horizontal => "",
+            Orientation::Vertical => format!("width: {board_length}px;") ,
+            Orientation::Horizontal => format!("height: {board_length}px; width: {board_other_length}px;"),
         }
     }
 
@@ -110,9 +125,12 @@ impl GameSize {
         let tab_header_diameter = self.tab_header_diameter();
         let tab_header_font_size = tab_header_diameter / 1.5;
 
+        let board_other_length = self.board_length * 13./ 8.;
+        let board_length = self.board_length;
+
         match self.orientation {
-            Orientation::Vertical => format!("max-width: 400px; --circle-diameter: {circle_diameter}px; --circle-radius: {circle_radius}px; --tab-header-diameter: {tab_header_diameter}px; --tab-header-font-size: {tab_header_font_size}px;"),
-            Orientation::Horizontal => format!("--circle-diameter: {circle_diameter}px; --circle-radius: {circle_radius}px; --tab-header-diameter: {tab_header_diameter}px; --tab-header-font-size: {tab_header_font_size}px;"),
+            Orientation::Vertical => format!("width: {board_length}px; height: {board_other_length}px; --circle-diameter: {circle_diameter}px; --circle-radius: {circle_radius}px; --tab-header-diameter: {tab_header_diameter}px; --tab-header-font-size: {tab_header_font_size}px;"),
+            Orientation::Horizontal => format!("height: {board_length}px; width: {board_other_length}px; --circle-diameter: {circle_diameter}px; --circle-radius: {circle_radius}px; --tab-header-diameter: {tab_header_diameter}px; --tab-header-font-size: {tab_header_font_size}px;"),
         }
     }
 

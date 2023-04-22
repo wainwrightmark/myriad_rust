@@ -56,9 +56,9 @@ impl SelectedTabState {
             return self;
         }
 
-        let Some(index) = ((number - 1) / GOALSIZE).try_into().ok() else {return self;};
+        let Some(index) : Option<usize> = ((number - 1) / GOALSIZE).try_into().ok() else {return self;};
         SelectedTabState {
-            index,
+            index : index + 1,
             locked: false,
         }
     }

@@ -62,7 +62,6 @@ body {
 
 .container {
   position: relative;
-  height: 100vh;
   margin: auto;
   background-color: var(--inner-background);
 

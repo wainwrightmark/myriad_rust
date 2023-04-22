@@ -74,7 +74,7 @@ pub fn found_words_tab_header(properties: &NumberTabHeaderProperties) -> Html {
     let onclick = Dispatch::new().apply_callback(move |_| TabSelectedMsg { index });
     let selected_tab_state = use_store_value::<SelectedTabState>();
     let is_complete =
-        use_selector(move |state: &FullGameState| state.is_tab_complete(index as i32));
+        use_selector(move |state: &FullGameState| state.is_tab_complete((index as i32) - 1));
 
     let key = format!("found_words_tab_header{index}");
     let selected = if selected_tab_state.index == index {
