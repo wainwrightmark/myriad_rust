@@ -90,6 +90,8 @@ pub fn found_words_word(properties: &FoundWordProperties) -> Html {
 
     let text = format_number(number);
     let (game_size, _) = use_store::<GameSize>();
+
+
     let (x, y) = game_size.get_found_word_position(number, properties.selected_tab, false);
 
     let style = format!(" transform: translate({x}px, {y}px); height: {FOUND_WORD_HEIGHT}px; width: {FOUND_WORD_WIDTH}px;");

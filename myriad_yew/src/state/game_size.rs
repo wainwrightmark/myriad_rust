@@ -154,6 +154,8 @@ impl GameSize {
         selected_index: usize,
         clamp: bool,
     ) -> (f32, f32) {
+
+        let number  = if number <= 100{ number + 20} else { number % 100};
         let row_number = ((number - 1) % GOALSIZE) / 10;
         let row_position = ((number - 1) % GOALSIZE) % 10;
 
