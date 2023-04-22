@@ -1,4 +1,4 @@
-use myriad::prelude::Center;
+use myriad::prelude::Location;
 use yewdux::store::{Reducer, Store};
 
 use super::prelude::*;
@@ -56,7 +56,7 @@ pub trait CenterStyle {
     fn get_style(&self) -> String;
 }
 
-impl CenterStyle for Center {
+impl CenterStyle for Location {
     fn get_style(&self) -> String {
         format!("left: {}px; top: {}px", self.x, self.y)
     }

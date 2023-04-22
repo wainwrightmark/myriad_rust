@@ -675,7 +675,8 @@ dependencies = [
 [[package]]
 name = "geometrid"
 version = "0.1.0"
-source = "git+https://github.com/wainwrightmark/geometrid#d244ba8266138307176016f8c0830026888f9d0f"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c9a2c3e5cf5f42ad6ccbe01d9e0205dff2360a3e574163474bb5243a99fdc749"
 dependencies = [
  "ethnum",
  "itertools",

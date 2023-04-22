@@ -96,7 +96,7 @@ pub fn crosshair(properties: &CrossHairProperties) -> Html {
     } else {
         1.0
     };
-    let offset = Center {
+    let offset = Location {
         x: -(square_radius * 0.9),
         y: -(square_radius * 0.9),
     };
@@ -121,10 +121,10 @@ pub struct Transform {
     pub rot: f32,
 }
 
-impl Add<Center> for Transform {
+impl Add<Location> for Transform {
     type Output = Self;
 
-    fn add(self, rhs: Center) -> Self::Output {
+    fn add(self, rhs: Location) -> Self::Output {
         Self {
             x: self.x + rhs.x,
             y: self.y + rhs.y,
