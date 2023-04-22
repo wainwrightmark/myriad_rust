@@ -13,10 +13,21 @@ pub fn info_bar() -> Html {
     let font_size = state.font_size();
     let line_height = state.line_height();
     let (x, y) = size.get_info_bar_position();
+    let (width, height) = size.get_info_bar_size();
+
+    let orientation = match size.orientation {
+        Orientation::Vertical  => "horizontal-writing",
+        Orientation::Horizontal  => "vertical-writing",
+    };
+
+    let class = classes!("infobar-text", orientation );
+
+    let style = format!("transform: translate({x}px, {y}px); color: {color}; font-size: {font_size}; line-height: {line_height}; width: {width}px; height: {height}px; ");
+
 
     html! {
-        <div class="infobar" style={format!("transform: translate({x}px, {y}px); color: {color}; font-size: {font_size}; line-height: {line_height};")}>
-        <span class="infobar-text">
+        <div class="infobar" >
+        <span {class} {style}>
         {state.text()}
         </span>
 

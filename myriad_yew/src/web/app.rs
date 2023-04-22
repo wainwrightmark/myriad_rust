@@ -75,30 +75,34 @@ fn myriad_app(props: &MyriadAppProps) -> Html {
         Dispatch::new().apply(LoadGameMessage { game });
     }
 
-    let node = use_node_ref();
-    let (width, height) = yew_hooks::use_size(node.clone());
+    let (width, height) = yew_hooks::use_window_size();
+    let (width, height) = (width as f32, height as f32);
+
+    // let node = use_node_ref();
+    // let (width, height) = yew_hooks::use_size(node.clone());
+
 
     Dispatch::<GameSize>::new().apply(SetSizeMessage { width, height });
 
-    if width == 0 && height == 0 {
+    if width == 0. && height == 0. {
         return html!(
             <div class="outer-container">
-            <div class="container" ref={node}/>
+            <div class="container" />
             </div>
         );
     }
 
-    let size = GameSize {
-        width: width as f32,
-        height: height as f32,
-    };
+    let size = GameSize::from_width_and_height(width, height);
+
+    let outer_container_style = size.outer_container_style();
+    let container_style = size.container_style();
 
     html! {
         <>
         <CongratsDialog/>
         <HistoryDialog/>
-        <div class="outer-container">
-            <div class="container" ref={node} style={size.style_string()}>
+        <div class="outer-container"  style={outer_container_style}>
+            <div class="container"   style={container_style}>
                 <Circles  />
                 <Crosshairs />
                 <InfoBar/>

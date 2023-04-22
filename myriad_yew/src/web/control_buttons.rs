@@ -15,7 +15,8 @@ pub struct GameButtonProperties {
     pub selected_tab: usize,
 
     pub position_number: i32,
-    pub width: f32,
+    pub size: f32,
+    pub orientation: Orientation,
 }
 
 #[function_component(TodayGameButton)]
@@ -35,7 +36,7 @@ pub fn todays_game_button(properties: &GameButtonProperties) -> Html {
         false,
     );
 
-    html!(<ButtonBox id={"today_game_button"} text={"Today's Game"} {x} {y} width_units={properties.width}  {on_click} />)
+    html!(<ButtonBox id={"today_game_button"} text={"Today Game"} {x} {y} size_units={properties.size}   orientation={properties.orientation}  {on_click} />)
 }
 
 #[function_component(RandomGameButton)]
@@ -52,14 +53,15 @@ pub fn random_game_button(properties: &GameButtonProperties) -> Html {
         false,
     );
 
-    html!(<ButtonBox id={"random_game_button"} text={"Random Game"} {x} {y} width_units={properties.width}  {on_click} />)
+    html!(<ButtonBox id={"random_game_button"} text={"Random Game"} {x} {y} size_units={properties.size}   orientation={properties.orientation}  {on_click} />)
 }
 
 #[derive(PartialEq, Properties)]
 pub struct ScoreCounterProperties {
     pub selected_tab: usize,
     pub position_number: i32,
-    pub width: f32,
+    pub size: f32,
+    pub orientation: Orientation,
 }
 
 #[function_component(ScoreCounter)]
@@ -73,20 +75,37 @@ pub fn score_counter(properties: &ScoreCounterProperties) -> Html {
 
     let (found, total) = *use_selector(|state: &FullGameState| state.get_found_count());
     let found_pc = found * 100 / total;
-    let gradient = format!("background: linear-gradient(to right, var(--progress) {found_pc}%, var(--progress-blank) {found_pc}%, var(--progress-blank));");
+    let gradient_to = match properties.orientation {
+        Orientation::Vertical=> "right",
+        Orientation::Horizontal=> "top"
+    };
+    let gradient = format!("background: linear-gradient(to {gradient_to}, var(--progress) {found_pc}%, var(--progress-blank) {found_pc}%, var(--progress-blank));");
 
-    let width = format!("{}", FOUND_WORD_WIDTH * properties.width);
-    let height = format!("{FOUND_WORD_HEIGHT}");
+    let width: f32;
+    let height: f32;
+
+    match properties.orientation {
+        Orientation::Vertical => {
+            width = FOUND_WORD_WIDTH * properties.size;
+            height = FOUND_WORD_HEIGHT;
+        }
+        Orientation::Horizontal => {
+            width = FOUND_WORD_WIDTH;
+            height = FOUND_WORD_HEIGHT * properties.size;
+        }
+    };
+
+    // let width = format!("{}", FOUND_WORD_WIDTH * properties.width);
+    // let height = format!("{FOUND_WORD_HEIGHT}");
     let style = format!("position:absolute; transform: translate({x}px, {y}px); height: {height}px; width: {width}px; border-radius:5px; {gradient}");
 
     let class = classes!("found-word",);
     let key = "score_counter";
 
-
-    let text = match total{
-        100=> format_number(found as i32),
-        _=> format!("{} / {}", found, total)
-    } ;
+    let text = match total {
+        100 => format_number(found as i32),
+        _ => format!("{} / {}", found, total),
+    };
 
     html!(
         <button {key} {style} {class} >
@@ -116,7 +135,7 @@ pub fn dark_mode_button(properties: &GameButtonProperties) -> Html {
         false,
     );
 
-    html!(<ButtonBox id={"dark_mode_button"} {text} {x} {y} width_units={properties.width}  {on_click} />)
+    html!(<ButtonBox id={"dark_mode_button"} {text} {x} {y} size_units={properties.size}   orientation={properties.orientation} {on_click} />)
 }
 
 #[function_component(RotateButton)]
@@ -134,7 +153,7 @@ pub fn rotate_button(properties: &GameButtonProperties) -> Html {
         false,
     );
 
-    html!(<ButtonBox id={"rotate_button"} text={"⟳"} {x} {y} width_units={properties.width}  {on_click} />)
+    html!(<ButtonBox id={"rotate_button"} text={"⟳"} {x} {y} size_units={properties.size}   orientation={properties.orientation} {on_click} />)
 }
 
 #[function_component(FlipButton)]
@@ -152,7 +171,7 @@ pub fn flip_button(properties: &GameButtonProperties) -> Html {
         false,
     );
 
-    html!(<ButtonBox id={"flip_button"} text={"⬌"} {x} {y} width_units={properties.width}  {on_click} />)
+    html!(<ButtonBox id={"flip_button"} text={"⬌"} {x} {y} size_units={properties.size}   orientation={properties.orientation}  {on_click} />)
 }
 
 #[function_component(ShareButton)]
@@ -169,7 +188,7 @@ pub fn share_button(properties: &GameButtonProperties) -> Html {
         false,
     );
 
-    html!(<ButtonBox id={"share_button"} text={"⠪"} {x} {y} width_units={properties.width}  {on_click} />)
+    html!(<ButtonBox id={"share_button"} text={"⠪"} {x} {y} size_units={properties.size}   orientation={properties.orientation} {on_click} />)
 }
 
 #[function_component(HistoryButton)]
@@ -186,9 +205,8 @@ pub fn history_button(properties: &GameButtonProperties) -> Html {
         false,
     );
 
-    html!(<ButtonBox id={"history_button"} text={"H"} {x} {y} width_units={properties.width}  {on_click} />)
+    html!(<ButtonBox id={"history_button"} text={"H"} {x} {y} size_units={properties.size}  {on_click} orientation={properties.orientation} />)
 }
-
 
 #[derive(PartialEq, Properties)]
 pub struct ButtonBoxProperties {
@@ -196,7 +214,8 @@ pub struct ButtonBoxProperties {
     pub text: AttrValue,
     pub x: f32,
     pub y: f32,
-    pub width_units: f32,
+    pub size_units: f32,
+    pub orientation: Orientation,
     pub on_click: Option<Callback<MouseEvent>>,
 }
 
@@ -204,9 +223,26 @@ pub struct ButtonBoxProperties {
 fn button_box(properties: &ButtonBoxProperties) -> Html {
     let x = properties.x;
     let y = properties.y;
-    let width = format!("{}", FOUND_WORD_WIDTH * properties.width_units);
-    let height = format!("{FOUND_WORD_HEIGHT}");
+
+    let width: f32;
+    let height: f32;
+    let p_class: &'static str;
+
+    match properties.orientation {
+        Orientation::Vertical => {
+            width = FOUND_WORD_WIDTH * properties.size_units;
+            height = FOUND_WORD_HEIGHT;
+            p_class = "horizontal-writing";
+        }
+        Orientation::Horizontal => {
+            width = FOUND_WORD_WIDTH;
+            height = FOUND_WORD_HEIGHT * properties.size_units;
+            p_class = "vertical-writing"
+        }
+    };
+
     let style = format!("position:absolute; transform: translate({x}px, {y}px); height: {height}px; width: {width}px; border-radius:5px;");
+
 
     let class = classes!(
         "found-word",
@@ -220,7 +256,9 @@ fn button_box(properties: &ButtonBoxProperties) -> Html {
 
     html!(
         <button {key} {style} {class} onclick={properties.on_click.clone()}>
+            <p class={p_class}>
             {properties.text.clone()}
+            </p>
         </button>
     )
 }

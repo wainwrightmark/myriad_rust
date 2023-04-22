@@ -7,11 +7,11 @@ use yewdux::prelude::*;
 
 #[function_component(TabHeaders)]
 pub fn found_words_tab_headers() -> Html {
-    let buttons = (0..5)
+    let buttons = (1..=5)
         .map(|index| html!(<NumberTabHeader {index} /> ))
         .collect::<Html>();
 
-    html!(<div class="tab-headers"> { buttons } <MoreTabHeader index={5} /> </div>)
+    html!(<div class="tab-headers"> { buttons } <MoreTabHeader index={0} /> </div>)
 }
 
 #[derive(PartialEq, Properties)]
@@ -46,9 +46,7 @@ pub fn more_tab_header(properties: &MoreTabHeaderProperties) -> Html {
         "var(--tab-background-default)"
     };
 
-    let x = game_size.get_tab_header_padding()
-        + (index as f32 * (game_size.tab_header_diameter() + TAB_HEADER_MARGIN));
-    let y = (game_size.square_length() * 3.0) + TAB_HEADER_TOP_MARGIN + INFO_BAR_HEIGHT;
+    let (x, y) = game_size.get_tab_header_position(index);
 
     let found_pc = found * 100 / total;
 
@@ -89,17 +87,14 @@ pub fn found_words_tab_header(properties: &NumberTabHeaderProperties) -> Html {
     let complete = is_complete.then(|| "complete-tab");
 
     let class = classes!("tab-header", selected, complete);
-    let style = format!(
-        "transform: translate({}px, {}px);",
-        game_size.get_tab_header_padding()
-            + (index as f32 * (game_size.tab_header_diameter() + TAB_HEADER_MARGIN)),
-        (game_size.square_length() * 3.0) + TAB_HEADER_TOP_MARGIN + INFO_BAR_HEIGHT
-    );
+    let (x, y) = game_size.get_tab_header_position(index);
+
+    let style = format!("transform: translate({x}px, {y}px);");
 
     html!(
 
         <button {class}  {style} {onclick} {key}>
-        {format_number (((index as i32)  + 1) * GOALSIZE)}
+        {format_number (((index as i32)) * GOALSIZE)}
      </button>
 
     )

@@ -5,14 +5,25 @@ use super::prelude::*;
 /// The size of the game area
 #[derive(Copy, Clone, PartialEq, Debug, Store)]
 pub struct GameSize {
-    pub width: f32,
-    pub height: f32,
+    pub board_length: f32,
+    // pub width: f32,
+    // pub height: f32,
+    pub orientation: Orientation,
 }
 
-#[derive(Debug, Default, PartialEq, Eq)]
+#[derive(Copy, Clone, PartialEq, Debug, Eq, Default)]
+pub enum Orientation {
+    #[default]
+    /// Taller than it is wide
+    Vertical,
+    /// Wider than it is tall
+    Horizontal,
+}
+
+#[derive(Debug, Default, PartialEq)]
 pub struct SetSizeMessage {
-    pub width: u32,
-    pub height: u32,
+    pub width: f32,
+    pub height: f32,
 }
 
 impl Reducer<GameSize> for SetSizeMessage {
@@ -20,16 +31,9 @@ impl Reducer<GameSize> for SetSizeMessage {
         if self == Default::default() {
             return state;
         }
-        let w = self.width as f32;
-        let h = self.height as f32;
-
-        if w == state.width && h == state.height {
-            return state;
-        }
 
         let s = std::rc::Rc::make_mut(&mut state);
-        s.width = w;
-        s.height = h;
+        *s = GameSize::from_width_and_height(self.width as f32, self.height as f32);
 
         state
     }
@@ -38,8 +42,8 @@ impl Reducer<GameSize> for SetSizeMessage {
 impl Default for GameSize {
     fn default() -> Self {
         Self {
-            width: 400.,
-            height: 400.,
+            board_length: 400.,
+            orientation: Orientation::default(),
         }
     }
 }
@@ -55,18 +59,33 @@ impl CenterStyle for Center {
 }
 
 impl GameSize {
-    pub fn board_length(&self) -> f32 {
-        self.width.min(self.height * 8. / 13.0)
+    pub fn from_width_and_height(width: f32, height: f32) -> Self {
+        let orientation = if width <= height {
+            Orientation::Vertical
+        } else {
+            Orientation::Horizontal
+        };
+
+        let board_length = match orientation {
+            Orientation::Vertical => width.min(height * 8. / 13.0),
+            Orientation::Horizontal => height.min(width * 8. / 13.),
+        }
+        .min(400.);
+
+        Self {
+            orientation,
+            board_length,
+        }
     }
 
     /// The length of one of the board squares
     pub fn square_length(&self) -> f32 {
-        self.board_length() / 3.
+        self.board_length / 3.
     }
 
     /// The length of one of the board squares
     pub fn square_radius(&self) -> f32 {
-        self.board_length() / 6.
+        self.board_length / 6.
     }
 
     fn circle_diameter(&self) -> f32 {
@@ -74,25 +93,59 @@ impl GameSize {
     }
 
     pub fn tab_header_diameter(&self) -> f32 {
-        self.board_length() / 8.0
+        self.board_length / 8.0
     }
 
-    pub fn style_string(&self) -> String {
+    pub fn outer_container_style(&self) -> &'static str {
+        match self.orientation {
+            Orientation::Vertical => "max-width: 600px",
+            Orientation::Horizontal => "",
+        }
+    }
+
+    pub fn container_style(&self) -> String {
         let circle_diameter = self.circle_diameter();
         let circle_radius = circle_diameter * 0.5;
 
         let tab_header_diameter = self.tab_header_diameter();
         let tab_header_font_size = tab_header_diameter / 1.5;
 
-        format!("--circle-diameter: {circle_diameter}px; --circle-radius: {circle_radius}px; --tab-header-diameter: {tab_header_diameter}px; --tab-header-font-size: {tab_header_font_size}px;")
+        match self.orientation {
+            Orientation::Vertical => format!("max-width: 400px; --circle-diameter: {circle_diameter}px; --circle-radius: {circle_radius}px; --tab-header-diameter: {tab_header_diameter}px; --tab-header-font-size: {tab_header_font_size}px;"),
+            Orientation::Horizontal => format!("--circle-diameter: {circle_diameter}px; --circle-radius: {circle_radius}px; --tab-header-diameter: {tab_header_diameter}px; --tab-header-font-size: {tab_header_font_size}px;"),
+        }
     }
 
     pub fn get_info_bar_position(&self) -> (f32, f32) {
-        let y = self.board_length();
+        match self.orientation {
+            Orientation::Vertical => {
+                let x = 0.0;
+                let y = self.board_length;
 
-        let x = 0.0;
+                (x, y)
+            }
+            Orientation::Horizontal => {
+                let x = self.board_length;
+                let y = 0.0;
+                (x, y)
+            }
+        }
+    }
+    pub fn get_info_bar_size(&self) -> (f32, f32) {
+        let width: f32;
+        let height: f32;
+        match self.orientation {
+            Orientation::Vertical => {
+                width = self.board_length;
+                height = INFO_BAR_HEIGHT;
+            }
+            Orientation::Horizontal => {
+                width = INFO_BAR_HEIGHT;
+                height = self.board_length;
+            }
+        }
 
-        (x, y)
+        (width, height)
     }
 
     pub fn get_found_word_position(
@@ -102,36 +155,88 @@ impl GameSize {
         clamp: bool,
     ) -> (f32, f32) {
         let row_number = ((number - 1) % GOALSIZE) / 10;
-        let y = self.board_length()
-            + FOUND_WORD_TOP_PADDING
-            + self.tab_header_diameter()
-            + TAB_HEADER_TOP_MARGIN
-            + FOUND_WORD_MARGIN
-            + INFO_BAR_HEIGHT
-            + (FOUND_WORD_HEIGHT + FOUND_WORD_MARGIN) * row_number as f32;
-
         let row_position = ((number - 1) % GOALSIZE) % 10;
 
-        let found_word_padding =
-            (self.width - (FOUND_WORD_WIDTH * 10.0 + FOUND_WORD_MARGIN * 9.0)) / 2.0;
+        match self.orientation {
+            Orientation::Vertical => {
+                let y = self.board_length
+                    + FOUND_WORD_TOP_PADDING
+                    + self.tab_header_diameter()
+                    + TAB_HEADER_TOP_MARGIN
+                    + FOUND_WORD_MARGIN
+                    + INFO_BAR_HEIGHT
+                    + (FOUND_WORD_HEIGHT + FOUND_WORD_MARGIN) * row_number as f32;
 
-        let tab_x =
-            found_word_padding + row_position as f32 * (FOUND_WORD_MARGIN + FOUND_WORD_WIDTH);
+                let found_word_padding =
+                    (self.board_length - (FOUND_WORD_WIDTH * 10.0 + FOUND_WORD_MARGIN * 9.0)) / 2.0;
 
-        let index = (number - 1) / GOALSIZE;
-        let mut index_offset = (index - selected_index as i32) as f32;
-        if clamp {
-            index_offset = index_offset.min(1.0).max(-1.0);
+                let tab_x = found_word_padding
+                    + row_position as f32 * (FOUND_WORD_MARGIN + FOUND_WORD_WIDTH);
+
+                let index = (number - 1) / GOALSIZE;
+                let mut index_offset = (index - selected_index as i32) as f32;
+                if clamp {
+                    index_offset = index_offset.min(1.0).max(-1.0);
+                }
+
+                let offset_x = index_offset * self.board_length;
+
+                let x = tab_x + offset_x;
+                (x, y)
+            }
+            Orientation::Horizontal => {
+                let x = self.board_length
+                    + FOUND_WORD_TOP_PADDING
+                    + self.tab_header_diameter()
+                    + TAB_HEADER_TOP_MARGIN
+                    + FOUND_WORD_MARGIN
+                    + INFO_BAR_HEIGHT
+                    + (FOUND_WORD_HEIGHT + FOUND_WORD_MARGIN) * row_number as f32;
+
+                let found_word_padding =
+                    (self.board_length - (FOUND_WORD_WIDTH * 10.0 + FOUND_WORD_MARGIN * 9.0)) / 2.0;
+
+                let tab_y = found_word_padding
+                    + row_position as f32 * (FOUND_WORD_MARGIN + FOUND_WORD_HEIGHT);
+
+                let index = (number - 1) / GOALSIZE;
+                let mut index_offset = (index - selected_index as i32) as f32;
+                if clamp {
+                    index_offset = index_offset.min(1.0).max(-1.0);
+                }
+
+                let offset_y = index_offset * self.board_length;
+
+                let y = tab_y + offset_y;
+                (x, y)
+            }
         }
-
-        let offset_x = index_offset * self.board_length();
-
-        let x = tab_x + offset_x;
-        (x, y)
     }
 
-    pub fn get_tab_header_padding(&self) -> f32 {
-        (self.width - ((self.tab_header_diameter() + 3.0) * 6.0 + TAB_HEADER_MARGIN * 5.0)) / 2.0
+    pub fn get_tab_header_position(&self, index: usize) -> (f32, f32) {
+        match self.orientation {
+            Orientation::Vertical => {
+                let tab_header_padding = (self.board_length
+                    - ((self.tab_header_diameter() + 3.0) * 6.0 + TAB_HEADER_MARGIN * 5.0))
+                    / 2.0;
+
+                let x = tab_header_padding
+                    + (index as f32 * (self.tab_header_diameter() + TAB_HEADER_MARGIN));
+                let y = (self.square_length() * 3.0) + TAB_HEADER_TOP_MARGIN + INFO_BAR_HEIGHT;
+                (x, y)
+            }
+            Orientation::Horizontal => {
+                let tab_header_padding = (self.board_length
+                    - ((self.tab_header_diameter() + 3.0) * 6.0 + TAB_HEADER_MARGIN * 5.0))
+                    / 2.0;
+
+                let x = self.board_length + INFO_BAR_HEIGHT + TAB_HEADER_TOP_MARGIN;
+                let y = tab_header_padding
+                    + (index as f32 * (self.tab_header_diameter() + TAB_HEADER_MARGIN));
+
+                (x, y)
+            }
+        }
     }
 }
 

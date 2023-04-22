@@ -1,17 +1,9 @@
-use crate::state::prelude::*;
-use myriad::prelude::*;
 use serde::*;
-use serde_with::serde_as;
-use std::rc::Rc;
-use yewdux::prelude::*;
-
-use chrono::{Datelike, NaiveDate};
-
 #[derive(PartialEq, Eq, Clone, Copy, Serialize, Deserialize)]
 pub enum GameTiming {
     Started { utc_time_milliseconds: i64 },
     Finished { total_milliseconds: u64 },
-    Unknown
+    Unknown,
 }
 
 impl Default for GameTiming {

@@ -53,16 +53,15 @@ body {
 
 .outer-container{
   position: relative;
-  max-width: 600px;
   height: 100vh;
   margin: auto;
   overflow-x: hidden;
+  overflow-y: hidden;
   background-color: var(--inner-background);
 }
 
 .container {
   position: relative;
-  max-width: 400px;
   height: 100vh;
   margin: auto;
   background-color: var(--inner-background);
@@ -244,6 +243,7 @@ Tab Header
   border-color: var(--tab-border-color);
   border-style: solid;
   background-color: var(--tab-background-default);
+  transition: transform 1s;
 }
 
 .selected-tab{
@@ -353,8 +353,21 @@ Crosshairs
 
 .infobar-text{
   text-align: center;
-  width: 100%;
   display: block;
-  height: 100px;
   font-family: 'Inconsolata', monospace;
+  transition: transform 1s;
+}
+
+.horizontal-writing{
+  writing-mode: horizontal-tb;
+  text-orientation: sideways;
+  margin-block-start: 0;
+  margin-block-end: 0;
+}
+
+.vertical-writing{
+  writing-mode: vertical-lr;
+  text-orientation: upright;
+  margin-block-start: 0;
+  margin-block-end: 0;
 }

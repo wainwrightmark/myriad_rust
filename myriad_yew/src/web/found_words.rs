@@ -17,6 +17,9 @@ pub fn all_found_words(properties: &AllFoundWordsProperties) -> Html {
     let found_words = use_selector(|state: &FullGameState| state.found_words.clone());
     let difficulties = use_selector(|state: &FullGameState| state.game.difficulties.clone());
     let selected_tab_state = use_store_value::<SelectedTabState>();
+    let orientation = use_selector(|gs: &GameSize| gs.orientation)
+        .as_ref()
+        .clone();
     let selected_tab = selected_tab_state.index;
 
     let cheat = properties.cheat;
@@ -38,15 +41,15 @@ pub fn all_found_words(properties: &AllFoundWordsProperties) -> Html {
         <div class="found-words">
             {words}
 
-            <TodayGameButton {selected_tab}  width={6.0} position_number={101}/>
+            <TodayGameButton {selected_tab}  size={6.0} position_number={101} {orientation}/>
 
-            <DarkModeButton  {selected_tab} width={1.0} position_number={107}/>
-            <RotateButton  {selected_tab} width={1.0} position_number={108}/>
-            <FlipButton  {selected_tab}  width={1.0} position_number={109}/>
-            <ShareButton {selected_tab} width={1.0} position_number={110} />
+            <DarkModeButton  {selected_tab} size={1.0} {orientation} position_number={107}/>
+            <RotateButton  {selected_tab}  size={1.0} {orientation} position_number={108}/>
+            <FlipButton  {selected_tab}   size={1.0} {orientation} position_number={109}/>
+            <ShareButton {selected_tab}  size={1.0} {orientation} position_number={110} />
 
-            <RandomGameButton {selected_tab}  width={6.0} position_number={111}/>
-            <ScoreCounter {selected_tab}  width={3.0} position_number={117}/>
+            <RandomGameButton {selected_tab}   size={6.0} {orientation} position_number={111}/>
+            <ScoreCounter {selected_tab}   size={3.0} {orientation} position_number={117}/>
 
 
 
