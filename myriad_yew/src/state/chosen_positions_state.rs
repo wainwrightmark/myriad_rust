@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 use crate::state::prelude::*;
 use itertools::Itertools;
 use myriad::parser::parse_and_evaluate;
@@ -123,6 +125,12 @@ impl Reducer<ChosenPositionsState> for FindNumberMsg {
                     .solve(fs.game.board.clone())
                     .find(|x| x.result == self.number)
                 {
+                    Dispatch::<FullGameState>::new().apply(|mut x: Rc<FullGameState>| {
+                        let gs = Rc::make_mut(&mut x);
+                        gs.timing = GameTiming::Cheat;
+                        x
+                    });
+
                     //log::debug!("Cheating Path found");
                     return ChosenPositionsState {
                         positions: solution.path,

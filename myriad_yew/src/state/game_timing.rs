@@ -3,7 +3,9 @@ use serde::*;
 pub enum GameTiming {
     Started { utc_time_milliseconds: i64 },
     Finished { total_milliseconds: u64 },
+    Cheat,
     Unknown,
+
 }
 
 impl Default for GameTiming {

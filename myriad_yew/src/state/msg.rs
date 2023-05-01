@@ -159,6 +159,7 @@ impl Reducer<FullGameState> for OnCoordinatesSetMsg {
                             GameTiming::Finished { total_milliseconds }
                         }
                         GameTiming::Unknown => GameTiming::Unknown,
+                        GameTiming::Cheat => GameTiming::Cheat
                     }
                 } else {
                     timing = state.timing;

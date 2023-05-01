@@ -84,6 +84,10 @@ pub fn congrats_dialog() -> Html {
         };
 
         let time_box = match *timing {
+            GameTiming::Cheat => html!(<>
+                <br/>
+                <p class="time-display">{"You Cheated!"}</p>
+                 </>),
             GameTiming::Started { .. } | GameTiming::Unknown => html!(<></>),
             GameTiming::Finished { total_milliseconds } => {
                 let total = Duration::milliseconds(total_milliseconds as i64);
