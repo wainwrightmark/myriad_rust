@@ -122,12 +122,10 @@ impl TryFrom<char> for Rune {
             'c' => Ok(Rune::RomanOneHundred),
 
             '-' => Ok(Rune::Minus),
-            '⨉' => Ok(Rune::Times),
-            '×' => Ok(Rune::Times),
+            '⨉' | '×' | '*' => Ok(Rune::Times),
+
             '+' => Ok(Rune::Plus),
-            '*' => Ok(Rune::Times),
-            '/' => Ok(Rune::Divide),
-            '÷' => Ok(Rune::Divide),
+            '/' | '÷' => Ok(Rune::Divide),
             '_' => Ok(Rune::Blank),
             _ => Err(()),
         }

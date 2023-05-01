@@ -69,9 +69,11 @@ struct MyriadAppProps {
 #[function_component(MyriadApp)]
 fn myriad_app(props: &MyriadAppProps) -> Html {
     let cheat = props.cheat;
-    let game = props.game.replace(' ', "+");
+    let game = url_replace(&props.game);
+    //log::info!("Loading Game - {}", game);
     let game = Game::from_string(game.as_str());
     if let Some(game) = game {
+
         Dispatch::new().apply(LoadGameMessage { game });
     }
 
@@ -117,4 +119,8 @@ fn myriad_app(props: &MyriadAppProps) -> Html {
         </div>
         </>
     }
+}
+
+fn url_replace(s: &str)-> String{
+    s.replace(' ', "+").replace( "%C3%B7", "÷").replace("%C3%97", "×")
 }
