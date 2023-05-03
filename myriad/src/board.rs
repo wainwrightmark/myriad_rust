@@ -42,22 +42,18 @@ impl<const C: u8, const R: u8, const SIZE: usize> Board<C, R, SIZE> {
 
     pub fn try_create(letters: &str) -> Option<Board<C, R, SIZE>> {
         let r: Result<Vec<Rune>, _> = letters.chars().map(Rune::try_from).collect();
+        let vector = r.ok()?;
 
-        match r {
-            Err(_) => None,
-            Ok(vector) => {
-                let letters: [Rune; SIZE] = vector
-                    .into_iter()
-                    .pad_using(SIZE, |_| Rune::Blank)
-                    .collect_vec()
-                    .try_into()
-                    .unwrap();
+        let letters: [Rune; SIZE] = vector
+            .into_iter()
+            .pad_using(SIZE, |_| Rune::Blank)
+            .collect_vec()
+            .try_into()
+            .ok()?;
 
-                let tile_map = TileMap::from_inner(letters);
+        let tile_map = TileMap::from_inner(letters);
 
-                Some(Self(tile_map))
-            }
-        }
+        Some(Self(tile_map))
     }
 
     pub fn get_word_text(&self, ps: &[Tile<C, R>]) -> String {

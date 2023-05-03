@@ -25,6 +25,7 @@ impl Default for FullGameState {
     }
 }
 
+
 impl FullGameState {
     pub fn get_found_count(&self) -> (usize, usize) {
         let found = self.found_words.words.len();

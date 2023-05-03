@@ -16,6 +16,7 @@ pub mod selected_tab_state;
 pub mod user_state;
 pub mod util;
 pub mod game_timing;
+pub mod game_rating;
 
 pub mod prelude {
 

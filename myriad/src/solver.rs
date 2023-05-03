@@ -53,6 +53,14 @@ pub struct FoundWord<const C: u8, const R: u8, const SIZE: usize> {
     pub path: ArrayVec<[Tile<C, R>; SIZE]>,
 }
 
+impl<const C: u8, const R: u8, const SIZE: usize> FoundWord<C, R, SIZE> {
+    pub fn runes(&self, board: &Board<C, R, SIZE>)-> String{
+        self.path
+        .iter().map(|x| board.0[*x] )
+         .join("")
+    }
+}
+
 impl<const C: u8, const R: u8, const SIZE: usize> std::fmt::Display for FoundWord<C, R, SIZE> {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "{} = {}", self.result, self.path.iter().join(""))

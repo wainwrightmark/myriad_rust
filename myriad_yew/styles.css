@@ -73,7 +73,7 @@ dialog{
   z-index: 2000;
 }
 
-.time-display{
+.time-display, .worst-display, .hardest-display, .score-display{
   font-size: xx-large;
   text-align: center;
   font-family: 'Inconsolata', monospace;
@@ -93,6 +93,7 @@ dialog{
 .dialog-message{
   font-family: 'Inconsolata', monospace;
   font-size: large;
+  text-align: center;
 }
 
 
