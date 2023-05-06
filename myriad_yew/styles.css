@@ -372,3 +372,27 @@ Crosshairs
   margin-block-start: 0;
   margin-block-end: 0;
 }
+
+
+details>summary span.icon {
+  width: 24px;
+  height: 24px;
+  transition: all 0.3s;
+  margin-left: auto;
+}
+
+details[open] summary span.icon {
+  transform: rotate(180deg);
+}
+
+summary::-webkit-details-marker {
+  display: none;
+}
+
+summary {
+  display: flex;
+  cursor: pointer;
+  font-size: large;
+  text-align: center;
+  font-family: 'Inconsolata', monospace;
+}

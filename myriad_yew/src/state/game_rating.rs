@@ -7,8 +7,8 @@ use super::{full_game_state::*, prelude::*};
 pub struct GameRating {
     pub min_steps: u32,
     pub actual_steps: u32,
-    pub worst_word: Option<SuboptimalWord>,
-    pub hardest_word: Option<FoundWord<GRID_COLUMNS, GRID_ROWS, GRID_SIZE>>,
+    pub suboptimal_words: Vec<SuboptimalWord>,
+    pub hard_words: Vec<FoundWord<GRID_COLUMNS, GRID_ROWS, GRID_SIZE>>,
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -41,8 +41,8 @@ impl GameRating {
         let mut result = Self {
             min_steps: 0,
             actual_steps: 0,
-            worst_word: None,
-            hardest_word: None,
+            suboptimal_words: vec![],
+            hard_words: vec![]
         };
 
         for (number, actual) in state.found_words.words.iter() {
@@ -53,28 +53,14 @@ impl GameRating {
 
             if let Some(extra_length) = actual.path.len().checked_sub(best.path.len()) {
                 if extra_length > 0 {
-                    if let Some(current_worst) = &result.worst_word {
-                        if current_worst.extra_length() < extra_length {
-                            result.worst_word = Some(SuboptimalWord {
-                                best: best.clone(),
-                                actual: actual.clone(),
-                            })
-                        }
-                    } else {
-                        result.worst_word = Some(SuboptimalWord {
-                            best: best.clone(),
-                            actual: actual.clone(),
-                        })
-                    }
+                    result.suboptimal_words.push(SuboptimalWord {
+                        best: best.clone(),
+                        actual: actual.clone(),
+                    });
                 }
             }
-
-            if let Some(hardest) = &result.hardest_word{
-                if actual.path.len() > hardest.path.len(){
-                    result.hardest_word = Some(actual.clone());
-                }
-            }else{
-                result.hardest_word = Some(actual.clone());
+            else if actual.path.len() >= 7{
+                result.hard_words.push(actual.clone());
             }
         }
 

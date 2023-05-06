@@ -1,6 +1,6 @@
-use crate::state::{prelude::*, game_rating::GameRating};
+use crate::state::{prelude::*, game_rating::{GameRating, SuboptimalWord}};
 use chrono::Duration;
-use myriad::prelude::Board;
+use myriad::prelude::{Board, FoundWord};
 use yew::prelude::*;
 use yew_router::prelude::use_navigator;
 use yewdux::prelude::*;
@@ -138,26 +138,72 @@ pub fn congrats_dialog() -> Html {
 
 fn rating_box(game_rating: &GameRating, board: &Board<GRID_ROWS, GRID_COLUMNS, GRID_SIZE>)->Html{
 
-    let score_box = html!(
-        <p class="score-display">{format!("{}/{}", game_rating.actual_steps, game_rating.min_steps)}</p>
-    );
+    let score_box =
 
-    let worst_box = match &game_rating.worst_word {
-        Some(w) => html!(<p class="worst-display">{format!("{} = {} = {}", w.actual.runes(board), w.best.runes(board), w.result())}</p>),
-        None => html!(<></>),
+    if game_rating.actual_steps == game_rating.min_steps{
+        html!(
+            <p class="score-display">{"Perfect Score"}</p>
+        )
+    }
+    else{
+        html!(
+            <p class="score-display">{format!("{}/{}", game_rating.actual_steps, game_rating.min_steps)}</p>
+        )
     };
 
-    let hardest_box = match &game_rating.hardest_word {
-        Some(w) => html!(<p class="hardest-display">{format!("{} = {}", w.runes(board), w.result)}</p>),
-        None => html!(<></>),
+
+    let suboptimal = if !game_rating.suboptimal_words.is_empty(){
+        let ws: Html = game_rating.suboptimal_words.iter().map(|x| suboptimal_word(x, board)).collect();
+        html!(
+            <>
+            <details>
+                <summary class="suboptimal-summary">
+                    {format!("{} Suboptimal {}", game_rating.suboptimal_words.len(), if game_rating.suboptimal_words.len() == 1 {"Word"} else {"Words"})}
+                    <span class="icon">{"↓"}</span>
+
+                </summary>
+                {ws}
+            </details>
+            <br/>
+            </>
+        )
+    } else{
+        html!(<></>)
+    };
+
+    let hard = if !game_rating.hard_words.is_empty(){
+        let ws: Html = game_rating.hard_words.iter().map(|x| hard_word(x, board)).collect();
+        html!(
+            <>
+            <details>
+                <summary class="hard-summary">
+                    {format!("{} Hard {}", game_rating.hard_words.len(), if game_rating.suboptimal_words.len() == 1 {"Word"} else {"Words"})}
+                    <span class="icon">{"↓"}</span>
+
+                </summary>
+                {ws}
+            </details>
+            <br/>
+            </>
+        )
+    } else{
+        html!(<></>)
     };
 
 
     html!(
         <>
         {score_box}
-        {worst_box}
-        {hardest_box}
+        {suboptimal}
+        {hard}
         </>
     )
+}
+
+fn suboptimal_word(w: &SuboptimalWord, board: &Board<GRID_ROWS, GRID_COLUMNS, GRID_SIZE> )-> Html{
+    html!(<p class="worst-display">{format!("{} = {} = {}", w.actual.runes(board), w.best.runes(board), w.result())}</p>)
+}
+
+fn hard_word(w: &FoundWord<GRID_ROWS, GRID_COLUMNS, GRID_SIZE>, board: &Board<GRID_ROWS, GRID_COLUMNS, GRID_SIZE>)-> Html{
+    html!(<p class="hardest-display">{format!("{} = {}", w.runes(board), w.result)}</p>)
 }
