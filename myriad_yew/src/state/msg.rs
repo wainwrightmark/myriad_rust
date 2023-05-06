@@ -1,4 +1,4 @@
-use crate::{state::prelude::*};
+use crate::state::prelude::*;
 use crate::web::prelude::*;
 use myriad::{parser, prelude::*};
 use std::rc::Rc;
@@ -36,7 +36,11 @@ impl Reducer<FullGameState> for LoadGameMessage {
 
         match loaded {
             Some(state) => Rc::new(state.clone()),
-            None => Rc::new(FullGameState { game: self.game, timing: Default::default(), found_words: Default::default() }),
+            None => Rc::new(FullGameState {
+                game: self.game,
+                timing: Default::default(),
+                found_words: Default::default(),
+            }),
         }
     }
 }
@@ -116,60 +120,80 @@ impl Reducer<FullGameState> for OnCoordinatesSetMsg {
 
             let timing: GameTiming;
             let new_found_words: Rc<FoundWordsTracker>;
-            if word_type == FoundWordType::Found {
-                let number = found_word.result;
-                Dispatch::new().apply(NumberFoundMsg { number });
-                let ns = state.found_words.with_word(found_word);
 
-                let len = ns.words.len();
+            match word_type {
+                FoundWordType::Found => {
+                    let number = found_word.result;
+                    Dispatch::new().apply(NumberFoundMsg { number });
+                    let ns = state.found_words.with_word(found_word);
 
-                if len % 10 == 0 {
-                    make_confetti(get_emoji(len as i32 / 10), (10 + len) as i32);
-                }
+                    let len = ns.words.len();
 
-                if len == state.game.total_solutions {
-                    let event = LoggableEvent::GameComplete {
-                        board: state.game.board.canonical_string(),
-                    };
-                    LoggableEvent::try_log(event);
-
-                    Dispatch::<DialogState>::new().reduce_mut(|s| {
-                        s.congratulations_dialog_type = Some(CongratsDialogType::OneHundred)
-                    });
-
-                    timing = match state.timing {
-                        GameTiming::Started {
-                            utc_time_milliseconds,
-                        } => {
-                            let js_today = js_sys::Date::new_0();
-                            let utc_time = js_today.get_time();
-                            let now_time_milliseconds = utc_time.floor() as i64;
-
-                            let difference =
-                                now_time_milliseconds.saturating_sub(utc_time_milliseconds);
-
-                            if difference.is_positive() {
-                                let total_milliseconds = difference.unsigned_abs();
-                                GameTiming::Finished { total_milliseconds }
-                            } else {
-                                GameTiming::Unknown
-                            }
-                        }
-                        GameTiming::Finished { total_milliseconds } => {
-                            GameTiming::Finished { total_milliseconds }
-                        }
-                        GameTiming::Unknown => GameTiming::Unknown,
-                        GameTiming::Cheat => GameTiming::Cheat
+                    if len % 10 == 0 {
+                        make_confetti(get_emoji(len as i32 / 10), (10 + len) as i32);
                     }
-                } else {
+
+                    if len == state.game.total_solutions {
+                        let event = LoggableEvent::GameComplete {
+                            board: state.game.board.canonical_string(),
+                        };
+                        LoggableEvent::try_log(event);
+
+                        Dispatch::<DialogState>::new().reduce_mut(|s| {
+                            s.congratulations_dialog_type = Some(CongratsDialogType::OneHundred)
+                        });
+
+                        timing = match state.timing {
+                            GameTiming::Started {
+                                utc_time_milliseconds,
+                            } => {
+                                let js_today = js_sys::Date::new_0();
+                                let utc_time = js_today.get_time();
+                                let now_time_milliseconds = utc_time.floor() as i64;
+
+                                let difference =
+                                    now_time_milliseconds.saturating_sub(utc_time_milliseconds);
+
+                                if difference.is_positive() {
+                                    let total_milliseconds = difference.unsigned_abs();
+                                    GameTiming::Finished { total_milliseconds }
+                                } else {
+                                    GameTiming::Unknown
+                                }
+                            }
+                            GameTiming::Finished { total_milliseconds } => {
+                                GameTiming::Finished { total_milliseconds }
+                            }
+                            GameTiming::Unknown => GameTiming::Unknown,
+                            GameTiming::Cheat => GameTiming::Cheat,
+                        }
+                    } else {
+                        timing = state.timing;
+                    }
+
+                    new_found_words = ns.into();
+                }
+                FoundWordType::PreviouslyFound => {
+                    //update if the word is shorter
+                    if let Some(_) = state
+                        .found_words
+                        .words
+                        .get(&num)
+                        .filter(|x| x.path.len() > coordinates.len())
+                    {
+                        new_found_words = state.found_words.with_word(found_word).into();
+
+                    } else {
+                        new_found_words = state.found_words.clone();
+                    }
+
                     timing = state.timing;
                 }
-
-                new_found_words = ns.into();
-            } else {
-                new_found_words = state.found_words.clone();
-                timing = state.timing;
-            };
+                FoundWordType::NotInRange => {
+                    new_found_words = state.found_words.clone();
+                    timing = state.timing;
+                }
+            }
 
             Dispatch::new().apply(WordFoundMsg {
                 word: num,

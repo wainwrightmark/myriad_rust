@@ -73,6 +73,7 @@ fn try_map_char(c: &char) -> Option<char> {
 
 fn try_map_chars(input: &str) -> Option<[char; 9]> {
     let mut arr: [char; 9] = [' '; 9];
+    input = input.replace(' ', "+").replace( "%C3%B7", "÷").replace("%C3%97", "×");
 
     for (index, char) in input.chars().enumerate() {
         let c = try_map_char(&char)?;
