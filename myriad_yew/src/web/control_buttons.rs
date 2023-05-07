@@ -36,7 +36,7 @@ pub fn todays_game_button(properties: &GameButtonProperties) -> Html {
         false,
     );
 
-    html!(<ButtonBox id={"today_game_button"} text={"Today Game"} {x} {y} size_units={properties.size}   orientation={properties.orientation}  {on_click} />)
+    html!(<ButtonBox id={"today_game_button"} text={"TODAY GAME"} {x} {y} size_units={properties.size}   orientation={properties.orientation}  {on_click} />)
 }
 
 #[function_component(RandomGameButton)]
@@ -53,7 +53,7 @@ pub fn random_game_button(properties: &GameButtonProperties) -> Html {
         false,
     );
 
-    html!(<ButtonBox id={"random_game_button"} text={"Random Game"} {x} {y} size_units={properties.size}   orientation={properties.orientation}  {on_click} />)
+    html!(<ButtonBox id={"random_game_button"} text={"NEW RANDOM"} {x} {y} size_units={properties.size}   orientation={properties.orientation}  {on_click} />)
 }
 
 #[derive(PartialEq, Properties)]
@@ -97,7 +97,7 @@ pub fn score_counter(properties: &ScoreCounterProperties) -> Html {
 
     // let width = format!("{}", FOUND_WORD_WIDTH * properties.width);
     // let height = format!("{FOUND_WORD_HEIGHT}");
-    let style = format!("position:absolute; transform: translate({x}px, {y}px); height: {height}px; width: {width}px; border-radius:5px; {gradient}");
+    let style = format!("pointer-events:none; position:absolute; transform: translate({x}px, {y}px); height: {height}px; width: {width}px; border-radius:5px; {gradient}");
 
     let class = classes!("found-word",);
     let key = "score_counter";
