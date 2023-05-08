@@ -54,7 +54,7 @@ pub fn all_found_words(properties: &AllFoundWordsProperties) -> Html {
 
 
 
-            // <HistoryButton {selected_tab} {game_size} width={1.0} position_number={118}/>
+            <HistoryButton {selected_tab} size={1.0} {orientation} position_number={120}/>
 
         </div>
     )

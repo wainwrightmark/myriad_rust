@@ -12,6 +12,7 @@ mod recent_words;
 mod sharing;
 mod startup;
 mod tab_headers;
+pub mod history;
 pub mod prelude {
 
     pub use crate::web::app::*;
@@ -25,6 +26,7 @@ pub mod prelude {
     pub use crate::web::recent_words::*;
     pub use crate::web::startup::*;
     pub use crate::web::tab_headers::*;
+    pub use crate::web::history::*;
 
     pub fn format_number(num: i32) -> String {
         if num == 100 {

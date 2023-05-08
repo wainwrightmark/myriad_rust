@@ -14,6 +14,10 @@ pub enum Route {
     #[at("/")]
     #[not_found]
     Home,
+
+    #[at("/history")]
+    History,
+
     #[at("/game/:game")]
     Game { game: String },
 
@@ -56,6 +60,10 @@ fn switch(route: Route) -> Html {
         Route::Cheat { game } => {
             let cheat = true;
             html! { <MyriadApp {game} {cheat} />}
+        }
+
+        Route::History{}=>{
+            html!( <HistoryPage/>)
         }
     }
 }
@@ -102,7 +110,6 @@ fn myriad_app(props: &MyriadAppProps) -> Html {
     html! {
         <>
         <CongratsDialog/>
-        <HistoryDialog/>
         <div class="outer-container"  style={outer_container_style}>
             <div class="container"   style={container_style}>
                 <Circles  />

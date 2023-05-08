@@ -9,7 +9,7 @@
   --progress-blank: var(--inner-background);
 
   --button-text: var(--black);
-  --history-border: var(--black);
+  --history-border: var(--white);
 
   --circle-disabled: var(--grey);
   --circle-last: var(--blue);
@@ -294,17 +294,7 @@ Found Word
 }
 
 
-.history-progress{
-  background: var(--progress);
-  height: 100%;
-}
 
-.history-progress-box{
-  height: 100%;
-  width: 100%;
-  border-color: var(--history-border);
-  border: solid;
-}
 
 /*
 Crosshairs
@@ -395,4 +385,65 @@ summary {
   font-size: large;
   text-align: center;
   font-family: 'Inconsolata', monospace;
+}
+
+
+.history-page{
+  background-color: var(--inner-background);
+}
+
+.page-header{
+  margin: auto;
+  color: var(--black);
+  font-family: 'Inconsolata', monospace;
+  font-size: xx-large;
+  text-align: center;
+}
+
+.history-table{
+  margin: auto;
+}
+
+/* .history-button{
+  color: var(--white);
+  background-color: var(--black);
+  font-family: 'Inconsolata', monospace;
+  text-align: left;
+} */
+
+.history-progress-box{
+  background-color: var(--black);
+  text-align: center;
+}
+
+.history-progress{
+  height: 100%;
+  color: var(--black);
+}
+
+.history-progress-box{
+  height: 100%;
+  width: 100px;
+  border-color: var(--history-border);
+  border: solid;
+  font-family: 'Inconsolata', monospace;
+}
+
+.history-time-display{
+  margin: 0;
+  font-size: large;
+  text-align: center;
+  font-family: 'Inconsolata', monospace;
+}
+
+.myriad-logo{
+  line-height: 1.5;
+  font-family: 'Inconsolata', monospace;
+  text-anchor: middle;
+  box-sizing: inherit;
+  color: var(--button-text);
+  background-color: transparent;
+  font-size: xx-large;
+  margin: 0;
+  text-align: center;
 }

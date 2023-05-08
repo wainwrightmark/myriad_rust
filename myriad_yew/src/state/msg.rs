@@ -30,8 +30,6 @@ impl Reducer<FullGameState> for LoadGameMessage {
         Dispatch::<ChosenPositionsState>::new().reduce_mut(|s| s.positions.clear());
         Dispatch::<RotFlipState>::new().reduce_mut(|x| x.clear());
 
-        Dispatch::<DialogState>::new().reduce_mut(|x| x.history_dialog_type = None);
-
         Dispatch::<HistoryState>::new().apply(SaveGameMessage(previous.into()));
 
         match loaded {

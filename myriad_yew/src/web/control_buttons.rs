@@ -194,10 +194,13 @@ pub fn share_button(properties: &GameButtonProperties) -> Html {
 #[function_component(HistoryButton)]
 pub fn history_button(properties: &GameButtonProperties) -> Html {
     let game_size = use_store_value::<GameSize>();
-    let on_click: Option<Callback<MouseEvent>> = Some(
-        Dispatch::<DialogState>::new()
-            .reduce_mut_callback(|s| s.history_dialog_type = Some(Default::default())),
-    );
+    let navigator = use_navigator().unwrap();
+
+    let on_click: Callback<MouseEvent> = Callback::from(move |_me: MouseEvent| navigator.push(&Route::History));
+    // let on_click: Option<Callback<MouseEvent>> = Some(
+    //     Dispatch::<DialogState>::new()
+    //         .reduce_mut_callback(|s| s.history_dialog_type = Some(Default::default())),
+    // );
 
     let (x, y) = game_size.get_found_word_position(
         properties.position_number,

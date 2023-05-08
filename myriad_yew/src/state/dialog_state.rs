@@ -5,7 +5,6 @@ use yewdux::prelude::*;
 #[store(storage = "local")] // can also be "session"
 pub struct DialogState {
     pub congratulations_dialog_type: Option<CongratsDialogType>,
-    pub history_dialog_type: Option<HistoryDialogType>,
 }
 
 #[derive(PartialEq, Eq, Clone, Copy, Serialize, Deserialize)]
@@ -13,5 +12,3 @@ pub enum CongratsDialogType {
     OneHundred,
 }
 
-#[derive(PartialEq, Eq, Clone, Copy, Serialize, Deserialize, Default)]
-pub struct HistoryDialogType {}
