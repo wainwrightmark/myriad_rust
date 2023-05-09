@@ -7,16 +7,19 @@ use yewdux::prelude::*;
 #[function_component(HistoryPage)]
 pub fn history_page() -> Html {
     let navigator = use_navigator().unwrap();
-    let (history, _) = use_store::<HistoryState>();
+    let history = use_store_value::<HistoryState>();
+
+    let current_game = use_store_value::<FullGameState>();
 
     let onclick: Callback<MouseEvent> =
     Callback::from(move |_me:MouseEvent| navigator.push(&Route::Home));
 
 
     let rows: Vec<Html> = history
-            .games
-            .iter()
-            .rev()
+        .all_games_including_current(current_game.as_ref())
+            // .games
+            // .iter()
+            // .rev()
             .map(|state| html!(<HistoryRow state={state.clone()} />))
             .collect();
 

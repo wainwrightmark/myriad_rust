@@ -76,8 +76,8 @@ pub fn score_counter(properties: &ScoreCounterProperties) -> Html {
     let (found, total) = *use_selector(|state: &FullGameState| state.get_found_count());
     let found_pc = found * 100 / total;
     let gradient_to = match properties.orientation {
-        Orientation::Vertical=> "right",
-        Orientation::Horizontal=> "top"
+        Orientation::Vertical => "right",
+        Orientation::Horizontal => "top",
     };
     let gradient = format!("background: linear-gradient(to {gradient_to}, var(--progress) {found_pc}%, var(--progress-blank) {found_pc}%, var(--progress-blank));");
 
@@ -196,11 +196,8 @@ pub fn history_button(properties: &GameButtonProperties) -> Html {
     let game_size = use_store_value::<GameSize>();
     let navigator = use_navigator().unwrap();
 
-    let on_click: Callback<MouseEvent> = Callback::from(move |_me: MouseEvent| navigator.push(&Route::History));
-    // let on_click: Option<Callback<MouseEvent>> = Some(
-    //     Dispatch::<DialogState>::new()
-    //         .reduce_mut_callback(|s| s.history_dialog_type = Some(Default::default())),
-    // );
+    let on_click: Callback<MouseEvent> =
+        Callback::from(move |_me: MouseEvent| navigator.push(&Route::History));
 
     let (x, y) = game_size.get_found_word_position(
         properties.position_number,
@@ -245,7 +242,6 @@ fn button_box(properties: &ButtonBoxProperties) -> Html {
     };
 
     let style = format!("position:absolute; transform: translate({x}px, {y}px); height: {height}px; width: {width}px; border-radius:5px;");
-
 
     let class = classes!(
         "found-word",

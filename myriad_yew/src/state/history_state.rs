@@ -10,6 +10,14 @@ pub struct HistoryState {
     pub games: Vec<FullGameState>,
 }
 
+
+impl HistoryState{
+    pub fn all_games_including_current<'a, 'b>  (&'a self, current: &'b FullGameState)-> impl Iterator<Item = &'a FullGameState> where 'b : 'a{
+        self.games.iter().filter(|x|x.game.board != current.game.board) .chain(std::iter::once(current)).rev()
+
+    }
+}
+
 pub struct SaveGameMessage(pub Rc<FullGameState>);
 
 impl Reducer<HistoryState> for SaveGameMessage {

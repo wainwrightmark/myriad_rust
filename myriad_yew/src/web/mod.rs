@@ -5,7 +5,7 @@ mod circle;
 mod confetti;
 mod control_buttons;
 mod crosshair;
-mod dialog;
+mod congratulations;
 mod found_words;
 mod info_bar;
 mod recent_words;
@@ -20,7 +20,7 @@ pub mod prelude {
     pub use crate::web::confetti::*;
     pub use crate::web::control_buttons::*;
     pub use crate::web::crosshair::*;
-    pub use crate::web::dialog::*;
+    pub use crate::web::congratulations::*;
     pub use crate::web::found_words::*;
     pub use crate::web::info_bar::*;
     pub use crate::web::recent_words::*;
