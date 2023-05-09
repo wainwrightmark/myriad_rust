@@ -59,15 +59,17 @@ pub fn move_to_new_game(for_today: bool, navigator: &Navigator) {
     } else {
         Game::create_random()
     };
-    let game = game.board.canonical_string();
+    let game_string = game.board.canonical_string();
 
     let event = logging::LoggableEvent::NewGame {
         today: for_today,
-        board: game.clone(),
+        board: game_string.clone(),
     };
     LoggableEvent::try_log(event);
 
-    navigator.push(&Route::Game { game })
+    Dispatch::<FullGameState>::new().apply(LoadGameMessage{game});
+
+    navigator.push(&Route::Game { game: game_string })
 }
 
 pub struct OnCoordinatesSetMsg {

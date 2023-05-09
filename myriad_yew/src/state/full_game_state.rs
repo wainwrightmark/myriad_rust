@@ -103,6 +103,7 @@ impl Game {
         let difficulties = Self::get_difficulties(solve_settings, &board);
         let total_solutions = difficulties.iter().filter(|x| x.is_some()).count();
 
+
         Game {
             board,
             date: Some(date),
