@@ -11,9 +11,6 @@ pub async fn subscribe_to_app_url_events() {
 #[cfg(any(feature = "android", feature = "ios"))]
 fn redirect_to_url(url: String) {
     use web_sys::window;
-
-    //use crate::state::logging::LoggableEvent;
-    // LoggableEvent::try_log(LoggableEvent::Internal { message: format!("Redirect to url: {url}") });
     let Some(url)  = web_sys::Url::new(&url).ok() else {
         return ;};
     let Some(window) = window() else{return ;};
@@ -31,6 +28,4 @@ fn redirect_to_url(url: String) {
 
     if current_href != url {
         let _ = window.location().set_href(&url);
-        //let _ = window.history().unwrap().push_state_with_url(&wasm_bindgen::JsValue::NULL, "", Some(&url));
-    }
-}
+    }}

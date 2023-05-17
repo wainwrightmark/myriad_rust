@@ -16,6 +16,8 @@ pub async fn share_async() {
     let game_text = state.game.board.canonical_string();
     let url = format!("https://myriad-game.com/game/{game_text}");
 
+    LoggableEvent::try_log_async(LoggableEvent::ClickShare).await;
+
     let result = capacitor_bindings::share::Share::share(ShareOptions {
         title: Some("Myriad".to_string()),
         text: Some("Find every number from one to one hundred.".to_string()),
@@ -25,7 +27,13 @@ pub async fn share_async() {
     })
     .await;
 
-    if let Err(e) = result {
-        LoggableEvent::try_log_error_message_async(e.to_string()).await;
+    match result {
+        Ok(share_result) => match share_result.activity_type {
+            Some(platform) => {
+                LoggableEvent::try_log_async(LoggableEvent::ShareOn { platform }).await
+            }
+            None => {}
+        },
+        Err(e) => LoggableEvent::try_log_error_message_async(e.to_string()).await,
     }
 }

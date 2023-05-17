@@ -62,7 +62,7 @@ fn switch(route: Route) -> Html {
             html! { <MyriadApp {game} {cheat} />}
         }
 
-        Route::History{}=>{
+        Route::History {} => {
             html!( <HistoryPage/>)
         }
     }
@@ -77,20 +77,15 @@ struct MyriadAppProps {
 #[function_component(MyriadApp)]
 fn myriad_app(props: &MyriadAppProps) -> Html {
     let cheat = props.cheat;
-    let game = url_replace(&props.game);
-    //log::info!("Loading Game - {}", game);
-    let game = Game::from_string(game.as_str());
-    if let Some(game) = game {
+    let game_str = url_replace(&props.game);
+    let game = Game::from_string(game_str.as_str());
 
-        Dispatch::new().apply(LoadGameMessage { game });
+    if let Some(game) = game {
+        Dispatch::new().apply(LoadGameMessage { game});
     }
 
     let (width, height) = yew_hooks::use_window_size();
     let (width, height) = (width as f32, height as f32);
-
-    // let node = use_node_ref();
-    // let (width, height) = yew_hooks::use_size(node.clone());
-
 
     Dispatch::<GameSize>::new().apply(SetSizeMessage { width, height });
 
@@ -128,6 +123,8 @@ fn myriad_app(props: &MyriadAppProps) -> Html {
     }
 }
 
-fn url_replace(s: &str)-> String{
-    s.replace(' ', "+").replace( "%C3%B7", "÷").replace("%C3%97", "×")
+fn url_replace(s: &str) -> String {
+    s.replace(' ', "+")
+        .replace("%C3%B7", "÷")
+        .replace("%C3%97", "×")
 }

@@ -125,6 +125,7 @@ impl LogDeviceInfo {
     }
 }
 
+#[must_use]
 #[skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, EnumDiscriminants)]
 #[serde(tag = "type")]
@@ -148,17 +149,6 @@ pub enum LoggableEvent {
     GameComplete {
         board: String,
     },
-
-    // Achievement {
-    //     achievement: Achievement,
-    // },
-    ReceivedShare {
-        ref_param: Option<String>,
-        referrer: Option<String>,
-        spread_id: Option<String>,
-        img_id: Option<String>,
-    },
-
     Warn {
         message: String,
     },
@@ -203,6 +193,10 @@ impl LoggableEvent {
         spawn_local(async move { Self::try_log_error_async(err).await })
     }
 
+    pub async fn try_log_async1(self){
+        Self::try_log_async(self).await
+    }
+
     /// Either logs the message or sends it to be retried later
     pub async fn try_log_async(data: impl Into<Self>) {
         let user = Dispatch::<UserState>::new().get();
@@ -222,7 +216,11 @@ impl LoggableEvent {
         }
     }
 
-    pub fn try_log(data: impl Into<Self> + 'static) {
+    pub fn try_log1(self){
+        Self::try_log(self)
+    }
+
+    fn try_log(data: impl Into<Self> + 'static) {
         wasm_bindgen_futures::spawn_local(async move { Self::try_log_async(data).await });
     }
 
@@ -234,24 +232,12 @@ impl LoggableEvent {
         }
     }
 
-    pub fn new_share(
-        ref_param: Option<String>,
-        spread_id: Option<String>,
-        img_id: Option<String>,
-    ) -> Self {
-        let referrer = get_referrer();
-        Self::ReceivedShare {
-            referrer,
-            ref_param,
-            spread_id,
-            img_id,
-        }
-    }
+
 }
 
 impl EventLog {
     pub async fn send_log_async(self) {
-        Self::log(self).await
+        Self::log_async(self).await
     }
 
     async fn try_log<T: Serialize>(data: &T) -> Result<(), reqwest::Error> {
@@ -268,7 +254,7 @@ impl EventLog {
         res.error_for_status().map(|_| ())
     }
 
-    async fn log(data: Self) {
+    async fn log_async(data: Self) {
         let r = Self::try_log(&data).await;
         if let Err(err) = r {
             log::error!("Failed to log: {}", err);

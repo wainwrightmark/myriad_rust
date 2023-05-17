@@ -65,9 +65,11 @@ pub fn move_to_new_game(for_today: bool, navigator: &Navigator) {
         today: for_today,
         board: game_string.clone(),
     };
-    LoggableEvent::try_log(event);
+    event.try_log1();
 
-    Dispatch::<FullGameState>::new().apply(LoadGameMessage{game});
+    Dispatch::<FullGameState>::new().apply(LoadGameMessage {
+        game,
+    });
 
     navigator.push(&Route::Game { game: game_string })
 }
@@ -137,7 +139,7 @@ impl Reducer<FullGameState> for OnCoordinatesSetMsg {
                         let event = LoggableEvent::GameComplete {
                             board: state.game.board.canonical_string(),
                         };
-                        LoggableEvent::try_log(event);
+                        event.try_log1();
 
                         Dispatch::<DialogState>::new().reduce_mut(|s| {
                             s.congratulations_dialog_type = Some(CongratsDialogType::OneHundred)
@@ -182,7 +184,6 @@ impl Reducer<FullGameState> for OnCoordinatesSetMsg {
                         .filter(|x| x.path.len() > coordinates.len())
                     {
                         new_found_words = state.found_words.with_word(found_word).into();
-
                     } else {
                         new_found_words = state.found_words.clone();
                     }
