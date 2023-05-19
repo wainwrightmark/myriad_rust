@@ -37,7 +37,7 @@ impl AsyncReducer<UserState> for UpdateParamsIfNewMessage {
             log::info!("User is new");
             let mut state = state.as_ref().clone();
             let device_id = capacitor::get_or_log_error_async(Device::get_id).await;
-            state.user_id1 = device_id.map(|x| DeviceUUID(x.uuid));
+            state.user_id1 = device_id.map(|x| DeviceUUID(x.identifier));
             state.gclid_param = self.gclid_param;
             state.ref_param = self.ref_param;
             log::info!("Params updated");

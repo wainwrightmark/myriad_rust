@@ -11,7 +11,7 @@ myriad = { path = "../myriad" }
 
 itertools = "0.10"
 serde = { version = "1", features = ["derive", "rc"] }
-serde_with = "2"
+serde_with = "3"
 rand = {version = "0.8"}
 strum = {version = "0.24", features = ["derive"]}
 
@@ -33,7 +33,7 @@ reqwest = { version = "0.11",default-features = false, features = ["json"] }
 
 static_assertions = "1.1.0"
 phf = { version = "0.11.1", features = ["macros"] }
-capacitor_bindings = { version = "0.5.1", features = ["web"] }
+capacitor_bindings = { version = "0.6.0", features = ["web"] }
 anyhow = "1.0.70"
 
 [dependencies.web-sys]
