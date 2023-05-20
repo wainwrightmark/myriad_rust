@@ -31,10 +31,10 @@ js-sys = "0.3"
 wee_alloc = "0.4"
 reqwest = { version = "0.11",default-features = false, features = ["json"] }
 
-static_assertions = "1.1.0"
-phf = { version = "0.11.1", features = ["macros"] }
+static_assertions = "1.1"
+phf = { version = "0.11", features = ["macros"] }
 capacitor_bindings = { version = "0.6.0", features = ["web"] }
-anyhow = "1.0.70"
+anyhow = "1"
 
 [dependencies.web-sys]
 version = "0.3"
