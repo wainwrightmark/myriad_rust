@@ -73,10 +73,30 @@ dialog{
   z-index: 2000;
 }
 
-.time-display, .worst-display, .hardest-display, .score-display{
+.time-display,  .hardest-display, .score-display{
   font-size: xx-large;
   text-align: center;
   font-family: 'Inconsolata', monospace;
+}
+
+.suboptimal-table{
+  border-collapse: collapse;
+  margin: 25px 0;
+  font-family: 'Inconsolata', monospace;
+  min-width: 100%;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.suboptimal-table tr {
+  border-bottom: 1px solid #dddddd;
+}
+
+
+
+.suboptimal-table td{
+  padding: 12px 15px;
+  text-align: center;
+
 }
 
 .dialog-button{

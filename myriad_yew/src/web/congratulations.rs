@@ -97,11 +97,15 @@ fn rating_box(game_rating: &GameRating, board: &Board<GRID_ROWS, GRID_COLUMNS, G
             <>
             <details>
                 <summary class="suboptimal-summary">
-                    {format!("{} Suboptimal {}", game_rating.suboptimal_words.len(), if game_rating.suboptimal_words.len() == 1 {"Word"} else {"Words"})}
+                    {format!("{} Suboptimal {}", game_rating.suboptimal_words.len(), if game_rating.suboptimal_words.len() == 1 {"Solution"} else {"Solutions"})}
                     <span class="icon">{"↓"}</span>
 
                 </summary>
+                <div style="max-height: 200px; overflow-y:scroll;">
+                <table class="suboptimal-table">
                 {ws}
+                </table>
+                </div>
             </details>
             <br/>
             </>
@@ -116,7 +120,7 @@ fn rating_box(game_rating: &GameRating, board: &Board<GRID_ROWS, GRID_COLUMNS, G
             <>
             <details>
                 <summary class="hard-summary">
-                    {format!("{} Hard {}", game_rating.hard_words.len(), if game_rating.suboptimal_words.len() == 1 {"Word"} else {"Words"})}
+                    {format!("{} Hard {}", game_rating.hard_words.len(), if game_rating.suboptimal_words.len() == 1 {"Solution"} else {"Solutions"})}
                     <span class="icon">{"↓"}</span>
 
                 </summary>
@@ -140,7 +144,15 @@ fn rating_box(game_rating: &GameRating, board: &Board<GRID_ROWS, GRID_COLUMNS, G
 }
 
 fn suboptimal_word(w: &SuboptimalWord, board: &Board<GRID_ROWS, GRID_COLUMNS, GRID_SIZE> )-> Html{
-    html!(<p class="worst-display">{format!("{} = {} = {}", w.actual.runes(board), w.best.runes(board), w.result())}</p>)
+    html!(
+        <tr>
+        <td>{w.result()}</td>
+        <td>{w.actual.runes(board)}</td>
+        <td>{w.best.runes(board)}</td>
+
+        </tr>
+
+    )
 }
 
 fn hard_word(w: &FoundWord<GRID_ROWS, GRID_COLUMNS, GRID_SIZE>, board: &Board<GRID_ROWS, GRID_COLUMNS, GRID_SIZE>)-> Html{
