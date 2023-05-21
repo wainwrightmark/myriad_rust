@@ -147,22 +147,18 @@ impl Reducer<ChosenPositionsState> for FindNumberMsg {
 impl ChosenPositionsState {
     pub fn next(
         state: std::rc::Rc<Self>,
-        allow_abandon: bool,
-        coordinate: Tile<GRID_COLUMNS, GRID_ROWS>,
+        message: ChangeChosenPositionsMessage,
     ) -> std::rc::Rc<Self> {
-        if let Some(last) = state.positions.last() {
-            if last == &coordinate {
-                //Abandon word - empty state
-
-                if !allow_abandon {
-                    return state;
-                }
-
-                //log::debug!("Abandon word");
+        let coordinate = match message {
+            ChangeChosenPositionsMessage::Continue(coordinate) => coordinate,
+            ChangeChosenPositionsMessage::Abandon => {
                 Dispatch::new().apply(ClearExpiredWordsMsg {});
 
                 return ChosenPositionsState::default().into();
             }
+        };
+        if state.positions.last() == Some(&coordinate) {
+            return state; //no change
         }
 
         let find_result = state.positions.iter().find_position(|&z| z == &coordinate);
@@ -215,8 +211,12 @@ impl ChosenPositionsState {
 }
 
 #[derive(PartialEq, Eq, Clone, Default, Serialize, Deserialize, Store)]
-pub struct InputState {
-    is_down: bool,
+pub enum InputState {
+    #[default]
+    Up,
+    DownFromLast(Tile<GRID_COLUMNS, GRID_ROWS>),
+    DownFromNew(Tile<GRID_COLUMNS, GRID_ROWS>),
+    DownMoved,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -240,43 +240,58 @@ impl Reducer<InputState> for InputMsg {
         match self {
             InputMsg::Down { coordinate } => {
                 //log::debug!("Input down {}", coordinate);
-                Dispatch::new().apply(OnClickMsg {
-                    coordinate,
-                    allow_abandon: true,
-                });
+                let dispatch: Dispatch<ChosenPositionsState> = Dispatch::new();
 
-                InputState { is_down: true }.into()
+                let from_last = dispatch.get().positions.last() == Some(&coordinate);
+
+                dispatch.apply(ChangeChosenPositionsMessage::Continue(coordinate));
+
+                if from_last {
+                    InputState::DownFromLast(coordinate).into()
+                } else {
+                    InputState::DownFromNew(coordinate).into()
+                }
             }
             InputMsg::Up {} => {
                 //log::debug!("Input up");
-
-                InputState { is_down: false }.into()
-            }
-            InputMsg::Enter { coordinate } => {
-                if state.is_down {
-                    //log::debug!("Input Enter {}", coordinate);
-                    Dispatch::new().apply(OnClickMsg {
-                        coordinate,
-                        allow_abandon: false,
-                    })
+                match state.as_ref() {
+                    InputState::DownFromLast(_) => {
+                        Dispatch::new().apply(ChangeChosenPositionsMessage::Abandon);
+                    }
+                    _ => {}
                 }
 
-                state
+                InputState::Up.into()
             }
+            InputMsg::Enter { coordinate } => match state.as_ref() {
+                InputState::Up => state,
+                InputState::DownFromLast(c) | InputState::DownFromNew(c) => {
+                    if c == &coordinate {
+                        state
+                    } else {
+                        Dispatch::new().apply(ChangeChosenPositionsMessage::Continue(coordinate));
+                        InputState::DownMoved.into()
+                    }
+                }
+                InputState::DownMoved => {
+                    Dispatch::new().apply(ChangeChosenPositionsMessage::Continue(coordinate));
+                    state
+                }
+            },
             InputMsg::None => state,
         }
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct OnClickMsg {
-    pub coordinate: Tile<GRID_COLUMNS, GRID_ROWS>,
-    pub allow_abandon: bool,
+pub enum ChangeChosenPositionsMessage {
+    Continue(Tile<GRID_COLUMNS, GRID_ROWS>),
+    Abandon,
 }
 
-impl Reducer<ChosenPositionsState> for OnClickMsg {
+impl Reducer<ChosenPositionsState> for ChangeChosenPositionsMessage {
     fn apply(self, state: std::rc::Rc<ChosenPositionsState>) -> std::rc::Rc<ChosenPositionsState> {
         //log::debug!("{self:?}");
-        ChosenPositionsState::next(state, self.allow_abandon, self.coordinate)
+        ChosenPositionsState::next(state, self)
     }
 }
