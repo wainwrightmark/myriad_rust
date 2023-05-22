@@ -7,7 +7,7 @@ version = "0.1.0"
 
 [dependencies]
 aws_lambda_events = {version= "0.9", default-features=false, features=["apigw"]}
-http = {version= "*", default-features=false}
 lambda_runtime = {version= "*", default-features=false}
-resvg = { version = "0.33", default-features = false, features=["text"] }
 tokio = {version= "*", default-features=false}
+resvg = { version = "0.33", default-features = false, features=["text"] }
+

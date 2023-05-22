@@ -1,18 +1,17 @@
 use aws_lambda_events::encodings::Body;
 use aws_lambda_events::event::apigw::{ApiGatewayProxyRequest, ApiGatewayProxyResponse};
-use http::header::HeaderMap;
-use http::HeaderValue;
+use aws_lambda_events::http::{HeaderMap, HeaderValue};
 use lambda_runtime::{service_fn, Error, LambdaEvent};
 use resvg::usvg::*;
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
-    let func = service_fn(my_handler);
-    lambda_runtime::run(func).await?;
+    let f = service_fn(image_request_handler);
+    lambda_runtime::run(f).await?;
     Ok(())
 }
 
-pub(crate) async fn my_handler(
+async fn image_request_handler(
     e: LambdaEvent<ApiGatewayProxyRequest>,
 ) -> Result<ApiGatewayProxyResponse, Error> {
     let mut headers = HeaderMap::new();
@@ -25,7 +24,7 @@ pub(crate) async fn my_handler(
         .filter(|x| x.0.eq_ignore_ascii_case("game"))
         .map(|x| x.1)
         .next()
-        .unwrap_or_else(|| "myriad123");
+        .unwrap_or_else(|| "");
 
     let data = draw_image(game);
 
