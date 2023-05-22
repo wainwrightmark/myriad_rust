@@ -34,7 +34,7 @@ pub(crate) async fn my_handler(
         headers,
         multi_value_headers: HeaderMap::new(),
         body: Some(Body::Binary(data)),
-        is_base64_encoded: Some(true),
+        is_base64_encoded: true,
     };
 
     Ok(resp)
@@ -164,14 +164,11 @@ fn draw_image(game: &str) -> Vec<u8> {
 
     let mut pixmap = resvg::tiny_skia::Pixmap::new(WIDTH, HEIGHT).unwrap();
 
-    use resvg::FitTo;
-    resvg::render(
-        &tree,
-        FitTo::Size(WIDTH, HEIGHT),
+    resvg::Tree::render(
+        &resvg::Tree::from_usvg(&tree),
         resvg::tiny_skia::Transform::default(),
-        pixmap.as_mut(),
-    )
-    .unwrap();
+        &mut pixmap.as_mut(),
+    );
 
     pixmap.encode_png().unwrap()
 }
