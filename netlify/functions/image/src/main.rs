@@ -3,7 +3,7 @@ use aws_lambda_events::event::apigw::{ApiGatewayProxyRequest, ApiGatewayProxyRes
 use http::header::HeaderMap;
 use http::HeaderValue;
 use lambda_runtime::{service_fn, Error, LambdaEvent};
-use resvg::usvg::{fontdb, Tree, TreeParsing, TreeTextToPath};
+use resvg::usvg::*;
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
@@ -40,12 +40,6 @@ pub(crate) async fn my_handler(
     Ok(resp)
 }
 
-const WIDTH: u32 = 1024;
-const HEIGHT: u32 = 1024;
-const WHITE: &str = "#f7f5f0";
-const BLACK: &str = "#1f1b20";
-const GRAY: &str = "#a1a9b0";
-
 fn try_map_char(c: &char) -> Option<char> {
     if c.is_ascii_digit() {
         return Some(*c);
@@ -73,7 +67,10 @@ fn try_map_char(c: &char) -> Option<char> {
 
 fn try_map_chars(input1: &str) -> Option<[char; 9]> {
     let mut arr: [char; 9] = [' '; 9];
-    let input2 = input1.replace(' ', "+").replace( "%C3%B7", "÷").replace("%C3%97", "×");
+    let input2 = input1
+        .replace(' ', "+")
+        .replace("%C3%B7", "÷")
+        .replace("%C3%97", "×");
 
     for (index, char) in input2.chars().enumerate() {
         let c = try_map_char(&char)?;
@@ -83,68 +80,22 @@ fn try_map_chars(input1: &str) -> Option<[char; 9]> {
     return Some(arr);
 }
 
-fn make_svg_text(chars: &[char; 9]) -> String {
-    let mut svg_text: String = "".to_string();
-    svg_text.push_str(format!(r#"<svg xmlns="http://www.w3.org/2000/svg" width="{WIDTH}" height="{HEIGHT}" viewBox="0 0 238.1 238.1">"#).as_str());
-    svg_text.push('\n');
-
-    svg_text.push_str(
-        format!(
-            r#"<path d="M0 0h238.1v238.1H0z" style="fill:{WHITE};stroke:{GRAY};stroke-width:4;" />"#
-        )
-        .as_str(),
-    );
-    svg_text.push('\n');
-
-    for (i, c) in chars.iter().enumerate().take(9) {
-        let x = match i % 3 {
-            0 => 13.2,
-            1 => 85.3,
-            _ => 157.4,
-        };
-        let y = match i / 3 {
-            0 => 13.2,
-            1 => 85.3,
-            _ => 157.4,
-        };
-
-        svg_text.push_str(format!(
-            r#"
-        <g transform="translate({x} {y})">
-            <circle cx="33.7" cy="33.7" r="31.8"
-                style="fill:none;stroke:{GRAY};stroke-width:4;" />
-            <text  x="18.5" y="50"
-                style="stroke:{BLACK};font-size:50px;line-height:1.25;font-family:Inconsolata;font-weight:1000;stroke-width:.25">
-                <tspan x="18.5" y="50" style="font-size:50px;stroke-width:.25">{c}</tspan>
-            </text>
-        </g>
-
-        "#
-        ).as_str());
-        svg_text.push('\n');
-    }
-
-    svg_text.push_str("</svg>");
-
-    return svg_text;
-}
-
-fn make_svg(game: &str) -> String {
-    let chars = try_map_chars(game).unwrap_or([' ', ' ', ' ', ' ', '?', ' ', ' ', ' ', ' ']);
-    let svg_data = make_svg_text(&chars);
-    svg_data
-}
-
 fn draw_image(game: &str) -> Vec<u8> {
     let opt: resvg::usvg::Options = Default::default();
-    let svg_data = make_svg(game);
 
-    //println!("{svg_data}");
+    let mut tree = Tree::from_data(include_bytes!("template.svg"), &opt)
+        .expect("Could not parse template.svg");
+    let chars = try_map_chars(game).unwrap_or([' ', ' ', ' ', ' ', '?', ' ', ' ', ' ', ' ']);
 
-    let mut tree = match Tree::from_data(&svg_data.as_bytes(), &opt) {
-        Ok(tree) => tree,
-        Err(e) => panic!("{e}"),
-    };
+    for (index, char) in chars.into_iter().enumerate() {
+        let id = format!("text{}", index);
+        let node = tree
+            .node_by_id(id.as_str())
+            .expect("Could not find node by id");
+        if let NodeKind::Text(ref mut text) = *node.borrow_mut() {
+            text.chunks[0].text = format!("{char}");
+        };
+    }
 
     let data: Vec<u8> = include_bytes!("Inconsolata-Regular.ttf")
         .into_iter()
@@ -152,21 +103,20 @@ fn draw_image(game: &str) -> Vec<u8> {
         .collect();
 
     let mut font_database: fontdb::Database = fontdb::Database::new();
-    //font_database.load_system_fonts();
     font_database.load_font_data(data);
 
-    // println!("Fonts:");
-    // for x in font_database.faces(){
-    //     println!("{} {}: {}", x.id, x.post_script_name,x.families.iter().map(|x|x.0.clone()).next().unwrap())
-    // }
-
     tree.convert_text(&font_database);
+    const WIDTH: u32 = 1024;
+    const HEIGHT: u32 = 1024;
 
-    let mut pixmap = resvg::tiny_skia::Pixmap::new(WIDTH, HEIGHT).unwrap();
+    let mut pixmap = resvg::tiny_skia::Pixmap::new(WIDTH, HEIGHT).expect("Could not create Pixmap");
+
+    let x_scale = WIDTH as f64 / tree.size.width();
+    let y_scale = HEIGHT as f64 / tree.size.height();
 
     resvg::Tree::render(
         &resvg::Tree::from_usvg(&tree),
-        resvg::tiny_skia::Transform::default(),
+        resvg::tiny_skia::Transform::from_scale(x_scale as f32, y_scale as f32),
         &mut pixmap.as_mut(),
     );
 
@@ -175,13 +125,7 @@ fn draw_image(game: &str) -> Vec<u8> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{draw_image, make_svg};
-
-    #[test]
-    fn test_svg() {
-        let svg: String = make_svg("-1+4/78 5");
-        std::fs::write("og_example.svg", svg).unwrap();
-    }
+    use crate::*;
 
     #[test]
     fn parse_test() {
