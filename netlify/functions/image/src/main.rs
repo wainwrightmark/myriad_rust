@@ -92,17 +92,16 @@ fn draw_image(game: &str) -> Vec<u8> {
             .node_by_id(id.as_str())
             .expect("Could not find node by id");
         if let NodeKind::Text(ref mut text) = *node.borrow_mut() {
-            text.chunks[0].text = format!("{char}");
+            text.chunks[0].text = char.to_string();
+        } else{
+            panic!("Node was not a text node")
         };
     }
 
-    let data: Vec<u8> = include_bytes!("Inconsolata-Regular.ttf")
-        .into_iter()
-        .cloned()
-        .collect();
+    let font_data: Vec<u8> = include_bytes!("Inconsolata-Regular.ttf").to_vec();
 
     let mut font_database: fontdb::Database = fontdb::Database::new();
-    font_database.load_font_data(data);
+    font_database.load_font_data(font_data);
 
     tree.convert_text(&font_database);
     const WIDTH: u32 = 1024;
