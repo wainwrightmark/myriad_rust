@@ -15,13 +15,13 @@ export default async (request, context) => {
 
     page = page.replace(
       '<meta property="og:url" content="https://myriad-game.com" />',
-      '<meta property="og:url" content="https://myriad-game.com/game/${game}" />'
+      `<meta property="og:url" content="https://myriad-game.com/game/${game}" />`
     );
 
 
     page = page.replace(
         '<meta property="og:image:alt" content="The Myriad Logo" />',
-        '<meta property="og:image:alt" content="The Myriad Game: ${game}" />'
+        `<meta property="og:image:alt" content="The Myriad Game: ${game}" />`
     )
     return new Response(page.replaceAll(search, replace), response);
   } catch {
