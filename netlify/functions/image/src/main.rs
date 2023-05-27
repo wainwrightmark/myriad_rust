@@ -104,8 +104,8 @@ fn draw_image(game: &str) -> Vec<u8> {
     font_database.load_font_data(font_data);
 
     tree.convert_text(&font_database);
-    const WIDTH: u32 = 1024;
-    const HEIGHT: u32 = 1024;
+    const WIDTH: u32 = 1080;
+    const HEIGHT: u32 = 1080;
 
     let mut pixmap = resvg::tiny_skia::Pixmap::new(WIDTH, HEIGHT).expect("Could not create Pixmap");
 
