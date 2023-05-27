@@ -23,7 +23,7 @@ export default async (request, context) => {
         '<meta property="og:image:alt" content="The Myriad Logo" />',
         `<meta property="og:image:alt" content="The Myriad Game: ${game}" />`
     )
-    return new Response(page.replaceAll(search, replace), response);
+    return new Response(page, response);
   } catch {
     return response;
   }
