@@ -135,6 +135,26 @@ impl<const L: u8, const SIZE: usize> Board<L, L, SIZE> {
 
         true
     }
+    pub fn to_canonical_form(mut self) -> Self {
+        let (quarter_turns, flip_axes) = QuarterTurns::iter()
+            .cartesian_product(
+                [FlipAxes::None, FlipAxes::Horizontal, FlipAxes::Horizontal].into_iter(),
+            )
+            .sorted_by_cached_key(|(quarter_turns, axes)| {
+                Tile::<L, L>::iter_by_row()
+                    .map(|c| c.rotate(*quarter_turns))
+                    .map(|c| c.flip(*axes))
+                    .map(|c| self[c])
+                    .join("")
+            })
+            .next()
+            .unwrap();
+
+        self.0.rotate(quarter_turns);
+        self.0.flip(flip_axes);
+
+        self
+    }
 
     pub fn try_create_canonical(letters: &str) -> Option<Self> {
         let mut board = Self::try_create(letters)?;

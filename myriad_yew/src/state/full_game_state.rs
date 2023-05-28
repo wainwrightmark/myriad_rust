@@ -97,12 +97,11 @@ impl Game {
         let board = settings
             .create_boards::<GRID_COLUMNS, 9, ClassicGameMode>(solve_settings, rng)
             .next()
-            .unwrap();
+            .unwrap().to_canonical_form();
 
         //let challenge_words = Self::create_challenge_words(solve_settings, &board);
         let difficulties = Self::get_difficulties(solve_settings, &board);
         let total_solutions = difficulties.iter().filter(|x| x.is_some()).count();
-
 
         Game {
             board,
@@ -144,10 +143,9 @@ impl Game {
 
         let mut boards =
             settings.create_boards::<GRID_COLUMNS, 9, ClassicGameMode>(solve_settings, rng);
-        let board = boards.next().unwrap();
+        let board = boards.next().unwrap().to_canonical_form();
         let diff = instant::Instant::now() - start_instant;
-
-        log::debug!("Board '{:?}' generated in {:?}", board, diff);
+        log::debug!("Board '{:?}' generated in {:?}", board.to_single_string(),diff);
 
         let difficulties = Self::get_difficulties(solve_settings, &board);
         let total_solutions = difficulties.iter().filter(|x| x.is_some()).count();
