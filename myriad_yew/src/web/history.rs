@@ -1,5 +1,6 @@
 use crate::{state::{ prelude::*}, web::prelude::{Route, format_number}};
 use chrono::Duration;
+use myriad::prelude::Board;
 use yew::prelude::*;
 use yew_router::prelude::use_navigator;
 use yewdux::prelude::*;
@@ -38,12 +39,20 @@ pub struct HistoryRowProperties {
     pub state: FullGameState
 }
 
+fn load_game(board: &Board<3,3,9>, navigator: &yew_router::prelude::Navigator){
+
+    let fgs = Dispatch::<FullGameState>::new().get();
+    Dispatch::<HistoryState>::new().apply(SaveGameMessage(fgs));
+
+    navigator.push(&Route::Game{game: board.canonical_string()})
+}
+
 #[function_component(HistoryRow)]
 pub fn history_row(properties: &HistoryRowProperties) -> Html {
     let navigator = use_navigator().unwrap();
     let game = properties.state.game.clone();
     let onclick: Callback<MouseEvent> =
-    Callback::from(move |_me:MouseEvent| navigator.push(&Route::Game{game: game.board.canonical_string()}));
+    Callback::from(move |_me:MouseEvent| load_game(&game.board, &navigator) );
 
     let (found, total) = properties.state.get_found_count();
     let found_pc = found * 100 / total;
