@@ -19,7 +19,7 @@ tinyvec = {version= "1.6.0", features=["rustc_1_57", "serde"]}
 
 
 [dev-dependencies]
-criterion= "0.4"
+criterion= "0.5"
 ntest = "0.9"
 
 [[bench]]

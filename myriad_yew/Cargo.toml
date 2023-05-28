@@ -11,7 +11,7 @@ myriad = { path = "../myriad" }
 
 itertools = "0.10"
 serde = { version = "1", features = ["derive", "rc"] }
-serde_with = "2"
+serde_with = "3"
 rand = {version = "0.8"}
 strum = {version = "0.24", features = ["derive"]}
 

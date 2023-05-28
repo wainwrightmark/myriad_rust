@@ -9,7 +9,7 @@
 
 [build]
   publish = "myriad_yew/dist"
-  command = "cargo install trunk --force && trunk build myriad_yew/index.html --release"
+  command = "rustup update && cargo install trunk --force && trunk build myriad_yew/index.html --release"
 
 
 [context.production]
