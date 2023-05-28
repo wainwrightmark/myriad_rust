@@ -120,8 +120,8 @@ fn draw_image(level: &str, width: u32, height: u32) -> Vec<u8> {
 
     let mut pixmap = resvg::tiny_skia::Pixmap::new(width, height).expect("Could not create Pixmap");
 
-    let x_scale = width as f64 / tree.size.width();
-    let y_scale = height as f64 / tree.size.height();
+    let x_scale = width as f32 / tree.size.width();
+    let y_scale = height as f32 / tree.size.height();
     let scale = x_scale.min(y_scale) as f32;
 
     resvg::Tree::render(
