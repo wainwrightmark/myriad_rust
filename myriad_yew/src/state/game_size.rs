@@ -64,7 +64,7 @@ impl CenterStyle for Location {
 
 impl GameSize {
     pub fn from_width_and_height(width: f32, height: f32) -> Self {
-        let orientation = if width <= height {
+        let orientation = if width <= height || height > GameSize::default().outer_length {
             Orientation::Vertical
         } else {
             Orientation::Horizontal
